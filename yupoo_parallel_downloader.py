@@ -37,16 +37,28 @@ class YupooParallelDownloader:
         Returns:
             Caminho da pasta criada
         """
-        # Extrai o ID do álbum da URL
-        album_id_match = re.search(r'/albums/(\d+)', album_url)
-        if album_id_match:
-            album_id = album_id_match.group(1)
-        else:
-            # Se não encontrar o ID, usa timestamp
-            album_id = str(int(time.time()))
+        # Extrai informações da URL para criar nome da pasta
+        # Formato: https://[subdomain].x.yupoo.com/albums/[album_id]?uid=[uid]
+        url_parts = re.search(r'https://([^.]+)\.x\.yupoo\.com/albums/(\d+)(?:\?uid=(\d+))?', album_url)
         
-        # Cria nome da pasta
-        folder_name = f"yupoo_album_{album_id}"
+        if url_parts:
+            subdomain = url_parts.group(1)
+            album_id = url_parts.group(2)
+            uid = url_parts.group(3) if url_parts.group(3) else "unknown"
+            
+            # Cria nome da pasta mais descritivo
+            folder_name = f"yupoo_{subdomain}_album_{album_id}_uid_{uid}"
+        else:
+            # Fallback para URLs que não seguem o padrão esperado
+            album_id_match = re.search(r'/albums/(\d+)', album_url)
+            if album_id_match:
+                album_id = album_id_match.group(1)
+                folder_name = f"yupoo_album_{album_id}"
+            else:
+                # Se não encontrar o ID, usa timestamp
+                album_id = str(int(time.time()))
+                folder_name = f"yupoo_album_{album_id}"
+        
         self.output_dir = folder_name
         
         # Cria o diretório se não existir
@@ -152,13 +164,14 @@ class YupooParallelDownloader:
         driver.execute_script("window.scrollTo(0, 0);")
         time.sleep(0.5)
     
-    def capture_single_image(self, data_id, index):
+    def capture_single_image(self, data_id, index, base_url):
         """
         Captura uma única imagem (função para thread)
         
         Args:
             data_id: ID da imagem
             index: Índice da imagem
+            base_url: URL base do álbum para extrair subdomain e uid
             
         Returns:
             Tupla (success, data_id, filename, error_message)
@@ -168,8 +181,18 @@ class YupooParallelDownloader:
             # Cria driver para esta thread
             driver = self.create_driver()
             
-            # Constrói a URL da imagem individual
-            image_url = f"https://nfl-world.x.yupoo.com/{data_id}?uid=1"
+            # Extrai subdomain e uid da URL base
+            url_parts = re.search(r'https://([^.]+)\.x\.yupoo\.com/albums/\d+(?:\?uid=(\d+))?', base_url)
+            if url_parts:
+                subdomain = url_parts.group(1)
+                uid = url_parts.group(2) if url_parts.group(2) else "1"
+            else:
+                # Fallback para URLs que não seguem o padrão
+                subdomain = "nfl-world"  # fallback
+                uid = "1"
+            
+            # Constrói a URL da imagem individual dinamicamente
+            image_url = f"https://{subdomain}.x.yupoo.com/{data_id}?uid={uid}"
             
             with self.lock:
                 print(f"[{index + 1:03d}/{len(self.data_ids)}] Capturando ID {data_id}...")
@@ -265,7 +288,7 @@ class YupooParallelDownloader:
         with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             # Submete todas as tarefas
             future_to_data_id = {
-                executor.submit(self.capture_single_image, data_id, index): data_id 
+                executor.submit(self.capture_single_image, data_id, index, album_url): data_id 
                 for index, data_id in enumerate(self.data_ids)
             }
             
@@ -310,6 +333,7 @@ def get_user_input():
             if album_url and "yupoo.com" in album_url and "albums" in album_url:
                 break
             print("URL inválida! Certifique-se de que é um link de álbum do Yupoo.")
+            print("Exemplo: https://nfl-world.x.yupoo.com/albums/100300873?uid=1")
         except (EOFError, KeyboardInterrupt):
             print("\nEntrada cancelada. Usando URL padrão...")
             album_url = "https://nfl-world.x.yupoo.com/albums/100300873?uid=1"
@@ -372,6 +396,7 @@ if __name__ == "__main__":
             # Valida URL
             if not ("yupoo.com" in album_url and "albums" in album_url):
                 print("URL inválida! Certifique-se de que é um link de álbum do Yupoo.")
+                print("Exemplo: https://nfl-world.x.yupoo.com/albums/100300873?uid=1")
                 sys.exit(1)
         
         # Cria o downloader com as configurações

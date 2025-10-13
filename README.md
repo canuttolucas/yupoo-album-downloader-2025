@@ -30,6 +30,11 @@ cd yupoo-album-downloader-2025
 pip install -r requirements.txt
 ```
 
+3. Execute o programa:
+```bash
+python yupoo_parallel_downloader.py --url "https://nfl-world.x.yupoo.com/albums/100300873?uid=1"
+```
+
 ## 🎯 Uso
 
 ### Modo Interativo
@@ -40,10 +45,13 @@ python yupoo_parallel_downloader.py --interactive
 ### Linha de Comando
 ```bash
 # Uso básico
-python yupoo_parallel_downloader.py --url "https://exemplo.x.yupoo.com/albums/123456?uid=1"
+python yupoo_parallel_downloader.py --url "https://nfl-world.x.yupoo.com/albums/100300873?uid=1"
 
 # Com configurações personalizadas
-python yupoo_parallel_downloader.py --url "https://exemplo.x.yupoo.com/albums/123456?uid=1" --threads 6 --no-headless
+python yupoo_parallel_downloader.py --url "https://nfl-world.x.yupoo.com/albums/100300873?uid=1" --threads 6 --no-headless
+
+# Qualquer álbum do Yupoo
+python yupoo_parallel_downloader.py --url "https://qualquer-subdomain.x.yupoo.com/albums/123456?uid=1"
 ```
 
 ### Opções Disponíveis
@@ -56,13 +64,18 @@ python yupoo_parallel_downloader.py --url "https://exemplo.x.yupoo.com/albums/12
 
 ## 📁 Estrutura de Saída
 
-O programa cria automaticamente uma pasta para cada álbum:
+O programa cria automaticamente uma pasta para cada álbum com nome descritivo:
 ```
-yupoo_album_[ID_DO_ALBUM]/
+yupoo_[SUBDOMAIN]_album_[ID_DO_ALBUM]_uid_[UID]/
 ├── image_0001_id_[DATA_ID].png
 ├── image_0002_id_[DATA_ID].png
 ├── image_0003_id_[DATA_ID].png
 └── ...
+
+# Exemplos:
+yupoo_nfl-world_album_100300873_uid_1/
+yupoo_fashion-store_album_123456_uid_2/
+yupoo_sports-shop_album_789012_uid_1/
 ```
 
 ## ⚡ Performance
