@@ -44,19 +44,27 @@ python yupoo_parallel_downloader.py --interactive
 
 ### Linha de Comando
 ```bash
-# Uso básico
+# Download de álbum individual
 python yupoo_parallel_downloader.py --url "https://nfl-world.x.yupoo.com/albums/100300873?uid=1"
+
+# Download de categoria completa (todos os álbuns)
+python yupoo_parallel_downloader.py --url "https://minkang.x.yupoo.com/categories/2890904"
+
+# Download de collection completa (todos os álbuns)
+python yupoo_parallel_downloader.py --url "https://exemplo.x.yupoo.com/collections/123456"
 
 # Com configurações personalizadas
 python yupoo_parallel_downloader.py --url "https://nfl-world.x.yupoo.com/albums/100300873?uid=1" --threads 6 --no-headless
 
-# Qualquer álbum do Yupoo
+# Qualquer álbum, categoria ou collection do Yupoo
 python yupoo_parallel_downloader.py --url "https://qualquer-subdomain.x.yupoo.com/albums/123456?uid=1"
+python yupoo_parallel_downloader.py --url "https://qualquer-subdomain.x.yupoo.com/categories/123456"
+python yupoo_parallel_downloader.py --url "https://qualquer-subdomain.x.yupoo.com/collections/123456"
 ```
 
 ### Opções Disponíveis
 
-- `--url, -u`: URL do álbum Yupoo (obrigatório)
+- `--url, -u`: URL do álbum, categoria ou collection Yupoo (obrigatório)
 - `--threads, -t`: Número de threads paralelas (1-8, padrão: 4)
 - `--no-headless`: Executar com interface gráfica
 - `--interactive, -i`: Modo interativo
@@ -64,7 +72,9 @@ python yupoo_parallel_downloader.py --url "https://qualquer-subdomain.x.yupoo.co
 
 ## 📁 Estrutura de Saída
 
-O programa cria automaticamente uma pasta para cada álbum com nome descritivo:
+O programa cria automaticamente uma pasta para cada álbum, categoria ou collection com nome descritivo:
+
+### Para Álbuns:
 ```
 yupoo_[SUBDOMAIN]_album_[ID_DO_ALBUM]_uid_[UID]/
 ├── image_0001_id_[DATA_ID].png
@@ -75,7 +85,30 @@ yupoo_[SUBDOMAIN]_album_[ID_DO_ALBUM]_uid_[UID]/
 # Exemplos:
 yupoo_nfl-world_album_100300873_uid_1/
 yupoo_fashion-store_album_123456_uid_2/
-yupoo_sports-shop_album_789012_uid_1/
+```
+
+### Para Categorias:
+```
+yupoo_[SUBDOMAIN]_category_[ID_DA_CATEGORIA]/
+├── image_0001_id_[DATA_ID].png
+├── image_0002_id_[DATA_ID].png
+├── image_0003_id_[DATA_ID].png
+└── ...
+
+# Exemplo:
+yupoo_minkang_category_2890904/
+```
+
+### Para Collections:
+```
+yupoo_[SUBDOMAIN]_collection_[ID_DA_COLLECTION]/
+├── image_0001_id_[DATA_ID].png
+├── image_0002_id_[DATA_ID].png
+├── image_0003_id_[DATA_ID].png
+└── ...
+
+# Exemplo:
+yupoo_exemplo_collection_123456/
 ```
 
 ## ⚡ Performance

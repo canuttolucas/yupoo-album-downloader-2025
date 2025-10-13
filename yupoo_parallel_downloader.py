@@ -70,6 +70,90 @@ class YupooParallelDownloader:
         
         return self.output_dir
     
+    def create_category_folder(self, category_url):
+        """
+        Cria uma pasta específica para a categoria baseada na URL
+        
+        Args:
+            category_url: URL da categoria Yupoo
+            
+        Returns:
+            Caminho da pasta criada
+        """
+        # Extrai informações da URL para criar nome da pasta
+        # Formato: https://[subdomain].x.yupoo.com/categories/[category_id]
+        url_parts = re.search(r'https://([^.]+)\.x\.yupoo\.com/categories/(\d+)', category_url)
+        
+        if url_parts:
+            subdomain = url_parts.group(1)
+            category_id = url_parts.group(2)
+            
+            # Cria nome da pasta mais descritivo
+            folder_name = f"yupoo_{subdomain}_category_{category_id}"
+        else:
+            # Fallback para URLs que não seguem o padrão esperado
+            category_id_match = re.search(r'/categories/(\d+)', category_url)
+            if category_id_match:
+                category_id = category_id_match.group(1)
+                folder_name = f"yupoo_category_{category_id}"
+            else:
+                # Se não encontrar o ID, usa timestamp
+                category_id = str(int(time.time()))
+                folder_name = f"yupoo_category_{category_id}"
+        
+        self.output_dir = folder_name
+        
+        # Cria o diretório se não existir
+        if not os.path.exists(self.output_dir):
+            os.makedirs(self.output_dir)
+            print(f"Pasta criada: {os.path.abspath(self.output_dir)}")
+        else:
+            print(f"Usando pasta existente: {os.path.abspath(self.output_dir)}")
+        
+        return self.output_dir
+    
+    def create_collection_folder(self, collection_url):
+        """
+        Cria uma pasta específica para a collection baseada na URL
+        
+        Args:
+            collection_url: URL da collection Yupoo
+            
+        Returns:
+            Caminho da pasta criada
+        """
+        # Extrai informações da URL para criar nome da pasta
+        # Formato: https://[subdomain].x.yupoo.com/collections/[collection_id]
+        url_parts = re.search(r'https://([^.]+)\.x\.yupoo\.com/collections/(\d+)', collection_url)
+        
+        if url_parts:
+            subdomain = url_parts.group(1)
+            collection_id = url_parts.group(2)
+            
+            # Cria nome da pasta mais descritivo
+            folder_name = f"yupoo_{subdomain}_collection_{collection_id}"
+        else:
+            # Fallback para URLs que não seguem o padrão esperado
+            collection_id_match = re.search(r'/collections/(\d+)', collection_url)
+            if collection_id_match:
+                collection_id = collection_id_match.group(1)
+                folder_name = f"yupoo_collection_{collection_id}"
+            else:
+                # Se não encontrar o ID, usa timestamp
+                collection_id = str(int(time.time()))
+                folder_name = f"yupoo_collection_{collection_id}"
+        
+        self.output_dir = folder_name
+        
+        # Cria o diretório se não existir
+        if not os.path.exists(self.output_dir):
+            os.makedirs(self.output_dir)
+            print(f"Pasta criada: {os.path.abspath(self.output_dir)}")
+        else:
+            print(f"Usando pasta existente: {os.path.abspath(self.output_dir)}")
+        
+        return self.output_dir
+    
     def create_driver(self):
         """Cria uma nova instância do ChromeDriver"""
         chrome_options = Options()
@@ -163,6 +247,106 @@ class YupooParallelDownloader:
         
         driver.execute_script("window.scrollTo(0, 0);")
         time.sleep(0.5)
+    
+    def get_albums_from_category(self, category_url):
+        """
+        Obtém todos os álbuns de uma categoria
+        
+        Args:
+            category_url: URL da categoria Yupoo
+            
+        Returns:
+            Lista de URLs dos álbuns
+        """
+        print(f"Abrindo categoria: {category_url}")
+        driver = self.create_driver()
+        
+        try:
+            driver.get(category_url)
+            time.sleep(3)
+            
+            # Scroll para carregar todos os álbuns
+            self.scroll_to_load_all(driver)
+            
+            print("Procurando álbuns na categoria...")
+            
+            # Encontra todos os links de álbuns
+            album_links = driver.find_elements(By.XPATH, "//a[contains(@href, '/albums/')]")
+            print(f"Encontrados {len(album_links)} links de álbuns")
+            
+            album_urls = []
+            for link in album_links:
+                href = link.get_attribute('href')
+                if href and '/albums/' in href:
+                    album_urls.append(href)
+                    print(f"[OK] Álbum encontrado: {href}")
+            
+            # Remove duplicatas mantendo a ordem
+            seen = set()
+            unique_album_urls = []
+            for url in album_urls:
+                if url not in seen:
+                    seen.add(url)
+                    unique_album_urls.append(url)
+            
+            print(f"\nTotal de {len(unique_album_urls)} álbuns únicos encontrados na categoria")
+            return unique_album_urls
+            
+        except Exception as e:
+            print(f"Erro ao capturar álbuns da categoria: {e}")
+            return []
+        finally:
+            driver.quit()
+    
+    def get_albums_from_collection(self, collection_url):
+        """
+        Obtém todos os álbuns de uma collection
+        
+        Args:
+            collection_url: URL da collection Yupoo
+            
+        Returns:
+            Lista de URLs dos álbuns
+        """
+        print(f"Abrindo collection: {collection_url}")
+        driver = self.create_driver()
+        
+        try:
+            driver.get(collection_url)
+            time.sleep(3)
+            
+            # Scroll para carregar todos os álbuns
+            self.scroll_to_load_all(driver)
+            
+            print("Procurando álbuns na collection...")
+            
+            # Encontra todos os links de álbuns
+            album_links = driver.find_elements(By.XPATH, "//a[contains(@href, '/albums/')]")
+            print(f"Encontrados {len(album_links)} links de álbuns")
+            
+            album_urls = []
+            for link in album_links:
+                href = link.get_attribute('href')
+                if href and '/albums/' in href:
+                    album_urls.append(href)
+                    print(f"[OK] Álbum encontrado: {href}")
+            
+            # Remove duplicatas mantendo a ordem
+            seen = set()
+            unique_album_urls = []
+            for url in album_urls:
+                if url not in seen:
+                    seen.add(url)
+                    unique_album_urls.append(url)
+            
+            print(f"\nTotal de {len(unique_album_urls)} álbuns únicos encontrados na collection")
+            return unique_album_urls
+            
+        except Exception as e:
+            print(f"Erro ao capturar álbuns da collection: {e}")
+            return []
+        finally:
+            driver.quit()
     
     def capture_single_image(self, data_id, index, base_url):
         """
@@ -316,6 +500,156 @@ class YupooParallelDownloader:
         print(f"Taxa media: {len(self.data_ids)/elapsed_total*60:.1f} imagens/minuto")
         print(f"Imagens salvas em: {os.path.abspath(self.output_dir)}")
         print("=" * 80)
+    
+    def download_category(self, category_url):
+        """
+        Processo completo para categoria: obtém todos os álbuns e baixa todas as imagens
+        
+        Args:
+            category_url: URL da categoria Yupoo
+        """
+        print("=" * 80)
+        print("YUPOO PARALLEL DOWNLOADER - Download de Categoria")
+        print(f"Threads paralelas: {self.max_workers}")
+        print("=" * 80)
+        
+        # Passo 0: Criar pasta específica para a categoria
+        self.create_category_folder(category_url)
+        
+        # Passo 1: Obter todos os álbuns da categoria
+        album_urls = self.get_albums_from_category(category_url)
+        
+        if not album_urls:
+            print("Nenhum álbum encontrado na categoria!")
+            return
+        
+        print(f"\nProcessando {len(album_urls)} álbuns da categoria...")
+        print("=" * 80)
+        
+        # Passo 2: Para cada álbum, obter data-ids e baixar imagens
+        total_successful = 0
+        total_failed = 0
+        start_time = time.time()
+        
+        for album_index, album_url in enumerate(album_urls):
+            print(f"\n[Álbum {album_index + 1}/{len(album_urls)}] Processando: {album_url}")
+            
+            # Obter data-ids do álbum
+            data_ids = self.get_data_ids(album_url)
+            
+            if not data_ids:
+                print(f"  Nenhum data-id encontrado no álbum {album_index + 1}")
+                continue
+            
+            print(f"  Encontrados {len(data_ids)} imagens no álbum")
+            
+            # Baixar imagens do álbum
+            successful = 0
+            failed = 0
+            
+            with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+                # Submete todas as tarefas
+                future_to_data_id = {
+                    executor.submit(self.capture_single_image, data_id, index, album_url): data_id 
+                    for index, data_id in enumerate(data_ids)
+                }
+                
+                # Processa resultados conforme completam
+                for future in as_completed(future_to_data_id):
+                    success, data_id, filename, error = future.result()
+                    
+                    if success:
+                        successful += 1
+                        total_successful += 1
+                    else:
+                        failed += 1
+                        total_failed += 1
+            
+            print(f"  Álbum {album_index + 1} concluído: {successful} sucessos, {failed} falhas")
+        
+        elapsed_total = time.time() - start_time
+        print("=" * 80)
+        print(f"Download da categoria concluído em {elapsed_total/60:.1f} minutos!")
+        print(f"[OK] Total de sucessos: {total_successful} imagens")
+        print(f"[ERRO] Total de falhas: {total_failed} imagens")
+        print(f"Taxa media: {(total_successful + total_failed)/elapsed_total*60:.1f} imagens/minuto")
+        print(f"Imagens salvas em: {os.path.abspath(self.output_dir)}")
+        print("=" * 80)
+    
+    def download_collection(self, collection_url):
+        """
+        Processo completo para collection: obtém todos os álbuns e baixa todas as imagens
+        
+        Args:
+            collection_url: URL da collection Yupoo
+        """
+        print("=" * 80)
+        print("YUPOO PARALLEL DOWNLOADER - Download de Collection")
+        print(f"Threads paralelas: {self.max_workers}")
+        print("=" * 80)
+        
+        # Passo 0: Criar pasta específica para a collection
+        self.create_collection_folder(collection_url)
+        
+        # Passo 1: Obter todos os álbuns da collection
+        album_urls = self.get_albums_from_collection(collection_url)
+        
+        if not album_urls:
+            print("Nenhum álbum encontrado na collection!")
+            return
+        
+        print(f"\nProcessando {len(album_urls)} álbuns da collection...")
+        print("=" * 80)
+        
+        # Passo 2: Para cada álbum, obter data-ids e baixar imagens
+        total_successful = 0
+        total_failed = 0
+        start_time = time.time()
+        
+        for album_index, album_url in enumerate(album_urls):
+            print(f"\n[Álbum {album_index + 1}/{len(album_urls)}] Processando: {album_url}")
+            
+            # Obter data-ids do álbum
+            data_ids = self.get_data_ids(album_url)
+            
+            if not data_ids:
+                print(f"  Nenhum data-id encontrado no álbum {album_index + 1}")
+                continue
+            
+            print(f"  Encontrados {len(data_ids)} imagens no álbum")
+            
+            # Baixar imagens do álbum
+            successful = 0
+            failed = 0
+            
+            with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+                # Submete todas as tarefas
+                future_to_data_id = {
+                    executor.submit(self.capture_single_image, data_id, index, album_url): data_id 
+                    for index, data_id in enumerate(data_ids)
+                }
+                
+                # Processa resultados conforme completam
+                for future in as_completed(future_to_data_id):
+                    success, data_id, filename, error = future.result()
+                    
+                    if success:
+                        successful += 1
+                        total_successful += 1
+                    else:
+                        failed += 1
+                        total_failed += 1
+            
+            print(f"  Álbum {album_index + 1} concluído: {successful} sucessos, {failed} falhas")
+        
+        elapsed_total = time.time() - start_time
+        print("=" * 80)
+        print(f"Download da collection concluído em {elapsed_total/60:.1f} minutos!")
+        print(f"[OK] Total de sucessos: {total_successful} imagens")
+        print(f"[ERRO] Total de falhas: {total_failed} imagens")
+        print(f"Taxa media: {(total_successful + total_failed)/elapsed_total*60:.1f} imagens/minuto")
+        print(f"Imagens salvas em: {os.path.abspath(self.output_dir)}")
+        print("=" * 80)
 
 
 def get_user_input():
@@ -326,14 +660,17 @@ def get_user_input():
     print("YUPOO PARALLEL DOWNLOADER - Configuração")
     print("=" * 80)
     
-    # Solicita URL do álbum
+    # Solicita URL do álbum, categoria ou collection
     while True:
         try:
-            album_url = input("Digite a URL do álbum Yupoo: ").strip()
-            if album_url and "yupoo.com" in album_url and "albums" in album_url:
+            album_url = input("Digite a URL do álbum, categoria ou collection Yupoo: ").strip()
+            if album_url and "yupoo.com" in album_url and ("albums" in album_url or "categories" in album_url or "collections" in album_url):
                 break
-            print("URL inválida! Certifique-se de que é um link de álbum do Yupoo.")
-            print("Exemplo: https://nfl-world.x.yupoo.com/albums/100300873?uid=1")
+            print("URL inválida! Certifique-se de que é um link de álbum, categoria ou collection do Yupoo.")
+            print("Exemplos:")
+            print("  Álbum: https://nfl-world.x.yupoo.com/albums/100300873?uid=1")
+            print("  Categoria: https://minkang.x.yupoo.com/categories/2890904")
+            print("  Collection: https://exemplo.x.yupoo.com/collections/123456")
         except (EOFError, KeyboardInterrupt):
             print("\nEntrada cancelada. Usando URL padrão...")
             album_url = "https://nfl-world.x.yupoo.com/albums/100300873?uid=1"
@@ -394,9 +731,12 @@ if __name__ == "__main__":
             headless = not args.no_headless
             
             # Valida URL
-            if not ("yupoo.com" in album_url and "albums" in album_url):
-                print("URL inválida! Certifique-se de que é um link de álbum do Yupoo.")
-                print("Exemplo: https://nfl-world.x.yupoo.com/albums/100300873?uid=1")
+            if not ("yupoo.com" in album_url and ("albums" in album_url or "categories" in album_url or "collections" in album_url)):
+                print("URL inválida! Certifique-se de que é um link de álbum, categoria ou collection do Yupoo.")
+                print("Exemplos:")
+                print("  Álbum: https://nfl-world.x.yupoo.com/albums/100300873?uid=1")
+                print("  Categoria: https://minkang.x.yupoo.com/categories/2890904")
+                print("  Collection: https://exemplo.x.yupoo.com/collections/123456")
                 sys.exit(1)
         
         # Cria o downloader com as configurações
@@ -408,8 +748,16 @@ if __name__ == "__main__":
         print(f"  Headless: {'Sim' if headless else 'Não'}")
         print()
         
-        # Faz o download do álbum
-        downloader.download_album(album_url)
+        # Detecta se é álbum, categoria ou collection e executa o método apropriado
+        if "categories" in album_url:
+            print("Detectado: URL de categoria")
+            downloader.download_category(album_url)
+        elif "collections" in album_url:
+            print("Detectado: URL de collection")
+            downloader.download_collection(album_url)
+        else:
+            print("Detectado: URL de álbum")
+            downloader.download_album(album_url)
         
     except KeyboardInterrupt:
         print("\nProcesso interrompido pelo usuário.")
