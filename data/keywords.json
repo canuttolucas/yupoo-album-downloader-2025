@@ -1,0 +1,243 @@
+{
+    "product_types": {
+        "retro": {
+            "folder": "RETRO",
+            "keywords": [
+                "retro",
+                "vintage",
+                "classic",
+                "throwback",
+                "historical",
+                "old",
+                "98",
+                "99",
+                "00",
+                "01",
+                "02",
+                "03",
+                "04",
+                "05",
+                "06",
+                "07",
+                "08",
+                "09"
+            ]
+        },
+        "women": {
+            "folder": "WOMEN",
+            "keywords": [
+                "women",
+                "womens",
+                "woman",
+                "female",
+                "ladies",
+                "feminina",
+                "feminino",
+                "mujer"
+            ]
+        },
+        "kids": {
+            "folder": "KIDS",
+            "keywords": [
+                "kids",
+                "kid",
+                "child",
+                "children",
+                "youth",
+                "junior",
+                "infantil",
+                "crianca",
+                "nino",
+                "ninos",
+                "boys",
+                "youth"
+            ]
+        },
+        "baby": {
+            "folder": "BABY",
+            "keywords": [
+                "baby",
+                "infant",
+                "toddler",
+                "bebe",
+                "bebê"
+            ]
+        },
+        "shorts": {
+            "folder": "SHORTS",
+            "keywords": [
+                "shorts",
+                "short",
+                "bermuda",
+                "calca"
+            ]
+        },
+        "polos": {
+            "folder": "POLOS",
+            "keywords": [
+                "polo",
+                "polos",
+                "poloshirt",
+                "polo shirt"
+            ]
+        },
+        "windbreaker": {
+            "folder": "WINDBREAKER",
+            "keywords": [
+                "windbreaker",
+                "wind breaker",
+                "jacket",
+                "jaqueta",
+                "corta vento",
+                "windrunner",
+                "all weather"
+            ]
+        },
+        "suits": {
+            "folder": "SUITS",
+            "keywords": [
+                "suit",
+                "suits",
+                "training suit",
+                "presentation",
+                "warm up",
+                "warmup"
+            ]
+        },
+        "tracksuit": {
+            "folder": "TRACKSUIT",
+            "keywords": [
+                "tracksuit",
+                "track suit",
+                "agasalho",
+                "chandal",
+                "survêtement"
+            ]
+        },
+        "long_sleeves": {
+            "folder": "LONG_SLEEVES",
+            "keywords": [
+                "long sleeve",
+                "long sleeves",
+                "longsleeve",
+                "manga longa",
+                "manga larga",
+                "ml"
+            ]
+        },
+        "player": {
+            "folder": "PLAYER",
+            "keywords": [
+                "player",
+                "player version",
+                "pv",
+                "jogador",
+                "match version",
+                "match worn",
+                "authentic",
+                "elite"
+            ]
+        },
+        "goalkeeper": {
+            "folder": "GOALKEEPER",
+            "keywords": [
+                "goalkeeper",
+                "gk",
+                "keeper",
+                "goleiro",
+                "portero",
+                "gardien"
+            ]
+        }
+    },
+    "version_mapping": {
+        "home": {
+            "normalized": "Home",
+            "keywords": [
+                "home",
+                "casa",
+                "1st",
+                "first",
+                "principal",
+                "titular"
+            ]
+        },
+        "away": {
+            "normalized": "Away",
+            "keywords": [
+                "away",
+                "fora",
+                "2nd",
+                "second",
+                "visitante",
+                "alternativo"
+            ]
+        },
+        "third": {
+            "normalized": "Third",
+            "keywords": [
+                "third",
+                "3rd",
+                "terceira",
+                "tercera",
+                "alternativa"
+            ]
+        },
+        "fourth": {
+            "normalized": "Fourth",
+            "keywords": [
+                "fourth",
+                "4th",
+                "quarta",
+                "cuarta"
+            ]
+        },
+        "goalkeeper": {
+            "normalized": "Goalkeeper",
+            "keywords": [
+                "goalkeeper",
+                "gk",
+                "keeper",
+                "goleiro",
+                "portero"
+            ]
+        },
+        "special_edition": {
+            "normalized": "SpecialEdition",
+            "keywords": [
+                "special",
+                "edition",
+                "limited",
+                "collector",
+                "especial",
+                "anti racism",
+                "anti-racism",
+                "no racism",
+                "black lives matter",
+                "blm",
+                "halloween",
+                "christmas",
+                "xmas",
+                "chinese new year",
+                "lunar new year",
+                "anniversary",
+                "collaboration",
+                "charity",
+                "memorial",
+                "commemorative",
+                "pride",
+                "training",
+                "pre-match",
+                "pre match",
+                "prematch",
+                "anthem"
+            ]
+        }
+    },
+    "season_regex": "\\b(1[0-9]|2[0-5])[-/](1[0-9]|2[0-6])\\b",
+    "valid_season_range": {
+        "min_start": 10,
+        "max_start": 25
+    },
+    "folder_unavailable": "INDISPONIVEL"
+}

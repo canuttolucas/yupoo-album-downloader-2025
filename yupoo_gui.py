@@ -9,6 +9,7 @@ import time
 from yupoo_gui_downloader import YupooGUIDownloader
 from yupoo_advanced_downloader import YupooAdvancedDownloader
 from yupoo_simple_cover_downloader import YupooSimpleCoverDownloader
+from photo_organizer import PhotoOrganizer
 from packaging import version
 
 # Set appearance mode and default color theme
@@ -63,6 +64,10 @@ class YupooDownloaderGUI(ctk.CTk):
         
         self.logo_label = ctk.CTkLabel(self.sidebar_frame, text="Yupoo\nDownloader", font=ctk.CTkFont(size=20, weight="bold"))
         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
+        
+        # Botão Organizar Fotos
+        self.organize_button = ctk.CTkButton(self.sidebar_frame, text="Organizar Fotos", command=self.open_organize_dialog, fg_color="#2E7D32", hover_color="#1B5E20")
+        self.organize_button.grid(row=1, column=0, padx=20, pady=(10, 5))
         
         self.label_mode = ctk.CTkLabel(self.sidebar_frame, text="Tema:", anchor="w")
         self.label_mode.grid(row=5, column=0, padx=20, pady=(10, 0))
@@ -337,6 +342,87 @@ class YupooDownloaderGUI(ctk.CTk):
             self.start_btn.configure(state="normal")
             self.stop_btn.configure(state="disabled")
             self.progressbar.stop()
+
+    def open_organize_dialog(self):
+        """Abre o diálogo para organizar fotos de futebol"""
+        dialog = ctk.CTkToplevel(self)
+        dialog.title("Organizar Fotos de Futebol")
+        dialog.geometry("600x450")
+        dialog.transient(self)
+        dialog.grab_set()
+        
+        # Variáveis
+        source_var = tk.StringVar()
+        dest_var = tk.StringVar()
+        
+        # Título
+        title_label = ctk.CTkLabel(dialog, text="Organizador de Camisas de Futebol", font=ctk.CTkFont(size=18, weight="bold"))
+        title_label.pack(pady=(20, 10))
+        
+        desc_label = ctk.CTkLabel(dialog, text="Classifica e organiza fotos por Clube/Liga/Temporada", font=ctk.CTkFont(size=12))
+        desc_label.pack(pady=(0, 20))
+        
+        # Frame de seleção de pastas
+        folders_frame = ctk.CTkFrame(dialog)
+        folders_frame.pack(fill="x", padx=20, pady=10)
+        
+        # Pasta de origem
+        ctk.CTkLabel(folders_frame, text="Pasta de Origem (fotos baixadas):").pack(anchor="w", padx=10, pady=(10, 0))
+        source_frame = ctk.CTkFrame(folders_frame)
+        source_frame.pack(fill="x", padx=10, pady=5)
+        source_entry = ctk.CTkEntry(source_frame, textvariable=source_var, width=400)
+        source_entry.pack(side="left", padx=(0, 10))
+        ctk.CTkButton(source_frame, text="Selecionar", width=80, 
+                      command=lambda: source_var.set(filedialog.askdirectory(title="Selecione a pasta de origem"))).pack(side="left")
+        
+        # Pasta de destino
+        ctk.CTkLabel(folders_frame, text="Pasta de Destino (estrutura organizada):").pack(anchor="w", padx=10, pady=(10, 0))
+        dest_frame = ctk.CTkFrame(folders_frame)
+        dest_frame.pack(fill="x", padx=10, pady=5)
+        dest_entry = ctk.CTkEntry(dest_frame, textvariable=dest_var, width=400)
+        dest_entry.pack(side="left", padx=(0, 10))
+        ctk.CTkButton(dest_frame, text="Selecionar", width=80,
+                      command=lambda: dest_var.set(filedialog.askdirectory(title="Selecione a pasta de destino"))).pack(side="left")
+        
+        # Log de progresso
+        log_frame = ctk.CTkFrame(dialog)
+        log_frame.pack(fill="both", expand=True, padx=20, pady=10)
+        ctk.CTkLabel(log_frame, text="Progresso:").pack(anchor="w", padx=10, pady=(10, 0))
+        log_text = ctk.CTkTextbox(log_frame, height=150)
+        log_text.pack(fill="both", expand=True, padx=10, pady=10)
+        
+        def log_to_dialog(message, level="INFO"):
+            log_text.insert("end", f"[{level}] {message}\n")
+            log_text.see("end")
+            dialog.update_idletasks()
+        
+        def run_organizer():
+            source = source_var.get()
+            dest = dest_var.get()
+            
+            if not source or not dest:
+                log_to_dialog("Por favor, selecione ambas as pastas!", "ERROR")
+                return
+            
+            log_to_dialog(f"Iniciando organização...")
+            log_to_dialog(f"Origem: {source}")
+            log_to_dialog(f"Destino: {dest}")
+            
+            try:
+                organizer = PhotoOrganizer(log_callback=log_to_dialog)
+                stats = organizer.organize_folder(source, dest)
+                log_to_dialog(f"\n=== CONCLUÍDO ===", "SUCCESS")
+                log_to_dialog(f"Arquivos processados: {stats['processed']}", "SUCCESS")
+                log_to_dialog(f"Arquivos movidos: {stats['moved']}", "SUCCESS")
+            except Exception as e:
+                log_to_dialog(f"Erro: {e}", "ERROR")
+        
+        # Botões de ação
+        action_frame = ctk.CTkFrame(dialog)
+        action_frame.pack(fill="x", padx=20, pady=10)
+        
+        ctk.CTkButton(action_frame, text="Organizar", command=run_organizer, fg_color="#2E7D32", hover_color="#1B5E20").pack(side="left", padx=10)
+        ctk.CTkButton(action_frame, text="Fechar", command=dialog.destroy, fg_color="gray").pack(side="right", padx=10)
 
 if __name__ == "__main__":
     app = YupooDownloaderGUI()

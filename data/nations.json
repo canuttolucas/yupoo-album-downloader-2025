@@ -1,0 +1,950 @@
+{
+    "continents": {
+        "UEFA": {
+            "name": "Europe",
+            "teams": [
+                {
+                    "name": "England",
+                    "aliases": [
+                        "england",
+                        "three lions",
+                        "the lions",
+                        "english"
+                    ]
+                },
+                {
+                    "name": "France",
+                    "aliases": [
+                        "france",
+                        "les bleus",
+                        "french"
+                    ]
+                },
+                {
+                    "name": "Germany",
+                    "aliases": [
+                        "germany",
+                        "die mannschaft",
+                        "german",
+                        "deutschland"
+                    ]
+                },
+                {
+                    "name": "Spain",
+                    "aliases": [
+                        "spain",
+                        "la roja",
+                        "spanish",
+                        "espana"
+                    ]
+                },
+                {
+                    "name": "Italy",
+                    "aliases": [
+                        "italy",
+                        "gli azzurri",
+                        "azzurri",
+                        "italian",
+                        "italia"
+                    ]
+                },
+                {
+                    "name": "Portugal",
+                    "aliases": [
+                        "portugal",
+                        "selecao",
+                        "portuguese"
+                    ]
+                },
+                {
+                    "name": "Netherlands",
+                    "aliases": [
+                        "netherlands",
+                        "holland",
+                        "oranje",
+                        "dutch"
+                    ]
+                },
+                {
+                    "name": "Belgium",
+                    "aliases": [
+                        "belgium",
+                        "red devils",
+                        "belgian",
+                        "diables rouges"
+                    ]
+                },
+                {
+                    "name": "Croatia",
+                    "aliases": [
+                        "croatia",
+                        "vatreni",
+                        "croatian"
+                    ]
+                },
+                {
+                    "name": "Switzerland",
+                    "aliases": [
+                        "switzerland",
+                        "nati",
+                        "die nati",
+                        "swiss"
+                    ]
+                },
+                {
+                    "name": "Denmark",
+                    "aliases": [
+                        "denmark",
+                        "danish dynamite",
+                        "danish"
+                    ]
+                },
+                {
+                    "name": "Austria",
+                    "aliases": [
+                        "austria",
+                        "austrian"
+                    ]
+                },
+                {
+                    "name": "Poland",
+                    "aliases": [
+                        "poland",
+                        "polish",
+                        "bialo-czerwoni"
+                    ]
+                },
+                {
+                    "name": "Ukraine",
+                    "aliases": [
+                        "ukraine",
+                        "ukrainian",
+                        "zbirna"
+                    ]
+                },
+                {
+                    "name": "Turkey",
+                    "aliases": [
+                        "turkey",
+                        "turkish",
+                        "turkiye",
+                        "ay-yildizlilar"
+                    ]
+                },
+                {
+                    "name": "Czech Republic",
+                    "aliases": [
+                        "czech republic",
+                        "czechia",
+                        "czech",
+                        "reprezentace"
+                    ]
+                },
+                {
+                    "name": "Sweden",
+                    "aliases": [
+                        "sweden",
+                        "swedish",
+                        "blagult"
+                    ]
+                },
+                {
+                    "name": "Hungary",
+                    "aliases": [
+                        "hungary",
+                        "hungarian",
+                        "magyar valogatott"
+                    ]
+                },
+                {
+                    "name": "Serbia",
+                    "aliases": [
+                        "serbia",
+                        "serbian",
+                        "orlovi"
+                    ]
+                },
+                {
+                    "name": "Scotland",
+                    "aliases": [
+                        "scotland",
+                        "scottish",
+                        "tartan army"
+                    ]
+                },
+                {
+                    "name": "Norway",
+                    "aliases": [
+                        "norway",
+                        "norwegian"
+                    ]
+                },
+                {
+                    "name": "Ireland",
+                    "aliases": [
+                        "ireland",
+                        "republic of ireland",
+                        "irish"
+                    ]
+                },
+                {
+                    "name": "Wales",
+                    "aliases": [
+                        "wales",
+                        "welsh",
+                        "dragons"
+                    ]
+                },
+                {
+                    "name": "Greece",
+                    "aliases": [
+                        "greece",
+                        "greek",
+                        "galanolefki"
+                    ]
+                },
+                {
+                    "name": "Romania",
+                    "aliases": [
+                        "romania",
+                        "romanian",
+                        "tricolorii"
+                    ]
+                },
+                {
+                    "name": "Slovakia",
+                    "aliases": [
+                        "slovakia",
+                        "slovak"
+                    ]
+                },
+                {
+                    "name": "Slovenia",
+                    "aliases": [
+                        "slovenia",
+                        "slovenian"
+                    ]
+                },
+                {
+                    "name": "Iceland",
+                    "aliases": [
+                        "iceland",
+                        "icelandic"
+                    ]
+                },
+                {
+                    "name": "Finland",
+                    "aliases": [
+                        "finland",
+                        "finnish",
+                        "huuhkajat"
+                    ]
+                },
+                {
+                    "name": "Bosnia and Herzegovina",
+                    "aliases": [
+                        "bosnia",
+                        "bosnian",
+                        "zmajevi"
+                    ]
+                },
+                {
+                    "name": "North Macedonia",
+                    "aliases": [
+                        "north macedonia",
+                        "macedonia",
+                        "macedonian"
+                    ]
+                },
+                {
+                    "name": "Albania",
+                    "aliases": [
+                        "albania",
+                        "albanian",
+                        "kuq e zi"
+                    ]
+                },
+                {
+                    "name": "Georgia",
+                    "aliases": [
+                        "georgia",
+                        "georgian",
+                        "jvarosnebi"
+                    ]
+                },
+                {
+                    "name": "Montenegro",
+                    "aliases": [
+                        "montenegro",
+                        "montenegrin"
+                    ]
+                },
+                {
+                    "name": "Kosovo",
+                    "aliases": [
+                        "kosovo",
+                        "kosovar"
+                    ]
+                },
+                {
+                    "name": "Armenia",
+                    "aliases": [
+                        "armenia",
+                        "armenian"
+                    ]
+                },
+                {
+                    "name": "Luxembourg",
+                    "aliases": [
+                        "luxembourg",
+                        "luxembourgish"
+                    ]
+                },
+                {
+                    "name": "Bulgaria",
+                    "aliases": [
+                        "bulgaria",
+                        "bulgarian",
+                        "lavovete"
+                    ]
+                },
+                {
+                    "name": "Cyprus",
+                    "aliases": [
+                        "cyprus",
+                        "cypriot"
+                    ]
+                }
+            ]
+        },
+        "CONMEBOL": {
+            "name": "South America",
+            "teams": [
+                {
+                    "name": "Brazil",
+                    "aliases": [
+                        "brazil",
+                        "brasil",
+                        "selecao",
+                        "canarinho",
+                        "brazilian"
+                    ]
+                },
+                {
+                    "name": "Argentina",
+                    "aliases": [
+                        "argentina",
+                        "albiceleste",
+                        "argentine",
+                        "argentino"
+                    ]
+                },
+                {
+                    "name": "Uruguay",
+                    "aliases": [
+                        "uruguay",
+                        "celeste",
+                        "charruas",
+                        "uruguayan"
+                    ]
+                },
+                {
+                    "name": "Colombia",
+                    "aliases": [
+                        "colombia",
+                        "cafeteros",
+                        "tricolor",
+                        "colombian"
+                    ]
+                },
+                {
+                    "name": "Chile",
+                    "aliases": [
+                        "chile",
+                        "la roja",
+                        "chilean"
+                    ]
+                },
+                {
+                    "name": "Ecuador",
+                    "aliases": [
+                        "ecuador",
+                        "la tri",
+                        "tricolor",
+                        "ecuadorian"
+                    ]
+                },
+                {
+                    "name": "Peru",
+                    "aliases": [
+                        "peru",
+                        "blanquirroja",
+                        "peruvian"
+                    ]
+                },
+                {
+                    "name": "Paraguay",
+                    "aliases": [
+                        "paraguay",
+                        "guaranies",
+                        "albirroja",
+                        "paraguayan"
+                    ]
+                },
+                {
+                    "name": "Bolivia",
+                    "aliases": [
+                        "bolivia",
+                        "la verde",
+                        "bolivian"
+                    ]
+                },
+                {
+                    "name": "Venezuela",
+                    "aliases": [
+                        "venezuela",
+                        "vinotinto",
+                        "venezuelan"
+                    ]
+                }
+            ]
+        },
+        "CONCACAF": {
+            "name": "North/Central America and Caribbean",
+            "teams": [
+                {
+                    "name": "United States",
+                    "aliases": [
+                        "usa",
+                        "us",
+                        "usmnt",
+                        "stars and stripes",
+                        "american",
+                        "yanks"
+                    ]
+                },
+                {
+                    "name": "Mexico",
+                    "aliases": [
+                        "mexico",
+                        "el tri",
+                        "tricolor",
+                        "mexican",
+                        "aztecas"
+                    ]
+                },
+                {
+                    "name": "Canada",
+                    "aliases": [
+                        "canada",
+                        "les rouges",
+                        "canadian",
+                        "canucks"
+                    ]
+                },
+                {
+                    "name": "Costa Rica",
+                    "aliases": [
+                        "costa rica",
+                        "ticos",
+                        "sele",
+                        "costa rican"
+                    ]
+                },
+                {
+                    "name": "Panama",
+                    "aliases": [
+                        "panama",
+                        "canaleros",
+                        "panamanian"
+                    ]
+                },
+                {
+                    "name": "Jamaica",
+                    "aliases": [
+                        "jamaica",
+                        "reggae boyz",
+                        "jamaican"
+                    ]
+                },
+                {
+                    "name": "Honduras",
+                    "aliases": [
+                        "honduras",
+                        "catrachos",
+                        "honduran",
+                        "la h"
+                    ]
+                },
+                {
+                    "name": "El Salvador",
+                    "aliases": [
+                        "el salvador",
+                        "selecta",
+                        "salvadoran"
+                    ]
+                },
+                {
+                    "name": "Guatemala",
+                    "aliases": [
+                        "guatemala",
+                        "chapines",
+                        "guatemalan",
+                        "bicolor"
+                    ]
+                },
+                {
+                    "name": "Haiti",
+                    "aliases": [
+                        "haiti",
+                        "grenadiers",
+                        "haitian"
+                    ]
+                },
+                {
+                    "name": "Trinidad and Tobago",
+                    "aliases": [
+                        "trinidad",
+                        "soca warriors",
+                        "trinidadian"
+                    ]
+                },
+                {
+                    "name": "Curacao",
+                    "aliases": [
+                        "curacao"
+                    ]
+                }
+            ]
+        },
+        "CAF": {
+            "name": "Africa",
+            "teams": [
+                {
+                    "name": "Nigeria",
+                    "aliases": [
+                        "nigeria",
+                        "super eagles",
+                        "nigerian"
+                    ]
+                },
+                {
+                    "name": "Senegal",
+                    "aliases": [
+                        "senegal",
+                        "teranga lions",
+                        "lions de la teranga",
+                        "senegalese"
+                    ]
+                },
+                {
+                    "name": "Morocco",
+                    "aliases": [
+                        "morocco",
+                        "atlas lions",
+                        "moroccan",
+                        "maroc"
+                    ]
+                },
+                {
+                    "name": "Egypt",
+                    "aliases": [
+                        "egypt",
+                        "pharaohs",
+                        "egyptian"
+                    ]
+                },
+                {
+                    "name": "Cameroon",
+                    "aliases": [
+                        "cameroon",
+                        "indomitable lions",
+                        "lions indomptables",
+                        "cameroonian"
+                    ]
+                },
+                {
+                    "name": "Algeria",
+                    "aliases": [
+                        "algeria",
+                        "fennecs",
+                        "desert foxes",
+                        "algerian"
+                    ]
+                },
+                {
+                    "name": "Tunisia",
+                    "aliases": [
+                        "tunisia",
+                        "eagles of carthage",
+                        "tunisian"
+                    ]
+                },
+                {
+                    "name": "Ghana",
+                    "aliases": [
+                        "ghana",
+                        "black stars",
+                        "ghanaian"
+                    ]
+                },
+                {
+                    "name": "Ivory Coast",
+                    "aliases": [
+                        "ivory coast",
+                        "cote divoire",
+                        "elephants",
+                        "ivorian"
+                    ]
+                },
+                {
+                    "name": "South Africa",
+                    "aliases": [
+                        "south africa",
+                        "bafana bafana",
+                        "south african"
+                    ]
+                },
+                {
+                    "name": "Mali",
+                    "aliases": [
+                        "mali",
+                        "eagles",
+                        "malian"
+                    ]
+                },
+                {
+                    "name": "DR Congo",
+                    "aliases": [
+                        "dr congo",
+                        "drc",
+                        "leopards",
+                        "congolese"
+                    ]
+                },
+                {
+                    "name": "Burkina Faso",
+                    "aliases": [
+                        "burkina faso",
+                        "stallions"
+                    ]
+                },
+                {
+                    "name": "Gabon",
+                    "aliases": [
+                        "gabon",
+                        "panthers",
+                        "gabonese"
+                    ]
+                },
+                {
+                    "name": "Cape Verde",
+                    "aliases": [
+                        "cape verde",
+                        "tubaroes azuis",
+                        "blue sharks"
+                    ]
+                },
+                {
+                    "name": "Guinea",
+                    "aliases": [
+                        "guinea",
+                        "syli nationale",
+                        "guinean"
+                    ]
+                },
+                {
+                    "name": "Mozambique",
+                    "aliases": [
+                        "mozambique",
+                        "mambas"
+                    ]
+                },
+                {
+                    "name": "Zambia",
+                    "aliases": [
+                        "zambia",
+                        "chipolopolo",
+                        "zambian"
+                    ]
+                },
+                {
+                    "name": "Angola",
+                    "aliases": [
+                        "angola",
+                        "palancas negras",
+                        "angolan"
+                    ]
+                },
+                {
+                    "name": "Uganda",
+                    "aliases": [
+                        "uganda",
+                        "cranes",
+                        "ugandan"
+                    ]
+                },
+                {
+                    "name": "Kenya",
+                    "aliases": [
+                        "kenya",
+                        "harambee stars",
+                        "kenyan"
+                    ]
+                },
+                {
+                    "name": "Tanzania",
+                    "aliases": [
+                        "tanzania",
+                        "taifa stars",
+                        "tanzanian"
+                    ]
+                }
+            ]
+        },
+        "AFC": {
+            "name": "Asia",
+            "teams": [
+                {
+                    "name": "Japan",
+                    "aliases": [
+                        "japan",
+                        "samurai blue",
+                        "japanese"
+                    ]
+                },
+                {
+                    "name": "South Korea",
+                    "aliases": [
+                        "south korea",
+                        "korea republic",
+                        "taegeuk warriors",
+                        "korean"
+                    ]
+                },
+                {
+                    "name": "Iran",
+                    "aliases": [
+                        "iran",
+                        "team melli",
+                        "iranian"
+                    ]
+                },
+                {
+                    "name": "Saudi Arabia",
+                    "aliases": [
+                        "saudi arabia",
+                        "green falcons",
+                        "saudi",
+                        "ksa"
+                    ]
+                },
+                {
+                    "name": "Australia",
+                    "aliases": [
+                        "australia",
+                        "socceroos",
+                        "australian"
+                    ]
+                },
+                {
+                    "name": "Qatar",
+                    "aliases": [
+                        "qatar",
+                        "al annabi",
+                        "qatari"
+                    ]
+                },
+                {
+                    "name": "United Arab Emirates",
+                    "aliases": [
+                        "uae",
+                        "emirates",
+                        "al abyad"
+                    ]
+                },
+                {
+                    "name": "Iraq",
+                    "aliases": [
+                        "iraq",
+                        "lions of mesopotamia",
+                        "iraqi"
+                    ]
+                },
+                {
+                    "name": "Uzbekistan",
+                    "aliases": [
+                        "uzbekistan",
+                        "white wolves",
+                        "uzbek"
+                    ]
+                },
+                {
+                    "name": "China PR",
+                    "aliases": [
+                        "china",
+                        "team dragon",
+                        "chinese"
+                    ]
+                },
+                {
+                    "name": "Thailand",
+                    "aliases": [
+                        "thailand",
+                        "war elephants",
+                        "thai"
+                    ]
+                },
+                {
+                    "name": "Vietnam",
+                    "aliases": [
+                        "vietnam",
+                        "golden star",
+                        "vietnamese"
+                    ]
+                },
+                {
+                    "name": "Indonesia",
+                    "aliases": [
+                        "indonesia",
+                        "garuda",
+                        "indonesian"
+                    ]
+                },
+                {
+                    "name": "Malaysia",
+                    "aliases": [
+                        "malaysia",
+                        "harimau malaya",
+                        "malaysian"
+                    ]
+                },
+                {
+                    "name": "India",
+                    "aliases": [
+                        "india",
+                        "blue tigers",
+                        "indian"
+                    ]
+                },
+                {
+                    "name": "Jordan",
+                    "aliases": [
+                        "jordan",
+                        "al nashama",
+                        "jordanian"
+                    ]
+                },
+                {
+                    "name": "Syria",
+                    "aliases": [
+                        "syria",
+                        "qasioun eagles",
+                        "syrian"
+                    ]
+                },
+                {
+                    "name": "Oman",
+                    "aliases": [
+                        "oman",
+                        "omani"
+                    ]
+                },
+                {
+                    "name": "Bahrain",
+                    "aliases": [
+                        "bahrain",
+                        "bahraini"
+                    ]
+                },
+                {
+                    "name": "Palestine",
+                    "aliases": [
+                        "palestine",
+                        "palestinian"
+                    ]
+                },
+                {
+                    "name": "Kuwait",
+                    "aliases": [
+                        "kuwait",
+                        "al azraq",
+                        "kuwaiti"
+                    ]
+                },
+                {
+                    "name": "Lebanon",
+                    "aliases": [
+                        "lebanon",
+                        "cedars",
+                        "lebanese"
+                    ]
+                },
+                {
+                    "name": "North Korea",
+                    "aliases": [
+                        "north korea",
+                        "dpr korea",
+                        "chollima"
+                    ]
+                }
+            ]
+        },
+        "OFC": {
+            "name": "Oceania",
+            "teams": [
+                {
+                    "name": "New Zealand",
+                    "aliases": [
+                        "new zealand",
+                        "all whites",
+                        "kiwis"
+                    ]
+                },
+                {
+                    "name": "Fiji",
+                    "aliases": [
+                        "fiji",
+                        "bula boys",
+                        "fijian"
+                    ]
+                },
+                {
+                    "name": "Papua New Guinea",
+                    "aliases": [
+                        "papua new guinea",
+                        "png",
+                        "kapuls"
+                    ]
+                },
+                {
+                    "name": "Solomon Islands",
+                    "aliases": [
+                        "solomon islands",
+                        "bonitos"
+                    ]
+                },
+                {
+                    "name": "New Caledonia",
+                    "aliases": [
+                        "new caledonia",
+                        "cagous"
+                    ]
+                },
+                {
+                    "name": "Tahiti",
+                    "aliases": [
+                        "tahiti",
+                        "toa aito"
+                    ]
+                },
+                {
+                    "name": "Vanuatu",
+                    "aliases": [
+                        "vanuatu"
+                    ]
+                }
+            ]
+        }
+    }
+}
