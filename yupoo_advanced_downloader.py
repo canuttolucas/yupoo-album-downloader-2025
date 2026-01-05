@@ -308,34 +308,30 @@ class YupooAdvancedDownloader:
         finally:
             driver.quit()
     
-    def scroll_to_load_all(self, driver):
+    def scroll_to_load_all(self, driver, duration=10):
         """Scrolla a página usando JavaScript para carregar álbuns dinâmicos (Lazy Loading)"""
-        self.log("Aguardando carregamento inicial (2s)...")
-        time.sleep(2)
+        self.log(f"Aguardando carregamento inicial (5s)...")
+        time.sleep(5)
         try:
-            self.log("Iniciando Scroll Progressivo via JavaScript...")
+            self.log(f"Iniciando Scroll Progressivo ({duration}s) via JavaScript...")
             # Script JS para scrollar suavemente até o final, disparando lazy loading
             driver.execute_script("""
-                const scrollStep = 400;
-                const scrollDelay = 300;
-                const totalHeight = document.body.scrollHeight;
-                let currentScroll = 0;
-                
+                const scrollStep = 500;
+                const scrollDelay = 200;
                 const scrollInterval = setInterval(() => {
                     window.scrollBy(0, scrollStep);
-                    currentScroll += scrollStep;
-                    if (currentScroll >= document.body.scrollHeight) {
+                    if (window.innerHeight + window.scrollY >= document.body.scrollHeight) {
                         clearInterval(scrollInterval);
                     }
                 }, scrollDelay);
             """)
             
-            # Aguardar o tempo do scroll (aprox 8 a 10 segundos para páginas grandes)
-            time.sleep(10)
+            # Aguardar o tempo do scroll
+            time.sleep(duration)
             
             # Garantir que chegou no fim absoluto
             driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            time.sleep(2)
+            time.sleep(1)
             
         except Exception as e:
             self.log(f"Aviso no scroll: {e}", "WARNING")
@@ -1382,8 +1378,8 @@ class YupooAdvancedDownloader:
                 driver = self.create_driver()
                 driver.get(album_url)
                 
-                # Espera 5s e scroll 5s conforme sugerido
-                self.scroll_to_load_all(driver)
+                # No álbum individual, scroll rápido basta para achar a capa (geralmente no topo)
+                self.scroll_to_load_all(driver, duration=2)
                 
                 elements_with_data_id = driver.find_elements(By.XPATH, "//div[@data-id]")
                 target_data_id = None
@@ -1431,20 +1427,28 @@ class YupooAdvancedDownloader:
                 # --- ORGANIZAÇÃO AO VIVO ---
                 if self.organizer:
                     try:
-                        classification = self.organizer.classify_file(filename)
+                        # Limpar nome do álbum para classificação
+                        base_name = album_name
+                        classification = self.organizer.classify_file(base_name + ".jpg") # Simular extensão para classificar
+                        
                         if classification['team_name']:
-                            # O diretório base para organização deve ser fora da pasta da coleção atual para seguir o padrão FUTEBOL/
-                            # Mas se o usuário quiser manual, respeitamos. Aqui usamos o pai do output_folder
-                            root_output = os.path.dirname(output_folder)
+                            # Usar o diretório atual de execução como raiz para a estrutura organizada FUTEBOL/
+                            root_output = os.getcwd() 
                             target_dir = os.path.join(root_output, classification['target_folder'])
-                            target_path = os.path.join(target_dir, classification['target_filename'])
+                            
+                            # Novo nome de arquivo sugerido pela classificação
+                            final_filename = classification['target_filename']
+                            target_path = os.path.join(target_dir, final_filename)
                             
                             target_path = self.organizer._get_unique_path(target_path)
                             os.makedirs(target_dir, exist_ok=True)
                             
                             import shutil
-                            shutil.move(filepath, target_path)
-                            self.log(f"Organizado ao vivo: {filename} -> {classification['target_folder']}")
+                            # Copiar em vez de mover para manter na pasta original também (opcional, mas move é mais limpo)
+                            shutil.copy2(filepath, target_path)
+                            self.log(f"[ORGANIZADO] {classification['team_name']} -> {classification['target_folder']}", "SUCCESS")
+                        else:
+                            self.log(f"[INFO] Time não identificado para: {base_name}", "DEBUG")
                     except Exception as org_err:
                         self.log(f"Aviso na organização ao vivo: {org_err}", "DEBUG")
                 # ---------------------------

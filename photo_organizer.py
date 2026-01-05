@@ -72,30 +72,46 @@ class PhotoOrganizer:
         return text
 
     def _extract_season(self, text: str) -> Optional[str]:
-        """Extrai temporada válida do texto (10-11 até 25-26)"""
-        pattern = r'\b(1[0-9]|2[0-5])[-/](1[0-9]|2[0-6])\b'
-        match = re.search(pattern, text)
-        if match:
-            start, end = int(match.group(1)), int(match.group(2))
-            if 10 <= start <= 25 and end == start + 1:
+        """Extrai temporada válida do texto (ex: 24-25, 2026, 2025/26)"""
+        # 1. Tentar padrão YY-YY ou YY/YY
+        pattern_dash = r'\b(1[0-9]|2[0-5])[-/](1[0-9]|2[0-6])\b'
+        match_dash = re.search(pattern_dash, text)
+        if match_dash:
+            start, end = int(match_dash.group(1)), int(match_dash.group(2))
+            if 10 <= start <= 25 and (end == start + 1 or end == start):
                 return f"{start:02d}-{end:02d}"
+        
+        # 2. Tentar padrão 20XX
+        pattern_year = r'\b(20[12][0-9])\b'
+        match_year = re.search(pattern_year, text)
+        if match_year:
+            year_full = int(match_year.group(1))
+            year_short = year_full % 100
+            if 10 <= year_short <= 26:
+                # Se for 2026, mapeia para 26-27 (ou apenas 26-27 se preferir)
+                # Para simplificar e seguir o padrão da pasta:
+                return f"{year_short:02d}-{year_short+1:02d}"
+        
         return None
 
     def _extract_product_type(self, text: str) -> Optional[str]:
-        """Identifica o tipo de produto (retro, women, kids, etc.)"""
+        """Identifica o tipo de produto (retro, women, kids, etc.) usando limites de palavras"""
         normalized = self._normalize(text)
         for product_key, product_data in self.keywords_data.get('product_types', {}).items():
             for keyword in product_data.get('keywords', []):
-                if keyword in normalized:
+                # Usar regex com word boundary para evitar matches parciais (ex: '06' em '2026')
+                pattern = r'\b' + re.escape(self._normalize(keyword)) + r'\b'
+                if re.search(pattern, normalized):
                     return product_data['folder']
         return None
 
     def _extract_version(self, text: str) -> str:
-        """Extrai a versão (Home, Away, Third, etc.)"""
+        """Extrai a versão (Home, Away, Third, etc.) usando limites de palavras"""
         normalized = self._normalize(text)
         for version_key, version_data in self.keywords_data.get('version_mapping', {}).items():
             for keyword in version_data.get('keywords', []):
-                if keyword in normalized:
+                pattern = r'\b' + re.escape(self._normalize(keyword)) + r'\b'
+                if re.search(pattern, normalized):
                     return version_data['normalized']
         return ""
 
@@ -229,16 +245,19 @@ class PhotoOrganizer:
         # 4. Extrair tipo de produto
         result['product_type'] = self._extract_product_type(filename)
         
-        # 5. Determinar pasta de destino (REGRA DE PRIORIDADE)
+        # 5. Determinar pasta de destino
         if result['team_name']:
             if result['team_type'] == 'CLUB':
                 base_path = f"FUTEBOL/CLUBES/{self._sanitize_filename(result['league_or_continent'])}/{self._sanitize_filename(result['team_name'])}"
             else:
                 base_path = f"FUTEBOL/SELECOES/{self._sanitize_filename(result['league_or_continent'])}/{self._sanitize_filename(result['team_name'])}"
             
-            # Prioridade: Temporada > Tipo de Produto > INDISPONIVEL
+            # Estrutura: Time / Temporada / (Tipo se não for comum)
             if result['season']:
-                result['target_folder'] = f"{base_path}/{result['season']}"
+                target = f"{base_path}/{result['season']}"
+                if result['product_type'] and result['product_type'] != "STANDARD":
+                    target = f"{target}/{result['product_type']}"
+                result['target_folder'] = target
             elif result['product_type']:
                 result['target_folder'] = f"{base_path}/{result['product_type']}"
             else:
@@ -251,8 +270,14 @@ class PhotoOrganizer:
         name_parts = []
         if result['team_name']:
             name_parts.append(self._sanitize_filename(result['team_name']))
+        
+        # Incluir tipo de produto se for relevante
+        if result['product_type'] and result['product_type'] != "STANDARD":
+            name_parts.append(result['product_type'])
+            
         if result['version']:
             name_parts.append(result['version'])
+            
         if result['season']:
             name_parts.append(result['season'])
         
