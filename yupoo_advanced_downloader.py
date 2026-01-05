@@ -14,9 +14,10 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 import urllib.parse as urlparse
 from urllib.parse import urlencode
+from photo_organizer import PhotoOrganizer
 
 class YupooAdvancedDownloader:
-    def __init__(self, headless=True, max_workers=4, log_callback=None):
+    def __init__(self, headless=True, max_workers=4, log_callback=None, openai_api_key=None):
         """
         Inicializa o downloader avançado do Yupoo com funcionalidades de paginação e capa
         
@@ -31,10 +32,19 @@ class YupooAdvancedDownloader:
         self.data_ids = []
         self.lock = threading.Lock()
         self.log_callback = log_callback
+        self.openai_api_key = openai_api_key
         self.is_cancelled = False
         self.album_title = ""
         self.album_cover_id = None
-        self.active_drivers = []
+        self.active_drivers = [] # Para fechar tudo no cancel
+        
+        # Inicializar Organizador se possível
+        try:
+            self.organizer = PhotoOrganizer(log_callback=log_callback, openai_api_key=openai_api_key)
+            self.log("Organizador de Fotos carregado e pronto para uso ao vivo.")
+        except Exception as e:
+            self.organizer = None
+            self.log(f"Aviso: Não foi possível carregar o Organizador de Fotos: {e}", "WARNING")
     
     def log(self, message, level="INFO"):
         """Envia log para a GUI"""
@@ -299,24 +309,31 @@ class YupooAdvancedDownloader:
             driver.quit()
     
     def scroll_to_load_all(self, driver):
-        """Foca na página e simula DOWN ARROW para carregar álbuns dinâmicos"""
-        self.log("Aguardando carregamento inicial (3s)...")
-        time.sleep(3)
-        
+        """Scrolla a página usando JavaScript para carregar álbuns dinâmicos (Lazy Loading)"""
+        self.log("Aguardando carregamento inicial (2s)...")
+        time.sleep(2)
         try:
-            # Essencial: Clicar em um espaço vazio para dar foco ao navegador
-            body = driver.find_element(By.TAG_NAME, "body")
-            body.click() 
-            time.sleep(1)
-            
-            self.log("Simulando DOWN ARROW (10s) para disparar Lazy Loading...")
-            start_time = time.time()
-            while time.time() - start_time < 10:
-                if self.is_cancelled: break
-                body.send_keys(Keys.ARROW_DOWN)
-                time.sleep(0.05) 
+            self.log("Iniciando Scroll Progressivo via JavaScript...")
+            # Script JS para scrollar suavemente até o final, disparando lazy loading
+            driver.execute_script("""
+                const scrollStep = 400;
+                const scrollDelay = 300;
+                const totalHeight = document.body.scrollHeight;
+                let currentScroll = 0;
                 
-            # Scroll extra para garantir o final
+                const scrollInterval = setInterval(() => {
+                    window.scrollBy(0, scrollStep);
+                    currentScroll += scrollStep;
+                    if (currentScroll >= document.body.scrollHeight) {
+                        clearInterval(scrollInterval);
+                    }
+                }, scrollDelay);
+            """)
+            
+            # Aguardar o tempo do scroll (aprox 8 a 10 segundos para páginas grandes)
+            time.sleep(10)
+            
+            # Garantir que chegou no fim absoluto
             driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             time.sleep(2)
             
@@ -371,7 +388,6 @@ class YupooAdvancedDownloader:
                 driver.quit()
         
         return None
-    
     def get_image_real_id_quick(self, data_id, base_url, driver):
         """
         Versão rápida de get_image_real_id que usa um driver já aberto
@@ -1301,11 +1317,23 @@ class YupooAdvancedDownloader:
                     # Tentar encontrar miniatura de capa
                     try:
                         img_element = link.find_element(By.CSS_SELECTOR, "img")
+                        cover_thumbnail_url = img_element.get_attribute('src') or img_element.get_attribute('data-src')
                     except:
-                        try: img_element = link.find_element(By.XPATH, ".//img")
-                        except: continue
-                            
-                    cover_thumbnail_url = img_element.get_attribute('src')
+                        try:
+                            # Tentar via background-image no style
+                            style = link.get_attribute('style') or ""
+                            match = re.search(r'url\("?\'?([^"\']+)"?\'?\)', style)
+                            if match:
+                                cover_thumbnail_url = match.group(1)
+                                if cover_thumbnail_url.startswith('//'):
+                                    cover_thumbnail_url = 'https:' + cover_thumbnail_url
+                            else:
+                                # Tentar xpath como último recurso
+                                img_element = link.find_element(By.XPATH, ".//img")
+                                cover_thumbnail_url = img_element.get_attribute('src') or img_element.get_attribute('data-src')
+                        except:
+                            self.log(f"Aviso: Não foi possível encontrar imagem para o álbum {album_url}", "DEBUG")
+                            continue
                     
                     if album_url and cover_thumbnail_url:
                         # Retornar (url, thumbnail, title)
@@ -1399,6 +1427,28 @@ class YupooAdvancedDownloader:
                 filepath = os.path.join(output_folder, filename)
                 with open(filepath, 'wb') as f: f.write(screenshot)
                 self.log(f"Capa HQ salva: {filename}", "SUCCESS")
+                
+                # --- ORGANIZAÇÃO AO VIVO ---
+                if self.organizer:
+                    try:
+                        classification = self.organizer.classify_file(filename)
+                        if classification['team_name']:
+                            # O diretório base para organização deve ser fora da pasta da coleção atual para seguir o padrão FUTEBOL/
+                            # Mas se o usuário quiser manual, respeitamos. Aqui usamos o pai do output_folder
+                            root_output = os.path.dirname(output_folder)
+                            target_dir = os.path.join(root_output, classification['target_folder'])
+                            target_path = os.path.join(target_dir, classification['target_filename'])
+                            
+                            target_path = self.organizer._get_unique_path(target_path)
+                            os.makedirs(target_dir, exist_ok=True)
+                            
+                            import shutil
+                            shutil.move(filepath, target_path)
+                            self.log(f"Organizado ao vivo: {filename} -> {classification['target_folder']}")
+                    except Exception as org_err:
+                        self.log(f"Aviso na organização ao vivo: {org_err}", "DEBUG")
+                # ---------------------------
+                
                 return True
             except Exception as e:
                 self.log(f"Erro no download da capa (tentativa {attempt+1}): {e}", "WARNING")

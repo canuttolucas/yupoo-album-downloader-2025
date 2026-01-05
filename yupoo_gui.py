@@ -327,7 +327,8 @@ class YupooDownloaderGUI(ctk.CTk):
                     self.downloader = YupooAdvancedDownloader(
                         headless=headless,
                         max_workers=max_workers,
-                        log_callback=self.log_message
+                        log_callback=self.log_message,
+                        openai_api_key=api_key
                     )
                     
                     if "collections" in url or "categories" in url:
