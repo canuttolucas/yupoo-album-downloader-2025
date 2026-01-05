@@ -80,18 +80,27 @@ class YupooDownloaderGUI(ctk.CTk):
         self.main_frame.grid(row=0, column=1, sticky="nsew", padx=20, pady=20)
         self.main_frame.grid_columnconfigure(0, weight=1)
         
-        # --- URL Input ---
+        # --- URL Input (Multi-line for batch) ---
         self.url_frame = ctk.CTkFrame(self.main_frame)
         self.url_frame.grid(row=0, column=0, sticky="ew", pady=(0, 10))
-        self.url_frame.grid_columnconfigure(1, weight=1)
+        self.url_frame.grid_columnconfigure(0, weight=1)
         
-        ctk.CTkLabel(self.url_frame, text="URL do Yupoo:").grid(row=0, column=0, padx=10, pady=10)
-        self.url_entry = ctk.CTkEntry(self.url_frame, placeholder_text="Cole o link aqui (álbum, categoria ou coleção)")
-        self.url_entry.grid(row=0, column=1, sticky="ew", padx=(0, 10), pady=10)
+        ctk.CTkLabel(self.url_frame, text="URLs do Yupoo (uma por linha, máx. 20):").grid(row=0, column=0, sticky="w", padx=10, pady=(10, 0))
+        self.url_textbox = ctk.CTkTextbox(self.url_frame, height=100)
+        self.url_textbox.grid(row=1, column=0, sticky="ew", padx=10, pady=(5, 10))
+        
+        # --- OpenAI API Key ---
+        self.api_frame = ctk.CTkFrame(self.main_frame)
+        self.api_frame.grid(row=1, column=0, sticky="ew", pady=(0, 10))
+        self.api_frame.grid_columnconfigure(1, weight=1)
+        
+        ctk.CTkLabel(self.api_frame, text="OpenAI API Key (opcional):").grid(row=0, column=0, padx=10, pady=10)
+        self.api_key_entry = ctk.CTkEntry(self.api_frame, placeholder_text="sk-...", show="*")
+        self.api_key_entry.grid(row=0, column=1, sticky="ew", padx=(0, 10), pady=10)
         
         # --- Pasta de Destino ---
         self.output_frame = ctk.CTkFrame(self.main_frame)
-        self.output_frame.grid(row=1, column=0, sticky="ew", pady=(0, 10))
+        self.output_frame.grid(row=2, column=0, sticky="ew", pady=(0, 10))
         self.output_frame.grid_columnconfigure(1, weight=1)
         
         ctk.CTkLabel(self.output_frame, text="Salvar em:").grid(row=0, column=0, padx=10, pady=10)
@@ -103,7 +112,7 @@ class YupooDownloaderGUI(ctk.CTk):
         
         # --- Opções Avançadas ---
         self.advanced_frame = ctk.CTkFrame(self.main_frame)
-        self.advanced_frame.grid(row=2, column=0, sticky="ew", pady=(0, 10))
+        self.advanced_frame.grid(row=3, column=0, sticky="ew", pady=(0, 10))
         self.advanced_frame.grid_columnconfigure(0, weight=1)
         
         self.use_advanced_chk = ctk.CTkCheckBox(self.advanced_frame, text="Usar Funcionalidades Avançadas (Recomendado)", onvalue=True, offvalue=False)
@@ -212,9 +221,15 @@ class YupooDownloaderGUI(ctk.CTk):
         threading.Thread(target=process_logs, daemon=True).start()
 
     def validate_inputs(self):
-        url = self.url_entry.get().strip()
-        if not url:
-            self.log_message("Erro: URL inválida.", "ERROR")
+        urls_text = self.url_textbox.get("1.0", "end").strip()
+        if not urls_text:
+            self.log_message("Erro: Nenhuma URL informada.", "ERROR")
+            return False
+        
+        # Validar quantidade máxima
+        urls = [u.strip() for u in urls_text.split('\n') if u.strip()]
+        if len(urls) > 20:
+            self.log_message("Erro: Máximo de 20 URLs permitidas.", "ERROR")
             return False
             
         # Range validation
@@ -249,35 +264,36 @@ class YupooDownloaderGUI(ctk.CTk):
     def stop_download(self):
         self.log_message("CANCELAMENTO TOTAL. FECHANDO TUDO...", "WARNING")
         if self.downloader:
-            try:
-                self.downloader.cancel()
-            except:
-                pass
-        # Nuclear exit: mata o processo Python e libera o terminal imediatamente
+            self.downloader.cancel()
+        self.is_downloading = False
+        self.start_btn.configure(state="normal")
+        self.stop_btn.configure(state="disabled")
+        self.progressbar.stop()
         os._exit(0)
-            
+
     def hard_restart(self):
-        self.log_message("REINICIANDO PROGRAMA...", "WARNING")
-        # Forçar fechamento de drivers se existirem
-        if self.downloader:
-            try:
+        """Reinicia o processo completamente"""
+        self.log_message("Reiniciando aplicação...", "WARNING")
+        try:
+            if self.downloader:
                 self.downloader.cancel()
-            except:
-                pass
-        
-        # Reiniciar o processo python
-        os.execv(sys.executable, [sys.executable] + sys.argv)
+        except: pass
+        python = sys.executable
+        os.execl(python, python, *sys.argv)
 
     def download_worker(self):
+        original_cwd = os.getcwd()
         try:
-            url = self.url_entry.get().strip()
+            # Ler URLs do textbox (batch)
+            urls_text = self.url_textbox.get("1.0", "end").strip()
+            urls = [u.strip() for u in urls_text.split('\n') if u.strip()]
+            
             use_advanced = self.use_advanced_chk.get() == 1
             max_workers = int(self.threads_slider.get())
             headless = self.headless_chk.get() == 1
             output_dir = self.output_dir_entry.get()
+            api_key = self.api_key_entry.get().strip() if hasattr(self, 'api_key_entry') else None
 
-            
-            # Logic for collection/album options
             collection_mode = self.collection_mode_var.get()
             page_opt = self.page_option_var.get()
             
@@ -292,46 +308,51 @@ class YupooDownloaderGUI(ctk.CTk):
                 except: 
                     page_conf = "all"
 
-            # Check if range is valid dynamically (implemented in downloader, but check here too)
-            # We need the downloader to check this against the total pages.
-            
-            original_cwd = os.getcwd()
             if not os.path.exists(output_dir):
                 os.makedirs(output_dir)
             os.chdir(output_dir)
 
-            if use_advanced or "collections" in url or "categories" in url:
-                self.downloader = YupooAdvancedDownloader(
-                    headless=headless,
-                    max_workers=max_workers,
-                    log_callback=self.log_message
-                )
-                
-                if "collections" in url or "categories" in url:
-                    if collection_mode == "covers":
-                        self.downloader.download_covers_from_collection(url, page_conf)
-                    else:
-                        self.downloader.download_albums_from_collection(url, page_conf)
-                        
-                elif "albums" in url:
-                    # Logic for single album advanced (defaulting to all photos for now based on previous GUI logic)
-                    self.downloader.download_album_advanced(url, "all", None)
-                    
-            else:
-                # Basic/Legacy Downloader
-                self.downloader = YupooGUIDownloader(
-                    headless=headless,
-                    max_workers=max_workers,
-                    log_callback=self.log_message
-                )
-                if "collections" in url:
-                    self.downloader.download_collection(url)
-                elif "categories" in url:
-                    self.downloader.download_category(url)
-                else:
-                    self.downloader.download_album(url)
+            total_urls = len(urls)
+            self.log_message(f"=== PROCESSANDO {total_urls} URL(s) ===")
 
-            self.log_message("Tarefa Finalizada!", "SUCCESS")
+            for idx, url in enumerate(urls, 1):
+                if not self.is_downloading:
+                    self.log_message("Download cancelado pelo usuário.", "WARNING")
+                    break
+                    
+                self.log_message(f"\n[{idx}/{total_urls}] Processando: {url}")
+                self.status_var.set(f"Baixando {idx}/{total_urls}")
+
+                if use_advanced or "collections" in url or "categories" in url:
+                    self.downloader = YupooAdvancedDownloader(
+                        headless=headless,
+                        max_workers=max_workers,
+                        log_callback=self.log_message
+                    )
+                    
+                    if "collections" in url or "categories" in url:
+                        if collection_mode == "covers":
+                            self.downloader.download_covers_from_collection(url, page_conf)
+                        else:
+                            self.downloader.download_albums_from_collection(url, page_conf)
+                            
+                    elif "albums" in url:
+                        self.downloader.download_album_advanced(url, "all", None)
+                        
+                else:
+                    self.downloader = YupooGUIDownloader(
+                        headless=headless,
+                        max_workers=max_workers,
+                        log_callback=self.log_message
+                    )
+                    if "collections" in url:
+                        self.downloader.download_collection(url)
+                    elif "categories" in url:
+                        self.downloader.download_category(url)
+                    else:
+                        self.downloader.download_album(url)
+
+            self.log_message(f"\n=== TODAS AS {total_urls} URL(s) PROCESSADAS! ===", "SUCCESS")
             self.status_var.set("Finalizado")
 
         except Exception as e:

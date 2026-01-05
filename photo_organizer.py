@@ -13,6 +13,7 @@ class PhotoOrganizer:
     def __init__(self, log_callback=None, openai_api_key: Optional[str] = None):
         self.log_callback = log_callback
         self.openai_api_key = openai_api_key
+        self.ai_cache: Dict[str, Optional[str]] = {}  # Cache de respostas da IA
         
         # Carregar dados
         data_dir = os.path.join(os.path.dirname(__file__), 'data')
@@ -118,6 +119,67 @@ class PhotoOrganizer:
                     name, continent = self.nation_lookup[phrase]
                     return (name, continent, "NATION")
         
+        # Fallback: Tentar com IA se disponível
+        if self.openai_api_key:
+            ai_result = self._resolve_with_ai(text)
+            if ai_result:
+                # Tentar encontrar o nome resolvido pela IA na base
+                normalized_ai = self._normalize(ai_result)
+                if normalized_ai in self.club_lookup:
+                    name, league = self.club_lookup[normalized_ai]
+                    self.log(f"IA identificou: '{text}' -> '{name}'")
+                    return (name, league, "CLUB")
+                if normalized_ai in self.nation_lookup:
+                    name, continent = self.nation_lookup[normalized_ai]
+                    self.log(f"IA identificou: '{text}' -> '{name}'")
+                    return (name, continent, "NATION")
+        
+        return None
+
+    def _resolve_with_ai(self, text: str) -> Optional[str]:
+        """Usa OpenAI para identificar nomes de times abreviações/parciais"""
+        if not self.openai_api_key:
+            return None
+        
+        # Verificar cache
+        cache_key = self._normalize(text)
+        if cache_key in self.ai_cache:
+            return self.ai_cache[cache_key]
+        
+        try:
+            import urllib.request
+            import urllib.error
+            
+            prompt = f"Normalize o nome abaixo para o nome oficial do clube ou seleção de futebol FIFA.\nResponda SOMENTE com o nome oficial (ex: 'Liverpool FC', 'Manchester United FC', 'Juventus FC', 'Brazil', 'Argentina').\nSe não for um time de futebol, responda 'UNKNOWN'.\n\nEntrada: \"{text}\""
+            
+            data = json.dumps({
+                "model": "gpt-4o-mini",
+                "messages": [{"role": "user", "content": prompt}],
+                "max_tokens": 50,
+                "temperature": 0
+            }).encode('utf-8')
+            
+            req = urllib.request.Request(
+                "https://api.openai.com/v1/chat/completions",
+                data=data,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.openai_api_key}"
+                }
+            )
+            
+            with urllib.request.urlopen(req, timeout=10) as response:
+                result = json.loads(response.read().decode('utf-8'))
+                ai_name = result['choices'][0]['message']['content'].strip()
+                
+                if ai_name and ai_name.upper() != 'UNKNOWN':
+                    self.ai_cache[cache_key] = ai_name
+                    return ai_name
+                    
+        except Exception as e:
+            self.log(f"Erro IA: {e}", "WARNING")
+        
+        self.ai_cache[cache_key] = None
         return None
 
     def _sanitize_filename(self, name: str) -> str:
