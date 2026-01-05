@@ -15,6 +15,7 @@ PYINSTALLER_CONFIG = {
     # Arquivos a incluir
     "add_data": [
         "yupoo_parallel_downloader.py;.",
+        "yupoo_gui_downloader.py;.",
     ],
     
     # Imports ocultos
@@ -50,11 +51,26 @@ PYINSTALLER_CONFIG = {
         "scipy",
         "jupyter",
         "IPython",
+        "pytest",
+        "setuptools",
+        "distutils",
+        "email",
+        "http",
+        "urllib3",
+        "certifi",
+        "charset_normalizer",
+        "idna",
+        "multidict",
+        "yarl",
+        "aiohttp",
+        "asyncio",
+        "concurrent.futures.thread",
+        "concurrent.futures.process",
     ],
     
-    # Otimizações
-    "optimize": 2,
-    "strip": True,
+    # Otimizações (removidas para compatibilidade)
+    # "optimize": 2,
+    # "strip": True,
 }
 
 # Informações do executável
@@ -81,7 +97,8 @@ OPTIONAL_FILES = [
 
 def get_pyinstaller_command():
     """Gera o comando PyInstaller baseado na configuração"""
-    cmd = ["pyinstaller"]
+    import os
+    cmd = ["python", "-m", "PyInstaller"]
     
     # Configurações básicas
     if PYINSTALLER_CONFIG["onefile"]:

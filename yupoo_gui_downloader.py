@@ -12,20 +12,30 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 
-class YupooParallelDownloader:
-    def __init__(self, headless=True, max_workers=4):
+class YupooGUIDownloader:
+    def __init__(self, headless=True, max_workers=4, log_callback=None):
         """
-        Inicializa o downloader do Yupoo com paralelismo
+        Inicializa o downloader do Yupoo com callback para logs da GUI
         
         Args:
             headless: Se True, executa sem interface gráfica
             max_workers: Número máximo de threads paralelas
+            log_callback: Função para enviar logs para a GUI
         """
         self.headless = headless
         self.max_workers = max_workers
         self.output_dir = None
         self.data_ids = []
         self.lock = threading.Lock()
+        self.log_callback = log_callback
+        self.is_cancelled = False
+    
+    def log(self, message, level="INFO"):
+        """Envia log para a GUI"""
+        if self.log_callback:
+            self.log_callback(message, level)
+        else:
+            print(f"[{level}] {message}")
     
     def create_album_folder(self, album_url):
         """
@@ -64,9 +74,9 @@ class YupooParallelDownloader:
         # Cria o diretório se não existir
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
-            print(f"Pasta criada: {os.path.abspath(self.output_dir)}")
+            self.log(f"Pasta criada: {os.path.abspath(self.output_dir)}")
         else:
-            print(f"Usando pasta existente: {os.path.abspath(self.output_dir)}")
+            self.log(f"Usando pasta existente: {os.path.abspath(self.output_dir)}")
         
         return self.output_dir
     
@@ -106,9 +116,9 @@ class YupooParallelDownloader:
         # Cria o diretório se não existir
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
-            print(f"Pasta criada: {os.path.abspath(self.output_dir)}")
+            self.log(f"Pasta criada: {os.path.abspath(self.output_dir)}")
         else:
-            print(f"Usando pasta existente: {os.path.abspath(self.output_dir)}")
+            self.log(f"Usando pasta existente: {os.path.abspath(self.output_dir)}")
         
         return self.output_dir
     
@@ -148,9 +158,9 @@ class YupooParallelDownloader:
         # Cria o diretório se não existir
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
-            print(f"Pasta criada: {os.path.abspath(self.output_dir)}")
+            self.log(f"Pasta criada: {os.path.abspath(self.output_dir)}")
         else:
-            print(f"Usando pasta existente: {os.path.abspath(self.output_dir)}")
+            self.log(f"Usando pasta existente: {os.path.abspath(self.output_dir)}")
         
         return self.output_dir
     
@@ -170,8 +180,8 @@ class YupooParallelDownloader:
         chrome_options.add_argument('--no-sandbox')
         chrome_options.add_argument('--disable-dev-shm-usage')
         chrome_options.add_argument('--force-device-scale-factor=1')
-        chrome_options.add_argument('--disable-images')  # Desabilita carregamento de imagens desnecessárias
-        chrome_options.add_argument('--disable-javascript')  # Desabilita JS desnecessário
+        # chrome_options.add_argument('--disable-images')  # Desabilitar isso para garantir carregamento dinâmico
+        # chrome_options.add_argument('--disable-javascript')  # Desabilitar isso quebra o scroll dinâmico do Yupoo
         
         # User agent para evitar bloqueios
         chrome_options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36')
@@ -190,7 +200,7 @@ class YupooParallelDownloader:
         Returns:
             Lista de data-ids das imagens
         """
-        print(f"Abrindo álbum: {album_url}")
+        self.log(f"Abrindo álbum: {album_url}")
         driver = self.create_driver()
         
         try:
@@ -200,18 +210,20 @@ class YupooParallelDownloader:
             # Scroll para carregar todas as imagens
             self.scroll_to_load_all(driver)
             
-            print("Procurando data-ids das miniaturas...")
+            self.log("Procurando data-ids das miniaturas...")
             
             # Encontra todos os elementos que contêm data-id
             elements_with_data_id = driver.find_elements(By.XPATH, "//div[@data-id]")
-            print(f"Encontrados {len(elements_with_data_id)} elementos com data-id")
+            self.log(f"Encontrados {len(elements_with_data_id)} elementos com data-id")
             
             data_ids = []
             for element in elements_with_data_id:
+                if self.is_cancelled:
+                    break
                 data_id = element.get_attribute('data-id')
                 if data_id and data_id.isdigit():
                     data_ids.append(data_id)
-                    print(f"[OK] Data-ID encontrado: {data_id}")
+                    self.log(f"Data-ID encontrado: {data_id}")
             
             # Remove duplicatas mantendo a ordem
             seen = set()
@@ -221,22 +233,24 @@ class YupooParallelDownloader:
                     seen.add(data_id)
                     unique_data_ids.append(data_id)
             
-            print(f"\nTotal de {len(unique_data_ids)} data-ids únicos encontrados")
+            self.log(f"Total de {len(unique_data_ids)} data-ids únicos encontrados")
             return unique_data_ids
             
         except Exception as e:
-            print(f"Erro ao capturar data-ids: {e}")
+            self.log(f"Erro ao capturar data-ids: {e}", "ERROR")
             return []
         finally:
             driver.quit()
     
     def scroll_to_load_all(self, driver):
         """Faz scroll na página para carregar todas as imagens"""
-        print("Fazendo scroll para carregar todas as imagens...")
+        self.log("Fazendo scroll para carregar todas as imagens...")
         
         last_height = driver.execute_script("return document.body.scrollHeight")
         
         while True:
+            if self.is_cancelled:
+                break
             driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             time.sleep(1)
             
@@ -258,7 +272,7 @@ class YupooParallelDownloader:
         Returns:
             Lista de URLs dos álbuns
         """
-        print(f"Abrindo categoria: {category_url}")
+        self.log(f"Abrindo categoria: {category_url}")
         driver = self.create_driver()
         
         try:
@@ -268,18 +282,20 @@ class YupooParallelDownloader:
             # Scroll para carregar todos os álbuns
             self.scroll_to_load_all(driver)
             
-            print("Procurando álbuns na categoria...")
+            self.log("Procurando álbuns na categoria...")
             
             # Encontra todos os links de álbuns
             album_links = driver.find_elements(By.XPATH, "//a[contains(@href, '/albums/')]")
-            print(f"Encontrados {len(album_links)} links de álbuns")
+            self.log(f"Encontrados {len(album_links)} links de álbuns")
             
             album_urls = []
             for link in album_links:
+                if self.is_cancelled:
+                    break
                 href = link.get_attribute('href')
                 if href and '/albums/' in href:
                     album_urls.append(href)
-                    print(f"[OK] Álbum encontrado: {href}")
+                    self.log(f"Álbum encontrado: {href}")
             
             # Remove duplicatas mantendo a ordem
             seen = set()
@@ -289,11 +305,11 @@ class YupooParallelDownloader:
                     seen.add(url)
                     unique_album_urls.append(url)
             
-            print(f"\nTotal de {len(unique_album_urls)} álbuns únicos encontrados na categoria")
+            self.log(f"Total de {len(unique_album_urls)} álbuns únicos encontrados na categoria")
             return unique_album_urls
             
         except Exception as e:
-            print(f"Erro ao capturar álbuns da categoria: {e}")
+            self.log(f"Erro ao capturar álbuns da categoria: {e}", "ERROR")
             return []
         finally:
             driver.quit()
@@ -308,7 +324,7 @@ class YupooParallelDownloader:
         Returns:
             Lista de URLs dos álbuns
         """
-        print(f"Abrindo collection: {collection_url}")
+        self.log(f"Abrindo collection: {collection_url}")
         driver = self.create_driver()
         
         try:
@@ -318,18 +334,20 @@ class YupooParallelDownloader:
             # Scroll para carregar todos os álbuns
             self.scroll_to_load_all(driver)
             
-            print("Procurando álbuns na collection...")
+            self.log("Procurando álbuns na collection...")
             
             # Encontra todos os links de álbuns
             album_links = driver.find_elements(By.XPATH, "//a[contains(@href, '/albums/')]")
-            print(f"Encontrados {len(album_links)} links de álbuns")
+            self.log(f"Encontrados {len(album_links)} links de álbuns")
             
             album_urls = []
             for link in album_links:
+                if self.is_cancelled:
+                    break
                 href = link.get_attribute('href')
                 if href and '/albums/' in href:
                     album_urls.append(href)
-                    print(f"[OK] Álbum encontrado: {href}")
+                    self.log(f"Álbum encontrado: {href}")
             
             # Remove duplicatas mantendo a ordem
             seen = set()
@@ -339,11 +357,11 @@ class YupooParallelDownloader:
                     seen.add(url)
                     unique_album_urls.append(url)
             
-            print(f"\nTotal de {len(unique_album_urls)} álbuns únicos encontrados na collection")
+            self.log(f"Total de {len(unique_album_urls)} álbuns únicos encontrados na collection")
             return unique_album_urls
             
         except Exception as e:
-            print(f"Erro ao capturar álbuns da collection: {e}")
+            self.log(f"Erro ao capturar álbuns da collection: {e}", "ERROR")
             return []
         finally:
             driver.quit()
@@ -360,6 +378,9 @@ class YupooParallelDownloader:
         Returns:
             Tupla (success, data_id, filename, error_message)
         """
+        if self.is_cancelled:
+            return (False, data_id, None, "Cancelado")
+            
         driver = None
         try:
             # Cria driver para esta thread
@@ -379,7 +400,7 @@ class YupooParallelDownloader:
             image_url = f"https://{subdomain}.x.yupoo.com/{data_id}?uid={uid}"
             
             with self.lock:
-                print(f"[{index + 1:03d}/{len(self.data_ids)}] Capturando ID {data_id}...")
+                self.log(f"[{index + 1:03d}/{len(self.data_ids)}] Capturando ID {data_id}...")
             
             driver.get(image_url)
             time.sleep(1)  # Reduzido para 1 segundo
@@ -426,14 +447,14 @@ class YupooParallelDownloader:
                 f.write(screenshot)
             
             with self.lock:
-                print(f"  [OK] ID {data_id} salvo: {filename}")
+                self.log(f"ID {data_id} salvo: {filename}", "SUCCESS")
             
             return (True, data_id, filename, None)
             
         except Exception as e:
             error_msg = str(e)[:50] + "..." if len(str(e)) > 50 else str(e)
             with self.lock:
-                print(f"  [ERRO] ID {data_id} falhou: {error_msg}")
+                self.log(f"ID {data_id} falhou: {error_msg}", "ERROR")
             return (False, data_id, None, error_msg)
         finally:
             if driver:
@@ -446,10 +467,10 @@ class YupooParallelDownloader:
         Args:
             album_url: URL do álbum Yupoo
         """
-        print("=" * 80)
-        print("YUPOO PARALLEL DOWNLOADER - Captura Paralela em 4K")
-        print(f"Threads paralelas: {self.max_workers}")
-        print("=" * 80)
+        self.log("=" * 80)
+        self.log("YUPOO PARALLEL DOWNLOADER - Captura Paralela em 4K")
+        self.log(f"Threads paralelas: {self.max_workers}")
+        self.log("=" * 80)
         
         # Passo 0: Criar pasta específica para o álbum
         self.create_album_folder(album_url)
@@ -458,11 +479,11 @@ class YupooParallelDownloader:
         self.data_ids = self.get_data_ids(album_url)
         
         if not self.data_ids:
-            print("Nenhum data-id encontrado no álbum!")
+            self.log("Nenhum data-id encontrado no álbum!", "ERROR")
             return
         
-        print(f"\nIniciando captura paralela de {len(self.data_ids)} imagens...")
-        print("=" * 80)
+        self.log(f"Iniciando captura paralela de {len(self.data_ids)} imagens...")
+        self.log("=" * 80)
         
         # Passo 2: Processar imagens em paralelo
         successful = 0
@@ -478,6 +499,9 @@ class YupooParallelDownloader:
             
             # Processa resultados conforme completam
             for future in as_completed(future_to_data_id):
+                if self.is_cancelled:
+                    break
+                    
                 success, data_id, filename, error = future.result()
                 
                 if success:
@@ -490,16 +514,16 @@ class YupooParallelDownloader:
                     elapsed = time.time() - start_time
                     rate = (successful + failed) / elapsed
                     eta = (len(self.data_ids) - successful - failed) / rate if rate > 0 else 0
-                    print(f"  Progresso: {successful + failed}/{len(self.data_ids)} | Taxa: {rate:.1f} img/min | ETA: {eta/60:.1f} min")
+                    self.log(f"Progresso: {successful + failed}/{len(self.data_ids)} | Taxa: {rate:.1f} img/min | ETA: {eta/60:.1f} min")
         
         elapsed_total = time.time() - start_time
-        print("=" * 80)
-        print(f"Captura paralela concluida em {elapsed_total/60:.1f} minutos!")
-        print(f"[OK] Sucesso: {successful} imagens")
-        print(f"[ERRO] Falhas: {failed} imagens")
-        print(f"Taxa media: {len(self.data_ids)/elapsed_total*60:.1f} imagens/minuto")
-        print(f"Imagens salvas em: {os.path.abspath(self.output_dir)}")
-        print("=" * 80)
+        self.log("=" * 80)
+        self.log(f"Captura paralela concluida em {elapsed_total/60:.1f} minutos!")
+        self.log(f"Sucesso: {successful} imagens", "SUCCESS")
+        self.log(f"Falhas: {failed} imagens", "ERROR" if failed > 0 else "INFO")
+        self.log(f"Taxa media: {len(self.data_ids)/elapsed_total*60:.1f} imagens/minuto")
+        self.log(f"Imagens salvas em: {os.path.abspath(self.output_dir)}")
+        self.log("=" * 80)
     
     def download_category(self, category_url):
         """
@@ -508,10 +532,10 @@ class YupooParallelDownloader:
         Args:
             category_url: URL da categoria Yupoo
         """
-        print("=" * 80)
-        print("YUPOO PARALLEL DOWNLOADER - Download de Categoria")
-        print(f"Threads paralelas: {self.max_workers}")
-        print("=" * 80)
+        self.log("=" * 80)
+        self.log("YUPOO PARALLEL DOWNLOADER - Download de Categoria")
+        self.log(f"Threads paralelas: {self.max_workers}")
+        self.log("=" * 80)
         
         # Passo 0: Criar pasta específica para a categoria
         self.create_category_folder(category_url)
@@ -520,11 +544,11 @@ class YupooParallelDownloader:
         album_urls = self.get_albums_from_category(category_url)
         
         if not album_urls:
-            print("Nenhum álbum encontrado na categoria!")
+            self.log("Nenhum álbum encontrado na categoria!", "ERROR")
             return
         
-        print(f"\nProcessando {len(album_urls)} álbuns da categoria...")
-        print("=" * 80)
+        self.log(f"Processando {len(album_urls)} álbuns da categoria...")
+        self.log("=" * 80)
         
         # Passo 2: Para cada álbum, obter data-ids e baixar imagens
         total_successful = 0
@@ -532,16 +556,19 @@ class YupooParallelDownloader:
         start_time = time.time()
         
         for album_index, album_url in enumerate(album_urls):
-            print(f"\n[Álbum {album_index + 1}/{len(album_urls)}] Processando: {album_url}")
+            if self.is_cancelled:
+                break
+                
+            self.log(f"[Álbum {album_index + 1}/{len(album_urls)}] Processando: {album_url}")
             
             # Obter data-ids do álbum
             data_ids = self.get_data_ids(album_url)
             
             if not data_ids:
-                print(f"  Nenhum data-id encontrado no álbum {album_index + 1}")
+                self.log(f"Nenhum data-id encontrado no álbum {album_index + 1}")
                 continue
             
-            print(f"  Encontrados {len(data_ids)} imagens no álbum")
+            self.log(f"Encontrados {len(data_ids)} imagens no álbum")
             
             # Baixar imagens do álbum
             successful = 0
@@ -556,6 +583,9 @@ class YupooParallelDownloader:
                 
                 # Processa resultados conforme completam
                 for future in as_completed(future_to_data_id):
+                    if self.is_cancelled:
+                        break
+                        
                     success, data_id, filename, error = future.result()
                     
                     if success:
@@ -565,16 +595,16 @@ class YupooParallelDownloader:
                         failed += 1
                         total_failed += 1
             
-            print(f"  Álbum {album_index + 1} concluído: {successful} sucessos, {failed} falhas")
+            self.log(f"Álbum {album_index + 1} concluído: {successful} sucessos, {failed} falhas")
         
         elapsed_total = time.time() - start_time
-        print("=" * 80)
-        print(f"Download da categoria concluído em {elapsed_total/60:.1f} minutos!")
-        print(f"[OK] Total de sucessos: {total_successful} imagens")
-        print(f"[ERRO] Total de falhas: {total_failed} imagens")
-        print(f"Taxa media: {(total_successful + total_failed)/elapsed_total*60:.1f} imagens/minuto")
-        print(f"Imagens salvas em: {os.path.abspath(self.output_dir)}")
-        print("=" * 80)
+        self.log("=" * 80)
+        self.log(f"Download da categoria concluído em {elapsed_total/60:.1f} minutos!")
+        self.log(f"Total de sucessos: {total_successful} imagens", "SUCCESS")
+        self.log(f"Total de falhas: {total_failed} imagens", "ERROR" if total_failed > 0 else "INFO")
+        self.log(f"Taxa media: {(total_successful + total_failed)/elapsed_total*60:.1f} imagens/minuto")
+        self.log(f"Imagens salvas em: {os.path.abspath(self.output_dir)}")
+        self.log("=" * 80)
     
     def download_collection(self, collection_url):
         """
@@ -583,10 +613,10 @@ class YupooParallelDownloader:
         Args:
             collection_url: URL da collection Yupoo
         """
-        print("=" * 80)
-        print("YUPOO PARALLEL DOWNLOADER - Download de Collection")
-        print(f"Threads paralelas: {self.max_workers}")
-        print("=" * 80)
+        self.log("=" * 80)
+        self.log("YUPOO PARALLEL DOWNLOADER - Download de Collection")
+        self.log(f"Threads paralelas: {self.max_workers}")
+        self.log("=" * 80)
         
         # Passo 0: Criar pasta específica para a collection
         self.create_collection_folder(collection_url)
@@ -595,11 +625,11 @@ class YupooParallelDownloader:
         album_urls = self.get_albums_from_collection(collection_url)
         
         if not album_urls:
-            print("Nenhum álbum encontrado na collection!")
+            self.log("Nenhum álbum encontrado na collection!", "ERROR")
             return
         
-        print(f"\nProcessando {len(album_urls)} álbuns da collection...")
-        print("=" * 80)
+        self.log(f"Processando {len(album_urls)} álbuns da collection...")
+        self.log("=" * 80)
         
         # Passo 2: Para cada álbum, obter data-ids e baixar imagens
         total_successful = 0
@@ -607,16 +637,19 @@ class YupooParallelDownloader:
         start_time = time.time()
         
         for album_index, album_url in enumerate(album_urls):
-            print(f"\n[Álbum {album_index + 1}/{len(album_urls)}] Processando: {album_url}")
+            if self.is_cancelled:
+                break
+                
+            self.log(f"[Álbum {album_index + 1}/{len(album_urls)}] Processando: {album_url}")
             
             # Obter data-ids do álbum
             data_ids = self.get_data_ids(album_url)
             
             if not data_ids:
-                print(f"  Nenhum data-id encontrado no álbum {album_index + 1}")
+                self.log(f"Nenhum data-id encontrado no álbum {album_index + 1}")
                 continue
             
-            print(f"  Encontrados {len(data_ids)} imagens no álbum")
+            self.log(f"Encontrados {len(data_ids)} imagens no álbum")
             
             # Baixar imagens do álbum
             successful = 0
@@ -631,6 +664,9 @@ class YupooParallelDownloader:
                 
                 # Processa resultados conforme completam
                 for future in as_completed(future_to_data_id):
+                    if self.is_cancelled:
+                        break
+                        
                     success, data_id, filename, error = future.result()
                     
                     if success:
@@ -640,126 +676,21 @@ class YupooParallelDownloader:
                         failed += 1
                         total_failed += 1
             
-            print(f"  Álbum {album_index + 1} concluído: {successful} sucessos, {failed} falhas")
+            self.log(f"Álbum {album_index + 1} concluído: {successful} sucessos, {failed} falhas")
         
         elapsed_total = time.time() - start_time
-        print("=" * 80)
-        print(f"Download da collection concluído em {elapsed_total/60:.1f} minutos!")
-        print(f"[OK] Total de sucessos: {total_successful} imagens")
-        print(f"[ERRO] Total de falhas: {total_failed} imagens")
-        print(f"Taxa media: {(total_successful + total_failed)/elapsed_total*60:.1f} imagens/minuto")
-        print(f"Imagens salvas em: {os.path.abspath(self.output_dir)}")
-        print("=" * 80)
-
-
-def get_user_input():
-    """
-    Solicita input do usuário para URL do álbum e configurações
-    """
-    print("=" * 80)
-    print("YUPOO PARALLEL DOWNLOADER - Configuração")
-    print("=" * 80)
+        self.log("=" * 80)
+        self.log(f"Download da collection concluído em {elapsed_total/60:.1f} minutos!")
+        self.log(f"Total de sucessos: {total_successful} imagens", "SUCCESS")
+        self.log(f"Total de falhas: {total_failed} imagens", "ERROR" if total_failed > 0 else "INFO")
+        self.log(f"Taxa media: {(total_successful + total_failed)/elapsed_total*60:.1f} imagens/minuto")
+        self.log(f"Imagens salvas em: {os.path.abspath(self.output_dir)}")
+        self.log("=" * 80)
     
-    # Solicita URL do álbum, categoria ou collection
-    while True:
-        try:
-            album_url = input("Digite a URL do álbum, categoria ou collection Yupoo: ").strip()
-            if album_url and "yupoo.com" in album_url and ("albums" in album_url or "categories" in album_url or "collections" in album_url):
-                break
-            print("URL inválida! Certifique-se de que é um link de álbum, categoria ou collection do Yupoo.")
-            print("Exemplos:")
-            print("  Álbum: https://nfl-world.x.yupoo.com/albums/100300873?uid=1")
-            print("  Categoria: https://minkang.x.yupoo.com/categories/2890904")
-            print("  Collection: https://exemplo.x.yupoo.com/collections/123456")
-        except (EOFError, KeyboardInterrupt):
-            print("\nEntrada cancelada. Usando URL padrão...")
-            album_url = "https://nfl-world.x.yupoo.com/albums/100300873?uid=1"
-            break
-    
-    # Solicita número de threads
-    while True:
-        try:
-            max_workers = input("Número de threads paralelas (padrão: 4): ").strip()
-            if not max_workers:
-                max_workers = 4
-            else:
-                max_workers = int(max_workers)
-            if 1 <= max_workers <= 8:
-                break
-            print("Digite um número entre 1 e 8.")
-        except (ValueError, EOFError, KeyboardInterrupt):
-            print("Usando valor padrão: 4 threads")
-            max_workers = 4
-            break
-    
-    # Solicita modo headless
-    try:
-        headless_input = input("Executar em modo headless (sem interface)? (s/n, padrão: s): ").strip().lower()
-        headless = headless_input in ['', 's', 'sim', 'y', 'yes']
-    except (EOFError, KeyboardInterrupt):
-        print("Usando modo headless padrão")
-        headless = True
-    
-    return album_url, max_workers, headless
+    def cancel(self):
+        """Cancela o download"""
+        self.is_cancelled = True
+        self.log("Download cancelado pelo usuário", "WARNING")
 
 
-def parse_arguments():
-    """
-    Parse argumentos da linha de comando
-    """
-    parser = argparse.ArgumentParser(description='Yupoo Parallel Downloader - Baixa imagens de álbuns do Yupoo')
-    parser.add_argument('--url', '-u', type=str, help='URL do álbum Yupoo')
-    parser.add_argument('--threads', '-t', type=int, default=4, help='Número de threads paralelas (1-8)')
-    parser.add_argument('--no-headless', action='store_true', help='Executar com interface gráfica')
-    parser.add_argument('--interactive', '-i', action='store_true', help='Modo interativo (solicita input)')
-    
-    return parser.parse_args()
 
-
-if __name__ == "__main__":
-    try:
-        # Parse argumentos da linha de comando
-        args = parse_arguments()
-        
-        if args.interactive or not args.url:
-            # Modo interativo
-            album_url, max_workers, headless = get_user_input()
-        else:
-            # Modo linha de comando
-            album_url = args.url
-            max_workers = max(1, min(8, args.threads))
-            headless = not args.no_headless
-            
-            # Valida URL
-            if not ("yupoo.com" in album_url and ("albums" in album_url or "categories" in album_url or "collections" in album_url)):
-                print("URL inválida! Certifique-se de que é um link de álbum, categoria ou collection do Yupoo.")
-                print("Exemplos:")
-                print("  Álbum: https://nfl-world.x.yupoo.com/albums/100300873?uid=1")
-                print("  Categoria: https://minkang.x.yupoo.com/categories/2890904")
-                print("  Collection: https://exemplo.x.yupoo.com/collections/123456")
-                sys.exit(1)
-        
-        # Cria o downloader com as configurações
-        downloader = YupooParallelDownloader(headless=headless, max_workers=max_workers)
-        
-        print(f"\nConfigurações:")
-        print(f"  URL: {album_url}")
-        print(f"  Threads: {max_workers}")
-        print(f"  Headless: {'Sim' if headless else 'Não'}")
-        print()
-        
-        # Detecta se é álbum, categoria ou collection e executa o método apropriado
-        if "categories" in album_url:
-            print("Detectado: URL de categoria")
-            downloader.download_category(album_url)
-        elif "collections" in album_url:
-            print("Detectado: URL de collection")
-            downloader.download_collection(album_url)
-        else:
-            print("Detectado: URL de álbum")
-            downloader.download_album(album_url)
-        
-    except KeyboardInterrupt:
-        print("\nProcesso interrompido pelo usuário.")
-    except Exception as e:
-        print(f"Erro geral: {e}")

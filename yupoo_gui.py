@@ -1,296 +1,343 @@
 import tkinter as tk
-from tkinter import ttk, messagebox, filedialog, scrolledtext
+import customtkinter as ctk
+from tkinter import filedialog
 import threading
 import os
 import sys
 import queue
 import time
-from yupoo_parallel_downloader import YupooParallelDownloader
+from yupoo_gui_downloader import YupooGUIDownloader
+from yupoo_advanced_downloader import YupooAdvancedDownloader
+from yupoo_simple_cover_downloader import YupooSimpleCoverDownloader
+from packaging import version
 
-class YupooDownloaderGUI:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Yupoo Album Downloader 2025")
-        self.root.geometry("800x600")
-        self.root.resizable(True, True)
+# Set appearance mode and default color theme
+ctk.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
+ctk.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
+
+class YupooDownloaderGUI(ctk.CTk):
+    def __init__(self):
+        super().__init__()
         
-        # Variáveis
+        self.title("Yupoo Album Downloader 2025 - Modern Edition")
+        self.geometry("900x700")
+        self.resizable(True, True)
+        
+        # Variáveis de Estado
         self.downloader = None
         self.is_downloading = False
         self.log_queue = queue.Queue()
+        self.status_var = tk.StringVar(value="Pronto")
         
-        # Configurar estilo
-        self.setup_styles()
+        # Configurar Grid
+        self.grid_columnconfigure(1, weight=1)
+        self.grid_rowconfigure(0, weight=1)
         
-        # Criar interface
-        self.create_widgets()
+        # Criar Sidebar
+        self.create_sidebar()
+        
+        # Criar Frame Principal
+        self.create_main_frame()
         
         # Iniciar thread para logs
         self.start_log_thread()
         
-        # Centralizar janela
+        # Center Window
         self.center_window()
-    
-    def setup_styles(self):
-        """Configura estilos da interface"""
-        style = ttk.Style()
-        style.theme_use('clam')
         
-        # Configurar cores
-        style.configure('Title.TLabel', font=('Arial', 16, 'bold'))
-        style.configure('Header.TLabel', font=('Arial', 12, 'bold'))
-        style.configure('Success.TLabel', foreground='green')
-        style.configure('Error.TLabel', foreground='red')
-    
+        # Protocolo para fechar tudo ao fechar a janela (X)
+        self.protocol("WM_DELETE_WINDOW", self.stop_download)
+        
     def center_window(self):
-        """Centraliza a janela na tela"""
-        self.root.update_idletasks()
-        width = self.root.winfo_width()
-        height = self.root.winfo_height()
-        x = (self.root.winfo_screenwidth() // 2) - (width // 2)
-        y = (self.root.winfo_screenheight() // 2) - (height // 2)
-        self.root.geometry(f'{width}x{height}+{x}+{y}')
-    
-    def create_widgets(self):
-        """Cria todos os widgets da interface"""
-        # Frame principal
-        main_frame = ttk.Frame(self.root, padding="10")
-        main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        self.update_idletasks()
+        width = self.winfo_width()
+        height = self.winfo_height()
+        x = (self.winfo_screenwidth() // 2) - (width // 2)
+        y = (self.winfo_screenheight() // 2) - (height // 2)
+        self.geometry(f'{width}x{height}+{x}+{y}')
+
+    def create_sidebar(self):
+        self.sidebar_frame = ctk.CTkFrame(self, width=140, corner_radius=0)
+        self.sidebar_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
+        self.sidebar_frame.grid_rowconfigure(4, weight=1)
         
-        # Configurar grid
-        self.root.columnconfigure(0, weight=1)
-        self.root.rowconfigure(0, weight=1)
-        main_frame.columnconfigure(1, weight=1)
+        self.logo_label = ctk.CTkLabel(self.sidebar_frame, text="Yupoo\nDownloader", font=ctk.CTkFont(size=20, weight="bold"))
+        self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
         
-        # Título
-        title_label = ttk.Label(main_frame, text="Yupoo Album Downloader 2025", style='Title.TLabel')
-        title_label.grid(row=0, column=0, columnspan=3, pady=(0, 20))
+        self.label_mode = ctk.CTkLabel(self.sidebar_frame, text="Tema:", anchor="w")
+        self.label_mode.grid(row=5, column=0, padx=20, pady=(10, 0))
+        self.appearance_mode_optionemenu = ctk.CTkOptionMenu(self.sidebar_frame, values=["Dark", "Light", "System"],
+                                                                       command=self.change_appearance_mode_event)
+        self.appearance_mode_optionemenu.grid(row=6, column=0, padx=20, pady=(10, 20))
+
+    def create_main_frame(self):
+        self.main_frame = ctk.CTkScrollableFrame(self, corner_radius=10)
+        self.main_frame.grid(row=0, column=1, sticky="nsew", padx=20, pady=20)
+        self.main_frame.grid_columnconfigure(0, weight=1)
         
-        # URL
-        ttk.Label(main_frame, text="URL:", style='Header.TLabel').grid(row=1, column=0, sticky=tk.W, pady=5)
-        self.url_var = tk.StringVar()
-        self.url_entry = ttk.Entry(main_frame, textvariable=self.url_var, width=60)
-        self.url_entry.grid(row=1, column=1, columnspan=2, sticky=(tk.W, tk.E), pady=5, padx=(10, 0))
+        # --- URL Input ---
+        self.url_frame = ctk.CTkFrame(self.main_frame)
+        self.url_frame.grid(row=0, column=0, sticky="ew", pady=(0, 10))
+        self.url_frame.grid_columnconfigure(1, weight=1)
         
-        # Exemplos de URL
-        examples_frame = ttk.LabelFrame(main_frame, text="Exemplos de URLs", padding="5")
-        examples_frame.grid(row=2, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=10)
-        examples_frame.columnconfigure(0, weight=1)
+        ctk.CTkLabel(self.url_frame, text="URL do Yupoo:").grid(row=0, column=0, padx=10, pady=10)
+        self.url_entry = ctk.CTkEntry(self.url_frame, placeholder_text="Cole o link aqui (álbum, categoria ou coleção)")
+        self.url_entry.grid(row=0, column=1, sticky="ew", padx=(0, 10), pady=10)
         
-        examples_text = """Álbum: https://nfl-world.x.yupoo.com/albums/100300873?uid=1
-Categoria: https://minkang.x.yupoo.com/categories/2890904
-Collection: https://exemplo.x.yupoo.com/collections/123456"""
+        # --- Pasta de Destino ---
+        self.output_frame = ctk.CTkFrame(self.main_frame)
+        self.output_frame.grid(row=1, column=0, sticky="ew", pady=(0, 10))
+        self.output_frame.grid_columnconfigure(1, weight=1)
         
-        ttk.Label(examples_frame, text=examples_text, font=('Consolas', 9)).grid(row=0, column=0, sticky=tk.W)
+        ctk.CTkLabel(self.output_frame, text="Salvar em:").grid(row=0, column=0, padx=10, pady=10)
+        self.output_dir_entry = ctk.CTkEntry(self.output_frame)
+        self.output_dir_entry.insert(0, os.getcwd())
+        self.output_dir_entry.grid(row=0, column=1, sticky="ew", padx=(0, 10), pady=10)
+        self.browse_btn = ctk.CTkButton(self.output_frame, text="Selecionar Pasta", command=self.browse_folder, width=100)
+        self.browse_btn.grid(row=0, column=2, padx=(0, 10), pady=10)
         
-        # Configurações
-        config_frame = ttk.LabelFrame(main_frame, text="Configurações", padding="10")
-        config_frame.grid(row=3, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=10)
-        config_frame.columnconfigure(1, weight=1)
+        # --- Opções Avançadas ---
+        self.advanced_frame = ctk.CTkFrame(self.main_frame)
+        self.advanced_frame.grid(row=2, column=0, sticky="ew", pady=(0, 10))
+        self.advanced_frame.grid_columnconfigure(0, weight=1)
         
-        # Threads
-        ttk.Label(config_frame, text="Threads:", style='Header.TLabel').grid(row=0, column=0, sticky=tk.W, pady=5)
-        self.threads_var = tk.IntVar(value=4)
-        threads_spinbox = ttk.Spinbox(config_frame, from_=1, to=8, textvariable=self.threads_var, width=10)
-        threads_spinbox.grid(row=0, column=1, sticky=tk.W, pady=5, padx=(10, 0))
+        self.use_advanced_chk = ctk.CTkCheckBox(self.advanced_frame, text="Usar Funcionalidades Avançadas (Recomendado)", onvalue=True, offvalue=False)
+        self.use_advanced_chk.select() # Default ON
+        self.use_advanced_chk.grid(row=0, column=0, sticky="w", padx=10, pady=(10, 5))
         
-        # Modo Headless
-        self.headless_var = tk.BooleanVar(value=True)
-        headless_check = ttk.Checkbutton(config_frame, text="Modo Headless (sem interface gráfica)", variable=self.headless_var)
-        headless_check.grid(row=1, column=0, columnspan=2, sticky=tk.W, pady=5)
+        # Opções de Threads
+        self.thread_frame = ctk.CTkFrame(self.advanced_frame, fg_color="transparent")
+        self.thread_frame.grid(row=1, column=0, sticky="w", padx=10, pady=5)
+        ctk.CTkLabel(self.thread_frame, text="Threads (Paralelismo):").pack(side="left", padx=(0, 10))
+        self.threads_slider = ctk.CTkSlider(self.thread_frame, from_=1, to=8, number_of_steps=7)
+        self.threads_slider.set(4)
+        self.threads_slider.pack(side="left", fill="x", expand=True, padx=10)
         
-        # Pasta de destino
-        ttk.Label(config_frame, text="Pasta de destino:", style='Header.TLabel').grid(row=2, column=0, sticky=tk.W, pady=5)
-        self.output_dir_var = tk.StringVar(value=os.getcwd())
-        output_frame = ttk.Frame(config_frame)
-        output_frame.grid(row=2, column=1, sticky=(tk.W, tk.E), pady=5, padx=(10, 0))
-        output_frame.columnconfigure(0, weight=1)
+        # Headless
+        self.headless_chk = ctk.CTkCheckBox(self.advanced_frame, text="Modo Headless (Esconder Navegador)", onvalue=True, offvalue=False)
+        self.headless_chk.select()
+        self.headless_chk.grid(row=2, column=0, sticky="w", padx=10, pady=5)
+
+        # --- Opções de Coleção/Álbum ---
+        self.collection_options_frame = ctk.CTkFrame(self.main_frame, border_width=1, border_color="gray50")
+        self.collection_options_frame.grid(row=3, column=0, sticky="ew", pady=(0, 10))
+        self.collection_options_frame.grid_columnconfigure(0, weight=1)
         
-        output_entry = ttk.Entry(output_frame, textvariable=self.output_dir_var)
-        output_entry.grid(row=0, column=0, sticky=(tk.W, tk.E), padx=(0, 5))
+        ctk.CTkLabel(self.collection_options_frame, text="Opções de Coleção / Álbum", font=ctk.CTkFont(size=14, weight="bold")).grid(row=0, column=0, sticky="w", padx=10, pady=5)
         
-        browse_btn = ttk.Button(output_frame, text="Procurar", command=self.browse_folder)
-        browse_btn.grid(row=0, column=1)
+        # Modo de Coleção
+        self.coll_mode_label = ctk.CTkLabel(self.collection_options_frame, text="Modo Coleção:")
+        self.coll_mode_label.grid(row=1, column=0, sticky="w", padx=10)
+        self.collection_mode_var = ctk.StringVar(value="covers")
+        self.radio_coll_covers = ctk.CTkRadioButton(self.collection_options_frame, text="Só Capas (HQ)", variable=self.collection_mode_var, value="covers")
+        self.radio_coll_covers.grid(row=2, column=0, sticky="w", padx=20, pady=2)
+        self.radio_coll_full = ctk.CTkRadioButton(self.collection_options_frame, text="Álbuns Completos", variable=self.collection_mode_var, value="albums")
+        self.radio_coll_full.grid(row=3, column=0, sticky="w", padx=20, pady=2)
+
+        # Opções de Página
+        ctk.CTkLabel(self.collection_options_frame, text="Paginação:").grid(row=4, column=0, sticky="w", padx=10, pady=(10, 0))
+        self.page_option_var = ctk.StringVar(value="all")
         
-        # Botões
-        button_frame = ttk.Frame(main_frame)
-        button_frame.grid(row=4, column=0, columnspan=3, pady=20)
+        self.page_opts_frame = ctk.CTkFrame(self.collection_options_frame, fg_color="transparent")
+        self.page_opts_frame.grid(row=5, column=0, sticky="w", padx=10)
         
-        self.download_btn = ttk.Button(button_frame, text="Iniciar Download", command=self.start_download)
-        self.download_btn.pack(side=tk.LEFT, padx=(0, 10))
+        ctk.CTkRadioButton(self.page_opts_frame, text="Primeira", variable=self.page_option_var, value="first").pack(side="left", padx=10)
+        ctk.CTkRadioButton(self.page_opts_frame, text="Todas", variable=self.page_option_var, value="all").pack(side="left", padx=10)
+        ctk.CTkRadioButton(self.page_opts_frame, text="Intervalo", variable=self.page_option_var, value="range").pack(side="left", padx=10)
         
-        self.stop_btn = ttk.Button(button_frame, text="Parar", command=self.stop_download, state=tk.DISABLED)
-        self.stop_btn.pack(side=tk.LEFT, padx=(0, 10))
+        self.range_frame = ctk.CTkFrame(self.collection_options_frame, fg_color="transparent")
+        self.range_frame.grid(row=6, column=0, sticky="w", padx=30, pady=2)
+        ctk.CTkLabel(self.range_frame, text="De:").pack(side="left")
+        self.page_start = ctk.CTkEntry(self.range_frame, width=50)
+        self.page_start.insert(0, "1")
+        self.page_start.pack(side="left", padx=5)
+        ctk.CTkLabel(self.range_frame, text="Até:").pack(side="left")
+        self.page_end = ctk.CTkEntry(self.range_frame, width=50)
+        self.page_end.insert(0, "1")
+        self.page_end.pack(side="left", padx=5)
+
+        # --- Botões de Ação ---
+        self.action_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
+        self.action_frame.grid(row=4, column=0, pady=20)
         
-        self.clear_btn = ttk.Button(button_frame, text="Limpar Log", command=self.clear_log)
-        self.clear_btn.pack(side=tk.LEFT)
+        self.start_btn = ctk.CTkButton(self.action_frame, text="INICIAR DOWNLOAD", command=self.start_download, width=200, height=40, font=ctk.CTkFont(size=14, weight="bold"))
+        self.start_btn.pack(side="left", padx=10)
         
-        # Log
-        log_frame = ttk.LabelFrame(main_frame, text="Log de Execução", padding="5")
-        log_frame.grid(row=5, column=0, columnspan=3, sticky=(tk.W, tk.E, tk.N, tk.S), pady=10)
-        log_frame.columnconfigure(0, weight=1)
-        log_frame.rowconfigure(0, weight=1)
-        main_frame.rowconfigure(5, weight=1)
+        self.stop_btn = ctk.CTkButton(self.action_frame, text="PARAR", command=self.stop_download, width=100, height=40, fg_color="darkred", hover_color="maroon", state="disabled")
+        self.stop_btn.pack(side="left", padx=10)
         
-        self.log_text = scrolledtext.ScrolledText(log_frame, height=15, width=80, font=('Consolas', 9))
-        self.log_text.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        self.restart_btn = ctk.CTkButton(self.action_frame, text="REINICIAR", command=self.hard_restart, width=100, height=40, fg_color="gray30", hover_color="gray20")
+        self.restart_btn.pack(side="left", padx=10)
+
+        # --- Log e Status ---
+        self.status_label = ctk.CTkLabel(self.main_frame, textvariable=self.status_var)
+        self.status_label.grid(row=5, column=0, sticky="w", padx=10)
         
-        # Status bar
-        self.status_var = tk.StringVar(value="Pronto")
-        status_bar = ttk.Label(main_frame, textvariable=self.status_var, relief=tk.SUNKEN, anchor=tk.W)
-        status_bar.grid(row=6, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=(10, 0))
-    
+        self.progressbar = ctk.CTkProgressBar(self.main_frame)
+        self.progressbar.grid(row=6, column=0, sticky="ew", padx=10, pady=(0, 10))
+        self.progressbar.set(0)
+
+        self.log_box = ctk.CTkTextbox(self.main_frame, height=200)
+        self.log_box.grid(row=7, column=0, sticky="ew", padx=10, pady=10)
+
+    def change_appearance_mode_event(self, new_appearance_mode: str):
+        ctk.set_appearance_mode(new_appearance_mode)
+
     def browse_folder(self):
-        """Abre diálogo para selecionar pasta de destino"""
-        folder = filedialog.askdirectory(initialdir=self.output_dir_var.get())
+        folder = filedialog.askdirectory(initialdir=self.output_dir_entry.get())
         if folder:
-            self.output_dir_var.set(folder)
-    
+            self.output_dir_entry.delete(0, tk.END)
+            self.output_dir_entry.insert(0, folder)
+            
     def log_message(self, message, level="INFO"):
-        """Adiciona mensagem ao log"""
         timestamp = time.strftime("%H:%M:%S")
-        log_entry = f"[{timestamp}] {level}: {message}\n"
-        self.log_queue.put(log_entry)
-    
+        self.log_queue.put(f"[{timestamp}] {level}: {message}\n")
+
     def start_log_thread(self):
-        """Inicia thread para processar logs"""
         def process_logs():
             while True:
                 try:
                     message = self.log_queue.get(timeout=0.1)
-                    self.log_text.insert(tk.END, message)
-                    self.log_text.see(tk.END)
-                    self.root.update_idletasks()
+                    self.log_box.insert("end", message)
+                    self.log_box.see("end")
                 except queue.Empty:
                     continue
                 except:
                     break
-        
-        log_thread = threading.Thread(target=process_logs, daemon=True)
-        log_thread.start()
-    
+        threading.Thread(target=process_logs, daemon=True).start()
+
     def validate_inputs(self):
-        """Valida as entradas do usuário"""
-        url = self.url_var.get().strip()
+        url = self.url_entry.get().strip()
         if not url:
-            messagebox.showerror("Erro", "Por favor, insira uma URL válida.")
+            self.log_message("Erro: URL inválida.", "ERROR")
             return False
-        
-        if not ("yupoo.com" in url and ("albums" in url or "categories" in url or "collections" in url)):
-            messagebox.showerror("Erro", "URL inválida! Certifique-se de que é um link de álbum, categoria ou collection do Yupoo.")
-            return False
-        
-        output_dir = self.output_dir_var.get().strip()
-        if not output_dir or not os.path.exists(output_dir):
-            messagebox.showerror("Erro", "Por favor, selecione uma pasta de destino válida.")
-            return False
-        
+            
+        # Range validation
+        if self.page_option_var.get() == "range":
+            try:
+                start = int(self.page_start.get())
+                end = int(self.page_end.get())
+                if start < 1 or end < start:
+                    raise ValueError
+            except ValueError:
+                self.log_message("Erro: Intervalo de páginas inválido.", "ERROR")
+                return False
+
         return True
-    
+
     def start_download(self):
-        """Inicia o download em uma thread separada"""
         if not self.validate_inputs():
             return
-        
+            
         if self.is_downloading:
-            messagebox.showwarning("Aviso", "Download já em andamento!")
             return
-        
-        # Configurar interface
+            
         self.is_downloading = True
-        self.download_btn.config(state=tk.DISABLED)
-        self.stop_btn.config(state=tk.NORMAL)
-        self.status_var.set("Iniciando download...")
+        self.start_btn.configure(state="disabled")
+        self.stop_btn.configure(state="normal")
+        self.progressbar.start()
+        self.log_box.delete("1.0", "end")
+        self.status_var.set("Iniciando...")
         
-        # Limpar log
-        self.clear_log()
-        
-        # Iniciar download em thread separada
-        download_thread = threading.Thread(target=self.download_worker, daemon=True)
-        download_thread.start()
-    
-    def download_worker(self):
-        """Worker thread para o download"""
-        try:
-            # Criar downloader
-            self.downloader = YupooParallelDownloader(
-                headless=self.headless_var.get(),
-                max_workers=self.threads_var.get()
-            )
-            
-            # Mudar para pasta de destino
-            original_dir = os.getcwd()
-            os.chdir(self.output_dir_var.get())
-            
-            url = self.url_var.get().strip()
-            
-            # Detectar tipo de URL e executar
-            if "categories" in url:
-                self.log_message("Detectado: URL de categoria")
-                self.status_var.set("Processando categoria...")
-                self.downloader.download_category(url)
-            elif "collections" in url:
-                self.log_message("Detectado: URL de collection")
-                self.status_var.set("Processando collection...")
-                self.downloader.download_collection(url)
-            else:
-                self.log_message("Detectado: URL de álbum")
-                self.status_var.set("Processando álbum...")
-                self.downloader.download_album(url)
-            
-            # Voltar para diretório original
-            os.chdir(original_dir)
-            
-            if self.is_downloading:  # Se não foi cancelado
-                self.log_message("Download concluído com sucesso!", "SUCCESS")
-                self.status_var.set("Download concluído!")
-                messagebox.showinfo("Sucesso", "Download concluído com sucesso!")
-            
-        except Exception as e:
-            self.log_message(f"Erro durante o download: {str(e)}", "ERROR")
-            self.status_var.set("Erro durante o download")
-            messagebox.showerror("Erro", f"Erro durante o download:\n{str(e)}")
-        
-        finally:
-            # Restaurar interface
-            self.is_downloading = False
-            self.download_btn.config(state=tk.NORMAL)
-            self.stop_btn.config(state=tk.DISABLED)
-            if self.status_var.get() == "Iniciando download...":
-                self.status_var.set("Pronto")
-    
-    def stop_download(self):
-        """Para o download"""
-        if self.is_downloading:
-            self.is_downloading = False
-            self.log_message("Parando download...", "WARNING")
-            self.status_var.set("Parando download...")
-            # Note: O download não pode ser interrompido facilmente devido ao Selenium
-            # Mas a interface será restaurada quando a thread terminar
-    
-    def clear_log(self):
-        """Limpa o log"""
-        self.log_text.delete(1.0, tk.END)
-    
-    def on_closing(self):
-        """Chamado quando a janela é fechada"""
-        if self.is_downloading:
-            if messagebox.askokcancel("Sair", "Download em andamento. Deseja realmente sair?"):
-                self.is_downloading = False
-                self.root.destroy()
-        else:
-            self.root.destroy()
+        threading.Thread(target=self.download_worker, daemon=True).start()
 
-def main():
-    """Função principal"""
-    root = tk.Tk()
-    app = YupooDownloaderGUI(root)
-    
-    # Configurar fechamento da janela
-    root.protocol("WM_DELETE_WINDOW", app.on_closing)
-    
-    # Iniciar aplicação
-    root.mainloop()
+    def stop_download(self):
+        self.log_message("CANCELAMENTO TOTAL. FECHANDO TUDO...", "WARNING")
+        if self.downloader:
+            try:
+                self.downloader.cancel()
+            except:
+                pass
+        # Nuclear exit: mata o processo Python e libera o terminal imediatamente
+        os._exit(0)
+            
+    def hard_restart(self):
+        self.log_message("REINICIANDO PROGRAMA...", "WARNING")
+        # Forçar fechamento de drivers se existirem
+        if self.downloader:
+            try:
+                self.downloader.cancel()
+            except:
+                pass
+        
+        # Reiniciar o processo python
+        os.execv(sys.executable, [sys.executable] + sys.argv)
+
+    def download_worker(self):
+        try:
+            url = self.url_entry.get().strip()
+            use_advanced = self.use_advanced_chk.get() == 1
+            max_workers = int(self.threads_slider.get())
+            headless = self.headless_chk.get() == 1
+            output_dir = self.output_dir_entry.get()
+
+            
+            # Logic for collection/album options
+            collection_mode = self.collection_mode_var.get()
+            page_opt = self.page_option_var.get()
+            
+            page_conf = "all"
+            if page_opt == "first":
+                page_conf = "first"
+            elif page_opt == "range":
+                try:
+                    s = int(self.page_start.get())
+                    e = int(self.page_end.get())
+                    page_conf = (s, e)
+                except: 
+                    page_conf = "all"
+
+            # Check if range is valid dynamically (implemented in downloader, but check here too)
+            # We need the downloader to check this against the total pages.
+            
+            original_cwd = os.getcwd()
+            if not os.path.exists(output_dir):
+                os.makedirs(output_dir)
+            os.chdir(output_dir)
+
+            if use_advanced or "collections" in url or "categories" in url:
+                self.downloader = YupooAdvancedDownloader(
+                    headless=headless,
+                    max_workers=max_workers,
+                    log_callback=self.log_message
+                )
+                
+                if "collections" in url or "categories" in url:
+                    if collection_mode == "covers":
+                        self.downloader.download_covers_from_collection(url, page_conf)
+                    else:
+                        self.downloader.download_albums_from_collection(url, page_conf)
+                        
+                elif "albums" in url:
+                    # Logic for single album advanced (defaulting to all photos for now based on previous GUI logic)
+                    self.downloader.download_album_advanced(url, "all", None)
+                    
+            else:
+                # Basic/Legacy Downloader
+                self.downloader = YupooGUIDownloader(
+                    headless=headless,
+                    max_workers=max_workers,
+                    log_callback=self.log_message
+                )
+                if "collections" in url:
+                    self.downloader.download_collection(url)
+                elif "categories" in url:
+                    self.downloader.download_category(url)
+                else:
+                    self.downloader.download_album(url)
+
+            self.log_message("Tarefa Finalizada!", "SUCCESS")
+            self.status_var.set("Finalizado")
+
+        except Exception as e:
+            self.log_message(f"Erro Crítico: {e}", "ERROR")
+        finally:
+            os.chdir(original_cwd)
+            self.is_downloading = False
+            self.start_btn.configure(state="normal")
+            self.stop_btn.configure(state="disabled")
+            self.progressbar.stop()
 
 if __name__ == "__main__":
-    main()
+    app = YupooDownloaderGUI()
+    app.mainloop()
