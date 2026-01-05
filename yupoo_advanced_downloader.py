@@ -115,12 +115,27 @@ class YupooAdvancedDownloader:
         chrome_options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36')
         
         driver = webdriver.Chrome(options=chrome_options)
+        driver.set_page_load_timeout(30) # Evita travamentos de 5 minutos
         driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
         
-        # Adicionar à lista de drivers ativos
-        self.active_drivers.append(driver)
+        # Adicionar à lista de drivers ativos (com lock se necessário, mas append é atômico em CPython)
+        with self.lock:
+            self.active_drivers.append(driver)
         return driver
     
+    def close_driver(self, driver):
+        """Fecha um driver específico e remove da lista de ativos"""
+        if not driver: return
+        
+        try:
+            with self.lock:
+                if driver in self.active_drivers:
+                    self.active_drivers.remove(driver)
+            
+            driver.quit()
+        except:
+            pass
+
     def create_driver_for_cover(self):
         """Cria um driver com JavaScript habilitado para download de capa"""
         chrome_options = Options()
@@ -144,6 +159,10 @@ class YupooAdvancedDownloader:
         
         driver = webdriver.Chrome(options=chrome_options)
         driver.set_window_size(3840, 2160)
+        driver.set_page_load_timeout(30)
+        
+        with self.lock:
+            self.active_drivers.append(driver)
         return driver
     
     def get_album_info(self, album_url):
@@ -194,7 +213,7 @@ class YupooAdvancedDownloader:
             self.log(f"Erro ao obter informações do álbum: {e}", "ERROR")
             return "Album_Sem_Titulo", None
         finally:
-            driver.quit()
+            self.close_driver(driver)
     
     def get_pagination_info(self, album_url):
         """
@@ -254,7 +273,7 @@ class YupooAdvancedDownloader:
             self.log(f"Erro ao analisar paginação: {e}", "ERROR")
             return 1, 1
         finally:
-            driver.quit()
+            self.close_driver(driver)
     
     def get_data_ids_from_page(self, page_url):
         """
@@ -306,7 +325,7 @@ class YupooAdvancedDownloader:
             self.log(f"Erro ao capturar data-ids da página: {e}", "ERROR")
             return []
         finally:
-            driver.quit()
+            self.close_driver(driver)
     
     def scroll_to_load_all(self, driver, duration=10):
         """Scrolla a página usando JavaScript para carregar álbuns dinâmicos (Lazy Loading)"""
@@ -381,9 +400,10 @@ class YupooAdvancedDownloader:
             self.log(f"Erro ao obter ID da capa: {e}", "ERROR")
         finally:
             if driver:
-                driver.quit()
+                self.close_driver(driver)
         
         return None
+    
     def get_image_real_id_quick(self, data_id, base_url, driver):
         """
         Versão rápida de get_image_real_id que usa um driver já aberto
@@ -600,7 +620,7 @@ class YupooAdvancedDownloader:
             self.log(f"Erro ao obter ID da imagem {data_id}: {e}", "ERROR")
         finally:
             if driver:
-                driver.quit()
+                self.close_driver(driver)
         
         return None
     
@@ -708,9 +728,9 @@ class YupooAdvancedDownloader:
             return (False, data_id, None, error_msg)
         finally:
             if driver:
-                driver.quit()
+                self.close_driver(driver)
     
-    def download_album_advanced(self, album_url, download_mode="all", page_range=None):
+    def download_album_advanced(self, album_url, download_mode="all", page_range=None, progress_callback=None):
         """
         Processo avançado de download com opções de paginação e capa
         
@@ -718,6 +738,7 @@ class YupooAdvancedDownloader:
             album_url: URL do álbum Yupoo
             download_mode: "all" para todas as fotos, "cover" para só a capa
             page_range: Tupla (start_page, end_page) ou None para todas as páginas
+            progress_callback: Callback para progresso (current, total)
         """
         self.log("=" * 80)
         self.log("YUPOO ADVANCED DOWNLOADER - Download Avançado")
@@ -848,7 +869,7 @@ class YupooAdvancedDownloader:
                 self.log(traceback.format_exc(), "ERROR")
             finally:
                 if driver:
-                    driver.quit()
+                    self.close_driver(driver)
             
             return
         
@@ -923,8 +944,10 @@ class YupooAdvancedDownloader:
                 else:
                     failed += 1
                 
-                # Mostra progresso a cada 5 imagens
-                if (successful + failed) % 5 == 0:
+                # Mostra progresso a cada 1 imagens
+                if (successful + failed) % 1 == 0:
+                    if progress_callback:
+                        progress_callback(successful + failed, len(self.data_ids))
                     elapsed = time.time() - start_time
                     rate = (successful + failed) / elapsed
                     eta = (len(self.data_ids) - successful - failed) / rate if rate > 0 else 0
@@ -1015,15 +1038,16 @@ class YupooAdvancedDownloader:
             self.log(f"Erro ao analisar paginação: {e}", "ERROR")
             return 1
         finally:
-            driver.quit()
+            self.close_driver(driver)
     
-    def download_covers_from_collection(self, collection_url, page_option='all'):
+    def download_covers_from_collection(self, collection_url, page_option='all', progress_callback=None):
         """
         Baixa apenas as capas dos álbuns de uma coleção/categoria em alta qualidade
         
         Args:
             collection_url: URL da coleção ou categoria Yupoo
             page_option: 'all', 'first', ou tupla (start, end) para intervalo
+            progress_callback: Callback para progresso (current, total)
         """
         self.log(f"Iniciando download de CAPAS da coleção/categoria: {collection_url}")
         
@@ -1104,6 +1128,9 @@ class YupooAdvancedDownloader:
                 except Exception as e:
                     self.log(f"Erro em thread de download: {e}", "ERROR")
                     failed += 1
+                
+                if progress_callback:
+                    progress_callback(successful + failed, len(all_albums))
         
         self.log("=" * 80)
         self.log(f"Download de capas concluído!")
@@ -1112,13 +1139,14 @@ class YupooAdvancedDownloader:
         self.log("=" * 80)
 
     
-    def download_albums_from_collection(self, collection_url, page_option='all'):
+    def download_albums_from_collection(self, collection_url, page_option='all', progress_callback=None):
         """
         Baixa todos os álbuns de uma coleção/categoria (todas as fotos)
         
         Args:
             collection_url: URL da coleção ou categoria Yupoo
             page_option: 'all', 'first', ou tupla (start, end) para intervalo
+            progress_callback: Callback para progresso (current, total)
         """
         self.log(f"Iniciando download COMPLETO da coleção/categoria: {collection_url}")
         
@@ -1189,6 +1217,9 @@ class YupooAdvancedDownloader:
             except Exception as e:
                 self.log(f"Erro ao baixar álbum {i+1}: {e}", "ERROR")
                 failed += 1
+                
+            if progress_callback:
+                progress_callback(i + 1, len(all_albums))
         
         self.log("=" * 80)
         self.log(f"Download de álbuns concluído!")
@@ -1229,7 +1260,7 @@ class YupooAdvancedDownloader:
         except Exception as e:
             self.log(f"Erro ao obter nome da coleção/categoria: {e}", "WARNING")
         finally:
-            driver.quit()
+            self.close_driver(driver)
 
         # Fallback se não conseguiu extrair do site
         if not folder_name:
@@ -1345,7 +1376,7 @@ class YupooAdvancedDownloader:
             self.log(f"Erro na extração: {e}", "ERROR")
             return []
         finally:
-            driver.quit()
+            self.close_driver(driver)
     
     def extract_cover_id_from_thumbnail(self, thumbnail_url):
         """
@@ -1427,50 +1458,71 @@ class YupooAdvancedDownloader:
                 # --- ORGANIZAÇÃO AO VIVO ---
                 if self.organizer:
                     try:
-                        # Limpar nome do álbum para classificação
-                        base_name = album_name
-                        classification = self.organizer.classify_file(base_name + ".jpg") # Simular extensão para classificar
+                        clean_name = re.sub(r'(_CAPA_HQ|hq|high quality)$', '', album_name, flags=re.IGNORECASE).strip()
+                        classification = self.organizer.classify_file(clean_name + ".png")
                         
                         if classification['team_name']:
-                            # Usar o diretório atual de execução como raiz para a estrutura organizada FUTEBOL/
-                            root_output = os.getcwd() 
+                            # Local de destino absoluto
+                            abs_output_folder = os.path.abspath(output_folder)
+                            root_output = os.path.dirname(abs_output_folder)
                             target_dir = os.path.join(root_output, classification['target_folder'])
                             
-                            # Novo nome de arquivo sugerido pela classificação
-                            final_filename = classification['target_filename']
+                            final_filename = os.path.splitext(classification['target_filename'])[0] + ".png"
                             target_path = os.path.join(target_dir, final_filename)
-                            
                             target_path = self.organizer._get_unique_path(target_path)
+                            
                             os.makedirs(target_dir, exist_ok=True)
                             
                             import shutil
-                            # Copiar em vez de mover para manter na pasta original também (opcional, mas move é mais limpo)
-                            shutil.copy2(filepath, target_path)
-                            self.log(f"[ORGANIZADO] {classification['team_name']} -> {classification['target_folder']}", "SUCCESS")
+                            if os.path.exists(filepath):
+                                shutil.move(filepath, target_path)
+                                self.log(f"[ORGANIZADO] {classification['team_name']} -> {os.path.abspath(target_path)}", "SUCCESS")
+                            else:
+                                self.log(f"Aviso: Arquivo fonte não encontrado para mover: {filepath}", "WARNING")
                         else:
-                            self.log(f"[INFO] Time não identificado para: {base_name}", "DEBUG")
+                            self.log(f"[INFO] Time não identificado para: {clean_name}", "DEBUG")
                     except Exception as org_err:
-                        self.log(f"Aviso na organização ao vivo: {org_err}", "DEBUG")
+                        self.log(f"Erro na organização ao vivo: {org_err}", "DEBUG")
                 # ---------------------------
                 
                 return True
             except Exception as e:
                 self.log(f"Erro no download da capa (tentativa {attempt+1}): {e}", "WARNING")
             finally:
-                if driver: driver.quit()
+                if driver: self.close_driver(driver)
         return False
     
     def cancel(self):
         """Cancela o download de forma agressiva e fecha todos os drivers ativos"""
         self.is_cancelled = True
         self.log("CANCELAMENTO SOLICITADO PELO USUÁRIO. Interrompendo todos os navegadores...", "WARNING")
+        self.close()
+
+    def close(self):
+        """Fecha todos os drivers ativos e limpa recursos"""
+        self.is_cancelled = True # Garante que nada novo comece
         
-        # Criar uma cópia da lista para evitar problemas de modificação durante o loop
-        drivers_to_quit = list(self.active_drivers)
-        self.active_drivers = []
+        self.log("Fechando drivers restantes...", "DEBUG")
+        with self.lock:
+            drivers_to_quit = list(self.active_drivers)
+            self.active_drivers = [] # Limpa a lista original imediatamente
         
         for driver in drivers_to_quit:
             try:
-                driver.quit()
+                # Tenta fechar graciosamente primeiro
+                try:
+                    driver.quit()
+                except:
+                    pass
             except:
                 pass
+        
+        # Forçar coleta de lixo
+        import gc
+        gc.collect()
+
+    def __del__(self):
+        try:
+            self.close()
+        except:
+            pass

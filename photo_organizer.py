@@ -152,6 +152,51 @@ class PhotoOrganizer:
         
         return None
 
+    def _resolve_full_info_with_ai(self, text: str) -> Optional[Dict]:
+        """Usa OpenAI para identificar temporada e tipo de produto quando incerto"""
+        if not self.openai_api_key:
+            return None
+            
+        try:
+            import urllib.request
+            import urllib.error
+            
+            prompt = (
+                f"Analise o nome do álbum de camisa de futebol abaixo e extraia a temporada e o tipo de produto.\n"
+                f"Entrada: \"{text}\"\n\n"
+                f"Regras:\n"
+                f"1. Temporada deve ser no formato YY-YY (ex: 24-25, 2026 -> 26-27).\n"
+                f"2. Tipo de produto deve ser um destes: RETRO, WOMEN, KIDS, BABY, SHORTS, POLOS, WINDBREAKER, SUITS, TRACKSUIT, LONG_SLEEVES, PLAYER, GOALKEEPER, STANDARD.\n"
+                f"Exemplo de resposta (JSON puro): {{\"season\": \"26-27\", \"product_type\": \"LONG_SLEEVES\"}}"
+            )
+            
+            data = json.dumps({
+                "model": "gpt-4o-mini",
+                "messages": [{"role": "user", "content": prompt}],
+                "max_tokens": 100,
+                "temperature": 0,
+                "response_format": { "type": "json_object" }
+            }).encode('utf-8')
+            
+            req = urllib.request.Request(
+                "https://api.openai.com/v1/chat/completions",
+                data=data,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.openai_api_key}"
+                }
+            )
+            
+            with urllib.request.urlopen(req, timeout=10) as response:
+                result = json.loads(response.read().decode('utf-8'))
+                ai_json = json.loads(result['choices'][0]['message']['content'].strip())
+                return ai_json
+                    
+        except Exception as e:
+            self.log(f"Erro IA Classificação: {e}", "WARNING")
+        
+        return None
+
     def _resolve_with_ai(self, text: str) -> Optional[str]:
         """Usa OpenAI para identificar nomes de times abreviações/parciais"""
         if not self.openai_api_key:
@@ -245,6 +290,32 @@ class PhotoOrganizer:
         # 4. Extrair tipo de produto
         result['product_type'] = self._extract_product_type(filename)
         
+        # --- Lógica de RETRO baseada em temporada ---
+        # Se a temporada for anterior a 20-21, é RETRO por definição
+        if result['season']:
+            try:
+                # Extrair o ano de início (os dois primeiros dígitos)
+                start_year = int(result['season'].split('-')[0])
+                # Consideramos retro tudo antes de 20-21 (ou seja, start_year <= 19)
+                # O range suportado vai de 10 a 26.
+                if 10 <= start_year <= 19:
+                    result['product_type'] = 'RETRO'
+            except:
+                pass
+        # --------------------------------------------
+        
+        # --- NOVO: FALLBACK DE IA PARA CLASSIFICAÇÃO COMPLETA ---
+        if self.openai_api_key and (not result['season'] or not result['product_type'] or result['product_type'] == 'RETRO'):
+            # Se for retro e tiver 2026 no nome, a IA pode ajudar a corrigir o erro de logica local
+            ai_info = self._resolve_full_info_with_ai(filename)
+            if ai_info:
+                if not result['season'] and ai_info.get('season'):
+                    result['season'] = ai_info['season']
+                if (not result['product_type'] or result['product_type'] == 'RETRO') and ai_info.get('product_type'):
+                    # Só sobrescreve RETRO se a IA tiver certeza de outro tipo (ex: PLAYER, KIDS)
+                    result['product_type'] = ai_info['product_type']
+        # --------------------------------------------------------
+        
         # 5. Determinar pasta de destino
         if result['team_name']:
             if result['team_type'] == 'CLUB':
@@ -252,9 +323,12 @@ class PhotoOrganizer:
             else:
                 base_path = f"FUTEBOL/SELECOES/{self._sanitize_filename(result['league_or_continent'])}/{self._sanitize_filename(result['team_name'])}"
             
-            # Estrutura: Time / Temporada / (Tipo se não for comum)
-            if result['season']:
+            # --- NOVA LÓGICA: RETRO é sempre um irmão das temporadas ---
+            if result['product_type'] == 'RETRO':
+                result['target_folder'] = f"{base_path}/RETRO"
+            elif result['season']:
                 target = f"{base_path}/{result['season']}"
+                # Sub-subpasta por tipo de produto se não for padrão (ex: KIDS, PLAYER)
                 if result['product_type'] and result['product_type'] != "STANDARD":
                     target = f"{target}/{result['product_type']}"
                 result['target_folder'] = target
@@ -266,7 +340,7 @@ class PhotoOrganizer:
             result['target_folder'] = f"FUTEBOL/{self.keywords_data.get('folder_unavailable', 'INDISPONIVEL')}"
             result['confidence'] = 'NONE'
         
-        # 6. Gerar nome de arquivo padronizado
+        # 6. Gerar nome de arquivo padronizado (SEMPRE .png)
         name_parts = []
         if result['team_name']:
             name_parts.append(self._sanitize_filename(result['team_name']))
@@ -286,8 +360,8 @@ class PhotoOrganizer:
         else:
             base_name = os.path.splitext(filename)[0]
         
-        ext = os.path.splitext(filename)[1]
-        result['target_filename'] = f"{base_name}{ext}"
+        # Forçar extensão .png como solicitado
+        result['target_filename'] = f"{base_name}.png"
         
         return result
 
@@ -326,7 +400,7 @@ class PhotoOrganizer:
                 
                 if not dry_run:
                     os.makedirs(target_dir, exist_ok=True)
-                    shutil.copy2(source_path, target_path)
+                    shutil.move(source_path, target_path)
                     stats['moved'] += 1
                 else:
                     stats['moved'] += 1
@@ -356,6 +430,9 @@ if __name__ == "__main__":
         "Flamengo Women 24-25.png",
         "psg kids away.jpg",
         "real madrid goalkeeper.png",
+        "Arsenal Player Long Sleeve 24-25.png",
+        "Arsenal Retro Player Long Sleeve.png",
+        "Arsenal Long Sleeve 24-25.png",
         "random image.jpg"
     ]
     

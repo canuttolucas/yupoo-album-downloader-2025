@@ -123,8 +123,8 @@ class YupooDownloaderGUI(ctk.CTk):
         self.thread_frame = ctk.CTkFrame(self.advanced_frame, fg_color="transparent")
         self.thread_frame.grid(row=1, column=0, sticky="w", padx=10, pady=5)
         ctk.CTkLabel(self.thread_frame, text="Threads (Paralelismo):").pack(side="left", padx=(0, 10))
-        self.threads_slider = ctk.CTkSlider(self.thread_frame, from_=1, to=8, number_of_steps=7)
-        self.threads_slider.set(4)
+        self.threads_slider = ctk.CTkSlider(self.thread_frame, from_=1, to=10, number_of_steps=9)
+        self.threads_slider.set(10)
         self.threads_slider.pack(side="left", fill="x", expand=True, padx=10)
         
         # Headless
@@ -184,15 +184,25 @@ class YupooDownloaderGUI(ctk.CTk):
         self.restart_btn.pack(side="left", padx=10)
 
         # --- Log e Status ---
-        self.status_label = ctk.CTkLabel(self.main_frame, textvariable=self.status_var)
-        self.status_label.grid(row=5, column=0, sticky="w", padx=10)
+        self.status_label = ctk.CTkLabel(self.main_frame, textvariable=self.status_var, font=ctk.CTkFont(size=13, weight="bold"))
+        self.status_label.grid(row=5, column=0, sticky="w", padx=10, pady=(10, 0))
         
-        self.progressbar = ctk.CTkProgressBar(self.main_frame)
-        self.progressbar.grid(row=6, column=0, sticky="ew", padx=10, pady=(0, 10))
-        self.progressbar.set(0)
+        # Barra de Progresso do Link Atual (Álbuns/Imagens)
+        self.progress_label_link = ctk.CTkLabel(self.main_frame, text="Progresso do Link Atual: 0%")
+        self.progress_label_link.grid(row=6, column=0, sticky="w", padx=10)
+        self.progressbar_link = ctk.CTkProgressBar(self.main_frame)
+        self.progressbar_link.grid(row=7, column=0, sticky="ew", padx=10, pady=(0, 5))
+        self.progressbar_link.set(0)
+        
+        # Barra de Progresso Geral (Batch)
+        self.progress_label_batch = ctk.CTkLabel(self.main_frame, text="Progresso Geral (Links): 0%")
+        self.progress_label_batch.grid(row=8, column=0, sticky="w", padx=10)
+        self.progressbar_batch = ctk.CTkProgressBar(self.main_frame, progress_color="#2E7D32")
+        self.progressbar_batch.grid(row=9, column=0, sticky="ew", padx=10, pady=(0, 10))
+        self.progressbar_batch.set(0)
 
         self.log_box = ctk.CTkTextbox(self.main_frame, height=200)
-        self.log_box.grid(row=7, column=0, sticky="ew", padx=10, pady=10)
+        self.log_box.grid(row=10, column=0, sticky="ew", padx=10, pady=10)
 
     def change_appearance_mode_event(self, new_appearance_mode: str):
         ctk.set_appearance_mode(new_appearance_mode)
@@ -249,17 +259,42 @@ class YupooDownloaderGUI(ctk.CTk):
         if not self.validate_inputs():
             return
             
-        if self.is_downloading:
-            return
-            
         self.is_downloading = True
         self.start_btn.configure(state="disabled")
         self.stop_btn.configure(state="normal")
-        self.progressbar.start()
+        
+        # Resetar barras
+        self.progressbar_link.set(0)
+        self.progress_label_link.configure(text="Progresso do Link Atual: 0%")
+        self.progressbar_batch.set(0)
+        self.progress_label_batch.configure(text="Progresso Geral (Links): 0%")
+        
         self.log_box.delete("1.0", "end")
         self.status_var.set("Iniciando...")
         
         threading.Thread(target=self.download_worker, daemon=True).start()
+
+    def update_link_progress(self, current, total):
+        """Atualiza a barra de progresso do link atual"""
+        if total > 0:
+            percentage = min(1.0, current / total)
+            self.progressbar_link.set(percentage)
+            self.progress_label_link.configure(text=f"Progresso do Link Atual: {int(percentage * 100)}%")
+        else:
+            self.progressbar_link.set(0)
+            self.progress_label_link.configure(text="Progresso do Link Atual: 0%")
+        self.update_idletasks()
+
+    def update_batch_progress(self, current, total):
+        """Atualiza a barra de progresso geral (batch)"""
+        if total > 0:
+            percentage = min(1.0, current / total)
+            self.progressbar_batch.set(percentage)
+            self.progress_label_batch.configure(text=f"Progresso Geral (Links): {int(percentage * 100)}% ({current}/{total})")
+        else:
+            self.progressbar_batch.set(0)
+            self.progress_label_batch.configure(text="Progresso Geral (Links): 0%")
+        self.update_idletasks()
 
     def stop_download(self):
         self.log_message("CANCELAMENTO TOTAL. FECHANDO TUDO...", "WARNING")
@@ -268,7 +303,8 @@ class YupooDownloaderGUI(ctk.CTk):
         self.is_downloading = False
         self.start_btn.configure(state="normal")
         self.stop_btn.configure(state="disabled")
-        self.progressbar.stop()
+        self.progressbar_link.set(0)
+        self.progressbar_batch.set(0)
         os._exit(0)
 
     def hard_restart(self):
@@ -320,8 +356,20 @@ class YupooDownloaderGUI(ctk.CTk):
                     self.log_message("Download cancelado pelo usuário.", "WARNING")
                     break
                     
+                self.update_batch_progress(idx - 1, total_urls)
+                self.update_link_progress(0, 100) # Reset link bar for new link
+                
                 self.log_message(f"\n[{idx}/{total_urls}] Processando: {url}")
                 self.status_var.set(f"Baixando {idx}/{total_urls}")
+
+                # Limpar downloader anterior se existir para liberar recursos
+                if self.downloader:
+                    self.log_message("Limpando recursos do link anterior...", "DEBUG")
+                    if hasattr(self.downloader, 'close'):
+                        self.downloader.close()
+                    self.downloader = None
+                    import gc
+                    gc.collect()
 
                 if use_advanced or "collections" in url or "categories" in url:
                     self.downloader = YupooAdvancedDownloader(
@@ -333,12 +381,12 @@ class YupooDownloaderGUI(ctk.CTk):
                     
                     if "collections" in url or "categories" in url:
                         if collection_mode == "covers":
-                            self.downloader.download_covers_from_collection(url, page_conf)
+                            self.downloader.download_covers_from_collection(url, page_conf, progress_callback=self.update_link_progress)
                         else:
-                            self.downloader.download_albums_from_collection(url, page_conf)
+                            self.downloader.download_albums_from_collection(url, page_conf, progress_callback=self.update_link_progress)
                             
                     elif "albums" in url:
-                        self.downloader.download_album_advanced(url, "all", None)
+                        self.downloader.download_album_advanced(url, "all", None, progress_callback=self.update_link_progress)
                         
                 else:
                     self.downloader = YupooGUIDownloader(
@@ -346,13 +394,18 @@ class YupooDownloaderGUI(ctk.CTk):
                         max_workers=max_workers,
                         log_callback=self.log_message
                     )
+                    # Adicionar progresso ao downloader antigo se necessário, 
+                    # mas o foco é no Advanced que o user usa mais
                     if "collections" in url:
                         self.downloader.download_collection(url)
                     elif "categories" in url:
                         self.downloader.download_category(url)
                     else:
                         self.downloader.download_album(url)
+                
+                self.update_link_progress(100, 100) # Finaliza a barra do link
 
+            self.update_batch_progress(total_urls, total_urls)
             self.log_message(f"\n=== TODAS AS {total_urls} URL(s) PROCESSADAS! ===", "SUCCESS")
             self.status_var.set("Finalizado")
 
@@ -363,7 +416,8 @@ class YupooDownloaderGUI(ctk.CTk):
             self.is_downloading = False
             self.start_btn.configure(state="normal")
             self.stop_btn.configure(state="disabled")
-            self.progressbar.stop()
+            self.progressbar_link.set(0)
+            self.progressbar_batch.set(0)
 
     def open_organize_dialog(self):
         """Abre o diálogo para organizar fotos de futebol"""

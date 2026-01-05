@@ -4,23 +4,34 @@
             "folder": "RETRO",
             "keywords": [
                 "retro",
-                "vintage",
-                "classic",
-                "throwback",
-                "historical",
-                "old",
-                "98",
-                "99",
-                "00",
-                "01",
-                "02",
-                "03",
-                "04",
-                "05",
-                "06",
-                "07",
-                "08",
-                "09"
+                "vintage"
+            ]
+        },
+        "player": {
+            "folder": "PLAYER",
+            "keywords": [
+                "player",
+                "player version",
+                "pv",
+                "jogador",
+                "match version",
+                "match worn",
+                "authentic",
+                "elite"
+            ]
+        },
+        "long_sleeves": {
+            "folder": "LONG_SLEEVES",
+            "keywords": [
+                "long sleeve",
+                "long sleeves",
+                "longsleeve",
+                "long-sleeve",
+                "long-sleeves",
+                "ls",
+                "manga longa",
+                "manga larga",
+                "ml"
             ]
         },
         "women": {
@@ -49,8 +60,7 @@
                 "crianca",
                 "nino",
                 "ninos",
-                "boys",
-                "youth"
+                "boys"
             ]
         },
         "baby": {
@@ -112,30 +122,6 @@
                 "agasalho",
                 "chandal",
                 "survêtement"
-            ]
-        },
-        "long_sleeves": {
-            "folder": "LONG_SLEEVES",
-            "keywords": [
-                "long sleeve",
-                "long sleeves",
-                "longsleeve",
-                "manga longa",
-                "manga larga",
-                "ml"
-            ]
-        },
-        "player": {
-            "folder": "PLAYER",
-            "keywords": [
-                "player",
-                "player version",
-                "pv",
-                "jogador",
-                "match version",
-                "match worn",
-                "authentic",
-                "elite"
             ]
         },
         "goalkeeper": {
