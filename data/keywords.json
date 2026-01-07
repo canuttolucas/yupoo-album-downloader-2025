@@ -1,12 +1,5 @@
 {
     "product_types": {
-        "retro": {
-            "folder": "RETRO",
-            "keywords": [
-                "retro",
-                "vintage"
-            ]
-        },
         "player": {
             "folder": "PLAYER",
             "keywords": [
@@ -21,7 +14,7 @@
             ]
         },
         "long_sleeves": {
-            "folder": "LONG_SLEEVES",
+            "folder": "MANGA LONGA",
             "keywords": [
                 "long sleeve",
                 "long sleeves",
@@ -92,7 +85,7 @@
             ]
         },
         "windbreaker": {
-            "folder": "WINDBREAKER",
+            "folder": "CORTA-VENTO",
             "keywords": [
                 "windbreaker",
                 "wind breaker",

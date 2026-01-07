@@ -1,475 +1,3070 @@
 {
-  "leagues": {
-    "Premier League": {
-      "country": "England",
-      "clubs": [
-        {"name": "Arsenal FC", "aliases": ["arsenal", "gunners", "afc"]},
-        {"name": "Aston Villa FC", "aliases": ["aston villa", "villa", "avfc"]},
-        {"name": "AFC Bournemouth", "aliases": ["bournemouth", "cherries"]},
-        {"name": "Brentford FC", "aliases": ["brentford", "bees"]},
-        {"name": "Brighton & Hove Albion FC", "aliases": ["brighton", "seagulls", "bhafc"]},
-        {"name": "Chelsea FC", "aliases": ["chelsea", "blues", "cfc"]},
-        {"name": "Crystal Palace FC", "aliases": ["crystal palace", "palace", "eagles", "cpfc"]},
-        {"name": "Everton FC", "aliases": ["everton", "toffees", "efc"]},
-        {"name": "Fulham FC", "aliases": ["fulham", "cottagers", "ffc"]},
-        {"name": "Ipswich Town FC", "aliases": ["ipswich", "tractor boys"]},
-        {"name": "Leicester City FC", "aliases": ["leicester", "foxes", "lcfc"]},
-        {"name": "Liverpool FC", "aliases": ["liverpool", "reds", "lfc"]},
-        {"name": "Manchester City FC", "aliases": ["manchester city", "man city", "city", "mcfc"]},
-        {"name": "Manchester United FC", "aliases": ["manchester united", "man united", "man u", "united", "mufc", "red devils"]},
-        {"name": "Newcastle United FC", "aliases": ["newcastle", "magpies", "nufc", "toon"]},
-        {"name": "Nottingham Forest FC", "aliases": ["nottingham forest", "forest", "nffc"]},
-        {"name": "Southampton FC", "aliases": ["southampton", "saints", "soton"]},
-        {"name": "Tottenham Hotspur FC", "aliases": ["tottenham", "spurs", "thfc"]},
-        {"name": "West Ham United FC", "aliases": ["west ham", "hammers", "whufc", "irons"]},
-        {"name": "Wolverhampton Wanderers FC", "aliases": ["wolves", "wolverhampton", "wwfc"]}
-      ]
-    },
-    "La Liga": {
-      "country": "Spain",
-      "clubs": [
-        {"name": "Athletic Club", "aliases": ["athletic bilbao", "bilbao", "athletic"]},
-        {"name": "Atletico Madrid", "aliases": ["atletico", "atleti", "colchoneros"]},
-        {"name": "CA Osasuna", "aliases": ["osasuna"]},
-        {"name": "Celta de Vigo", "aliases": ["celta", "celta vigo"]},
-        {"name": "Deportivo Alaves", "aliases": ["alaves"]},
-        {"name": "Espanyol", "aliases": ["rcd espanyol", "espanyol barcelona"]},
-        {"name": "FC Barcelona", "aliases": ["barcelona", "barca", "fcb", "blaugrana"]},
-        {"name": "Getafe CF", "aliases": ["getafe"]},
-        {"name": "Girona FC", "aliases": ["girona"]},
-        {"name": "CD Leganes", "aliases": ["leganes"]},
-        {"name": "RCD Mallorca", "aliases": ["mallorca"]},
-        {"name": "Rayo Vallecano", "aliases": ["rayo"]},
-        {"name": "Real Betis", "aliases": ["betis", "real betis balompie"]},
-        {"name": "Real Madrid CF", "aliases": ["real madrid", "madrid", "real", "los blancos", "merengues"]},
-        {"name": "Real Sociedad", "aliases": ["sociedad", "la real", "txuri-urdin"]},
-        {"name": "Real Valladolid", "aliases": ["valladolid"]},
-        {"name": "Sevilla FC", "aliases": ["sevilla", "sevillistas"]},
-        {"name": "UD Las Palmas", "aliases": ["las palmas"]},
-        {"name": "Valencia CF", "aliases": ["valencia", "los che"]},
-        {"name": "Villarreal CF", "aliases": ["villarreal", "yellow submarine", "submarino amarillo"]}
-      ]
-    },
-    "Serie A": {
-      "country": "Italy",
-      "clubs": [
-        {"name": "AC Milan", "aliases": ["milan", "rossoneri", "acm"]},
-        {"name": "AS Roma", "aliases": ["roma", "giallorossi", "lupi"]},
-        {"name": "Atalanta BC", "aliases": ["atalanta", "dea", "bergamo"]},
-        {"name": "Bologna FC 1909", "aliases": ["bologna", "rossoblù"]},
-        {"name": "Cagliari Calcio", "aliases": ["cagliari"]},
-        {"name": "Como 1907", "aliases": ["como"]},
-        {"name": "Empoli FC", "aliases": ["empoli"]},
-        {"name": "ACF Fiorentina", "aliases": ["fiorentina", "viola"]},
-        {"name": "Genoa CFC", "aliases": ["genoa", "grifone"]},
-        {"name": "Hellas Verona FC", "aliases": ["verona", "hellas"]},
-        {"name": "Inter Milan", "aliases": ["inter", "internazionale", "nerazzurri", "biscione"]},
-        {"name": "Juventus FC", "aliases": ["juventus", "juve", "vecchia signora", "bianconeri"]},
-        {"name": "SS Lazio", "aliases": ["lazio", "aquilotti", "biancocelesti"]},
-        {"name": "US Lecce", "aliases": ["lecce", "salentini"]},
-        {"name": "AC Monza", "aliases": ["monza"]},
-        {"name": "SSC Napoli", "aliases": ["napoli", "partenopei", "azzurri"]},
-        {"name": "Parma Calcio 1913", "aliases": ["parma", "crociati"]},
-        {"name": "Torino FC", "aliases": ["torino", "toro", "granata"]},
-        {"name": "Udinese Calcio", "aliases": ["udinese", "zebrette"]},
-        {"name": "Venezia FC", "aliases": ["venezia"]}
-      ]
-    },
-    "Bundesliga": {
-      "country": "Germany",
-      "clubs": [
-        {"name": "FC Augsburg", "aliases": ["augsburg", "fca"]},
-        {"name": "Bayer 04 Leverkusen", "aliases": ["leverkusen", "bayer", "werkself"]},
-        {"name": "Bayern Munich", "aliases": ["bayern", "bayern munchen", "fcb", "bavarians"]},
-        {"name": "VfL Bochum 1848", "aliases": ["bochum"]},
-        {"name": "Borussia Dortmund", "aliases": ["dortmund", "bvb", "die schwarzgelben"]},
-        {"name": "Borussia Monchengladbach", "aliases": ["gladbach", "monchengladbach", "bmg", "fohlen"]},
-        {"name": "Eintracht Frankfurt", "aliases": ["frankfurt", "sge", "eintracht"]},
-        {"name": "SC Freiburg", "aliases": ["freiburg", "breisgau-brasilianer"]},
-        {"name": "1. FC Heidenheim 1846", "aliases": ["heidenheim", "fch"]},
-        {"name": "TSG 1899 Hoffenheim", "aliases": ["hoffenheim", "tsg", "hoffe"]},
-        {"name": "Holstein Kiel", "aliases": ["kiel", "holstein"]},
-        {"name": "1. FSV Mainz 05", "aliases": ["mainz", "nullfunfer", "karnevalsverein"]},
-        {"name": "RB Leipzig", "aliases": ["leipzig", "rbl", "die roten bullen"]},
-        {"name": "FC St. Pauli", "aliases": ["st pauli", "kiezklub"]},
-        {"name": "VfB Stuttgart", "aliases": ["stuttgart", "vfb", "schwaben"]},
-        {"name": "1. FC Union Berlin", "aliases": ["union berlin", "union", "eisern union"]},
-        {"name": "VfL Wolfsburg", "aliases": ["wolfsburg", "wolves"]},
-        {"name": "SV Werder Bremen", "aliases": ["bremen", "werder"]}
-      ]
-    },
-    "Ligue 1": {
-      "country": "France",
-      "clubs": [
-        {"name": "AJ Auxerre", "aliases": ["auxerre", "aja"]},
-        {"name": "Angers SCO", "aliases": ["angers"]},
-        {"name": "Stade Brestois 29", "aliases": ["brest", "stade brestois"]},
-        {"name": "Le Havre AC", "aliases": ["le havre", "hac"]},
-        {"name": "RC Lens", "aliases": ["lens", "sang et or"]},
-        {"name": "LOSC Lille", "aliases": ["lille", "losc", "dogues"]},
-        {"name": "Olympique Lyonnais", "aliases": ["lyon", "ol", "gones"]},
-        {"name": "Olympique de Marseille", "aliases": ["marseille", "om", "phocéens"]},
-        {"name": "AS Monaco FC", "aliases": ["monaco", "asm"]},
-        {"name": "Montpellier HSC", "aliases": ["montpellier", "mhsc", "paillade"]},
-        {"name": "FC Nantes", "aliases": ["nantes", "canaris"]},
-        {"name": "OGC Nice", "aliases": ["nice", "aiglons"]},
-        {"name": "Paris Saint-Germain FC", "aliases": ["paris", "psg", "paris saint germain", "parisiens"]},
-        {"name": "Stade de Reims", "aliases": ["reims"]},
-        {"name": "Stade Rennais FC", "aliases": ["rennes", "stade rennais"]},
-        {"name": "AS Saint-Etienne", "aliases": ["saint etienne", "sainté", "asse", "verts"]},
-        {"name": "RC Strasbourg Alsace", "aliases": ["strasbourg", "racing"]},
-        {"name": "Toulouse FC", "aliases": ["toulouse", "téfécé", "tfc"]}
-      ]
-    },
-    "Brasileirao Serie A": {
-      "country": "Brazil",
-      "clubs": [
-        {"name": "Athletico Paranaense", "aliases": ["athletico", "athlético", "cap", "furacao"]},
-        {"name": "Atletico Mineiro", "aliases": ["atletico mg", "galo", "atletico-mg"]},
-        {"name": "Bahia EC", "aliases": ["bahia", "tricolor de aco"]},
-        {"name": "Botafogo FR", "aliases": ["botafogo", "fogo", "glorioso"]},
-        {"name": "Red Bull Bragantino", "aliases": ["bragantino", "rb bragantino", "massa bruta"]},
-        {"name": "Corinthians", "aliases": ["sport club corinthians paulista", "timao", "sccp"]},
-        {"name": "Criciuma EC", "aliases": ["criciuma", "tigre"]},
-        {"name": "Cruzeiro EC", "aliases": ["cruzeiro", "raposa", "cabuloso"]},
-        {"name": "Cuiaba EC", "aliases": ["cuiaba", "dourado"]},
-        {"name": "Flamengo", "aliases": ["clube de regatas do flamengo", "mengao", "fla", "rubro negro"]},
-        {"name": "Fluminense FC", "aliases": ["fluminense", "flu", "tricolor carioca"]},
-        {"name": "Fortaleza EC", "aliases": ["fortaleza", "leao do pici"]},
-        {"name": "Gremio FBPA", "aliases": ["gremio", "imortal tricolor", "gremio porto alegre"]},
-        {"name": "Internacional", "aliases": ["inter", "sc internacional", "colorado"]},
-        {"name": "Juventude", "aliases": ["ec juventude", "juve", "papo"]},
-        {"name": "Palmeiras", "aliases": ["se palmeiras", "verdao", "porco", "sep"]},
-        {"name": "Santos FC", "aliases": ["santos", "peixe", "alvinegro praiano"]},
-        {"name": "Sao Paulo FC", "aliases": ["sao paulo", "spfc", "tricolor paulista", "soberano"]},
-        {"name": "Vasco da Gama", "aliases": ["vasco", "gigante da colina", "vascao"]},
-        {"name": "Vitoria BA", "aliases": ["vitoria", "leao da barra"]}
-      ]
-    },
-    "Brasileirao Serie B": {
-      "country": "Brazil",
-      "clubs": [
-        {"name": "America Mineiro", "aliases": ["america mg", "coelho"]},
-        {"name": "Avai FC", "aliases": ["avai", "leao da ilha"]},
-        {"name": "Ceara SC", "aliases": ["ceara", "vozao"]},
-        {"name": "Chapecoense AF", "aliases": ["chapecoense", "chape", "verdao do oeste"]},
-        {"name": "Coritiba FC", "aliases": ["coritiba", "coxa"]},
-        {"name": "Goias EC", "aliases": ["goias", "verdao"]},
-        {"name": "Guarani FC", "aliases": ["guarani", "bugre"]},
-        {"name": "Ituano FC", "aliases": ["ituano", "galo de itu"]},
-        {"name": "Mirassol FC", "aliases": ["mirassol", "leao"]},
-        {"name": "Novorizontino", "aliases": ["novorizontino", "tigre"]},
-        {"name": "Operario PR", "aliases": ["operario", "fantasma"]},
-        {"name": "Paysandu SC", "aliases": ["paysandu", "papao"]},
-        {"name": "Ponte Preta", "aliases": ["ponte", "macaca"]},
-        {"name": "Sport Club do Recife", "aliases": ["sport", "leao", "sport recife"]},
-        {"name": "Vila Nova FC", "aliases": ["vila nova", "tigre"]}
-      ]
-    },
-    "MLS": {
-      "country": "USA",
-      "clubs": [
-        {"name": "Atlanta United FC", "aliases": ["atlanta united", "atlanta", "five stripes"]},
-        {"name": "Austin FC", "aliases": ["austin", "verde"]},
-        {"name": "Charlotte FC", "aliases": ["charlotte"]},
-        {"name": "Chicago Fire FC", "aliases": ["chicago fire", "fire"]},
-        {"name": "FC Cincinnati", "aliases": ["cincinnati", "fcc"]},
-        {"name": "Colorado Rapids", "aliases": ["colorado", "rapids"]},
-        {"name": "Columbus Crew", "aliases": ["columbus", "crew"]},
-        {"name": "D.C. United", "aliases": ["dc united", "dc"]},
-        {"name": "FC Dallas", "aliases": ["dallas", "fcd"]},
-        {"name": "Houston Dynamo FC", "aliases": ["houston", "dynamo"]},
-        {"name": "Sporting Kansas City", "aliases": ["kansas city", "sporting kc", "skc"]},
-        {"name": "LA Galaxy", "aliases": ["la galaxy", "galaxy", "lag"]},
-        {"name": "Los Angeles FC", "aliases": ["lafc", "los angeles fc"]},
-        {"name": "Inter Miami CF", "aliases": ["inter miami", "miami", "imcf"]},
-        {"name": "Minnesota United FC", "aliases": ["minnesota", "loons"]},
-        {"name": "CF Montreal", "aliases": ["montreal", "cfm"]},
-        {"name": "Nashville SC", "aliases": ["nashville", "nsc"]},
-        {"name": "New England Revolution", "aliases": ["new england", "revs", "revolution"]},
-        {"name": "New York City FC", "aliases": ["nycfc", "new york city"]},
-        {"name": "New York Red Bulls", "aliases": ["red bulls", "nyrb", "ny red bulls"]},
-        {"name": "Orlando City SC", "aliases": ["orlando", "lions"]},
-        {"name": "Philadelphia Union", "aliases": ["philadelphia", "union"]},
-        {"name": "Portland Timbers", "aliases": ["portland", "timbers"]},
-        {"name": "Real Salt Lake", "aliases": ["rsl", "salt lake"]},
-        {"name": "San Jose Earthquakes", "aliases": ["san jose", "quakes", "earthquakes"]},
-        {"name": "Seattle Sounders FC", "aliases": ["seattle", "sounders"]},
-        {"name": "St. Louis City SC", "aliases": ["st louis", "stl city"]},
-        {"name": "Toronto FC", "aliases": ["toronto", "tfc", "reds"]},
-        {"name": "Vancouver Whitecaps FC", "aliases": ["vancouver", "whitecaps"]}
-      ]
-    },
-    "Saudi Pro League": {
-      "country": "Saudi Arabia",
-      "clubs": [
-        {"name": "Al Ahli SFC", "aliases": ["al ahli", "ahli jeddah"]},
-        {"name": "Al Ettifaq FC", "aliases": ["al ettifaq", "ettifaq"]},
-        {"name": "Al Fateh SC", "aliases": ["al fateh", "fateh"]},
-        {"name": "Al Fayha FC", "aliases": ["al fayha", "fayha"]},
-        {"name": "Al Hilal SFC", "aliases": ["al hilal", "hilal", "zalzal"]},
-        {"name": "Al Ittihad FC", "aliases": ["al ittihad", "ittihad", "tigers"]},
-        {"name": "Al Khaleej FC", "aliases": ["al khaleej", "khaleej"]},
-        {"name": "Al Nassr FC", "aliases": ["al nassr", "nassr", "knights"]},
-        {"name": "Al Okhdood", "aliases": ["al okhdood", "okhdood"]},
-        {"name": "Al Orubah FC", "aliases": ["al orubah", "orubah"]},
-        {"name": "Al Qadsiah FC", "aliases": ["al qadsiah", "qadsiah"]},
-        {"name": "Al Raed FC", "aliases": ["al raed", "raed"]},
-        {"name": "Al Riyadh SC", "aliases": ["al riyadh", "riyadh"]},
-        {"name": "Al Shabab FC", "aliases": ["al shabab", "shabab"]},
-        {"name": "Al Taawoun FC", "aliases": ["al taawoun", "taawoun"]},
-        {"name": "Al Wehda FC", "aliases": ["al wehda", "wehda"]},
-        {"name": "Damac FC", "aliases": ["damac"]}
-      ]
-    },
-    "Eredivisie": {
-      "country": "Netherlands",
-      "clubs": [
-        {"name": "AFC Ajax", "aliases": ["ajax", "godenzonen"]},
-        {"name": "AZ Alkmaar", "aliases": ["az", "alkmaar"]},
-        {"name": "Feyenoord", "aliases": ["feyenoord rotterdam", "het legioen"]},
-        {"name": "PSV Eindhoven", "aliases": ["psv", "eindhoven", "boeren"]},
-        {"name": "FC Twente", "aliases": ["twente", "tukkers"]},
-        {"name": "FC Utrecht", "aliases": ["utrecht", "utreg"]},
-        {"name": "Fortuna Sittard", "aliases": ["fortuna"]},
-        {"name": "Go Ahead Eagles", "aliases": ["go ahead", "gae", "eagles"]},
-        {"name": "Heracles Almelo", "aliases": ["heracles", "heansen"]},
-        {"name": "NEC Nijmegen", "aliases": ["nec", "nijmegen"]},
-        {"name": "PEC Zwolle", "aliases": ["pec", "zwolle"]},
-        {"name": "RKC Waalwijk", "aliases": ["rkc", "waalwijk"]},
-        {"name": "SC Heerenveen", "aliases": ["heerenveen"]},
-        {"name": "Sparta Rotterdam", "aliases": ["sparta", "kasteelheren"]},
-        {"name": "Vitesse", "aliases": ["vitesse arnhem", "arnhem"]},
-        {"name": "Willem II", "aliases": ["willem", "tricolores"]}
-      ]
-    },
-    "Primeira Liga": {
-      "country": "Portugal",
-      "clubs": [
-        {"name": "SL Benfica", "aliases": ["benfica", "slb", "aguias", "encarnados"]},
-        {"name": "Sporting CP", "aliases": ["sporting", "sporting lisbon", "leoes"]},
-        {"name": "FC Porto", "aliases": ["porto", "fcp", "dragoes"]},
-        {"name": "SC Braga", "aliases": ["braga", "arsenalistas"]},
-        {"name": "Vitoria SC", "aliases": ["vitoria guimaraes", "guimaraes", "vimaranenses"]},
-        {"name": "Boavista FC", "aliases": ["boavista", "panteras"]},
-        {"name": "CD Santa Clara", "aliases": ["santa clara"]},
-        {"name": "Casa Pia AC", "aliases": ["casa pia"]},
-        {"name": "Estoril Praia", "aliases": ["estoril", "canarinhos"]},
-        {"name": "Rio Ave FC", "aliases": ["rio ave", "rioavistas"]},
-        {"name": "FC Arouca", "aliases": ["arouca"]},
-        {"name": "FC Famalicao", "aliases": ["famalicao"]},
-        {"name": "Gil Vicente FC", "aliases": ["gil vicente", "gilistas"]},
-        {"name": "GD Estrela Amadora", "aliases": ["estrela amadora", "tricolores"]},
-        {"name": "Moreirense FC", "aliases": ["moreirense", "cónegos"]},
-        {"name": "Nacional", "aliases": ["cd nacional", "alvinegros"]}
-      ]
-    },
-    "Liga MX": {
-      "country": "Mexico",
-      "clubs": [
-        {"name": "Club America", "aliases": ["america", "aguilas", "las aguilas"]},
-        {"name": "Guadalajara", "aliases": ["chivas", "chivas guadalajara", "rebano sagrado"]},
-        {"name": "Cruz Azul", "aliases": ["cruz azul", "la maquina", "cementeros"]},
-        {"name": "Pumas UNAM", "aliases": ["pumas", "unam", "universitarios"]},
-        {"name": "CF Monterrey", "aliases": ["monterrey", "rayados"]},
-        {"name": "UANL Tigres", "aliases": ["tigres", "tigres uanl", "felinos"]},
-        {"name": "Club Leon", "aliases": ["leon", "esmeraldas", "panzas verdes"]},
-        {"name": "Santos Laguna", "aliases": ["santos", "santos laguna", "guerreros"]},
-        {"name": "Atlas FC", "aliases": ["atlas", "rojinegros", "zorros"]},
-        {"name": "Toluca FC", "aliases": ["toluca", "diablos rojos"]},
-        {"name": "Club Pachuca", "aliases": ["pachuca", "tuzos"]},
-        {"name": "Necaxa", "aliases": ["necaxa", "rayos"]},
-        {"name": "Club Tijuana", "aliases": ["tijuana", "xolos", "xoloitzcuintles"]},
-        {"name": "Queretaro FC", "aliases": ["queretaro", "gallos blancos"]},
-        {"name": "Mazatlan FC", "aliases": ["mazatlan", "canoneros"]},
-        {"name": "FC Juarez", "aliases": ["juarez", "bravos"]},
-        {"name": "Puebla FC", "aliases": ["puebla", "camoteros", "franja"]}
-      ]
-    },
-    "Argentine Primera Division": {
-      "country": "Argentina",
-      "clubs": [
-        {"name": "CA Boca Juniors", "aliases": ["boca", "boca juniors", "xeneizes"]},
-        {"name": "CA River Plate", "aliases": ["river", "river plate", "millonarios"]},
-        {"name": "CA Independiente", "aliases": ["independiente", "rojo", "diablos rojos"]},
-        {"name": "Racing Club", "aliases": ["racing", "academia"]},
-        {"name": "CA San Lorenzo", "aliases": ["san lorenzo", "ciclon", "cuervo"]},
-        {"name": "CA Huracan", "aliases": ["huracan", "globo", "quemeros"]},
-        {"name": "CA Velez Sarsfield", "aliases": ["velez", "velez sarsfield", "fortin"]},
-        {"name": "Estudiantes de La Plata", "aliases": ["estudiantes", "pincharratas"]},
-        {"name": "CA Lanus", "aliases": ["lanus", "granate"]},
-        {"name": "CA Rosario Central", "aliases": ["rosario central", "central", "canallas"]},
-        {"name": "Newell's Old Boys", "aliases": ["newells", "leprosos", "rojinegros"]},
-        {"name": "CA Talleres", "aliases": ["talleres", "albiazul", "matadores"]},
-        {"name": "Godoy Cruz", "aliases": ["godoy cruz", "tomba", "bodegueros"]},
-        {"name": "Club Atletico Belgrano", "aliases": ["belgrano", "piratas", "celeste"]},
-        {"name": "Argentinos Juniors", "aliases": ["argentinos", "bicho"]},
-        {"name": "CA Defensa y Justicia", "aliases": ["defensa", "halcones"]},
-        {"name": "CA Tigre", "aliases": ["tigre", "matadores de victoria"]},
-        {"name": "CA Platense", "aliases": ["platense", "calamar"]}
-      ]
-    },
-    "J1 League": {
-      "country": "Japan",
-      "clubs": [
-        {"name": "Vissel Kobe", "aliases": ["vissel", "kobe"]},
-        {"name": "Yokohama F. Marinos", "aliases": ["yokohama", "marinos", "tricolore"]},
-        {"name": "Kawasaki Frontale", "aliases": ["kawasaki", "frontale"]},
-        {"name": "Kashima Antlers", "aliases": ["kashima", "antlers"]},
-        {"name": "Urawa Red Diamonds", "aliases": ["urawa", "reds", "urawa reds"]},
-        {"name": "FC Tokyo", "aliases": ["fc tokyo", "tokyo"]},
-        {"name": "Sanfrecce Hiroshima", "aliases": ["sanfrecce", "hiroshima"]},
-        {"name": "Gamba Osaka", "aliases": ["gamba", "osaka"]},
-        {"name": "Cerezo Osaka", "aliases": ["cerezo", "cerezo osaka"]},
-        {"name": "Nagoya Grampus", "aliases": ["nagoya", "grampus"]},
-        {"name": "Kashiwa Reysol", "aliases": ["kashiwa", "reysol"]},
-        {"name": "Sagan Tosu", "aliases": ["sagan", "tosu"]},
-        {"name": "Avispa Fukuoka", "aliases": ["avispa", "fukuoka"]},
-        {"name": "Albirex Niigata", "aliases": ["albirex", "niigata"]},
-        {"name": "Consadole Sapporo", "aliases": ["consadole", "sapporo"]},
-        {"name": "Machida Zelvia", "aliases": ["machida", "zelvia"]},
-        {"name": "Tokyo Verdy", "aliases": ["verdy", "tokyo verdy"]},
-        {"name": "Jubilo Iwata", "aliases": ["jubilo", "iwata"]}
-      ]
-    },
-    "K League 1": {
-      "country": "South Korea",
-      "clubs": [
-        {"name": "Jeonbuk Hyundai Motors FC", "aliases": ["jeonbuk", "hyundai", "green warriors"]},
-        {"name": "Ulsan Hyundai FC", "aliases": ["ulsan", "horangi"]},
-        {"name": "FC Seoul", "aliases": ["fc seoul", "seoul"]},
-        {"name": "Suwon Samsung Bluewings", "aliases": ["suwon", "bluewings", "samsung"]},
-        {"name": "Pohang Steelers", "aliases": ["pohang", "steelers"]},
-        {"name": "Daegu FC", "aliases": ["daegu"]},
-        {"name": "Incheon United FC", "aliases": ["incheon", "incheon united"]},
-        {"name": "Jeju United FC", "aliases": ["jeju", "jeju united"]},
-        {"name": "Gangwon FC", "aliases": ["gangwon"]},
-        {"name": "Gwangju FC", "aliases": ["gwangju"]},
-        {"name": "Daejeon Citizen FC", "aliases": ["daejeon", "citizen"]}
-      ]
-    },
-    "Super Lig": {
-      "country": "Turkey",
-      "clubs": [
-        {"name": "Galatasaray SK", "aliases": ["galatasaray", "cimbom", "gs", "aslanlar"]},
-        {"name": "Fenerbahce SK", "aliases": ["fenerbahce", "fener", "fb", "sari kanarya"]},
-        {"name": "Besiktas JK", "aliases": ["besiktas", "bjk", "kara kartallar"]},
-        {"name": "Trabzonspor", "aliases": ["trabzon", "firtina", "bordo mavililer"]},
-        {"name": "Istanbul Basaksehir FK", "aliases": ["basaksehir", "ibfk"]},
-        {"name": "Adana Demirspor", "aliases": ["adana", "demirspor", "mavi şimșek"]},
-        {"name": "Alanyaspor", "aliases": ["alanya", "turuncu-yesil"]},
-        {"name": "Sivasspor", "aliases": ["sivas", "yigidolar"]},
-        {"name": "Antalyaspor", "aliases": ["antalya", "akrepler"]},
-        {"name": "Kayserispor", "aliases": ["kayseri"]},
-        {"name": "Kasimpasa SK", "aliases": ["kasimpasa"]},
-        {"name": "Konyaspor", "aliases": ["konya"]},
-        {"name": "Gaziantep FK", "aliases": ["gaziantep"]},
-        {"name": "Hatayspor", "aliases": ["hatay"]},
-        {"name": "Samsunspor", "aliases": ["samsun"]}
-      ]
-    },
-    "Scottish Premiership": {
-      "country": "Scotland",
-      "clubs": [
-        {"name": "Celtic FC", "aliases": ["celtic", "bhoys", "hoops"]},
-        {"name": "Rangers FC", "aliases": ["rangers", "gers", "teddy bears"]},
-        {"name": "Aberdeen FC", "aliases": ["aberdeen", "dons"]},
-        {"name": "Heart of Midlothian FC", "aliases": ["hearts", "jambos"]},
-        {"name": "Hibernian FC", "aliases": ["hibernian", "hibs"]},
-        {"name": "Dundee United FC", "aliases": ["dundee united", "tangerines"]},
-        {"name": "Kilmarnock FC", "aliases": ["kilmarnock", "killie"]},
-        {"name": "Motherwell FC", "aliases": ["motherwell", "well", "steelmen"]},
-        {"name": "Ross County FC", "aliases": ["ross county", "county", "staggies"]},
-        {"name": "St Johnstone FC", "aliases": ["st johnstone", "saints"]},
-        {"name": "St Mirren FC", "aliases": ["st mirren", "buddies"]},
-        {"name": "Livingston FC", "aliases": ["livingston", "livi"]}
-      ]
-    },
-    "Belgian Pro League": {
-      "country": "Belgium",
-      "clubs": [
-        {"name": "Club Brugge KV", "aliases": ["club brugge", "brugge", "blauw-zwart"]},
-        {"name": "RSC Anderlecht", "aliases": ["anderlecht", "rsca", "sporting"]},
-        {"name": "KRC Genk", "aliases": ["genk", "racing genk"]},
-        {"name": "Royal Antwerp FC", "aliases": ["antwerp", "rafc", "great old"]},
-        {"name": "Union Saint-Gilloise", "aliases": ["union", "union sg", "unionistes"]},
-        {"name": "AA Gent", "aliases": ["gent", "buffalo's"]},
-        {"name": "Standard Liege", "aliases": ["standard", "liege", "rouches"]},
-        {"name": "KV Mechelen", "aliases": ["mechelen", "malinois"]},
-        {"name": "Cercle Brugge", "aliases": ["cercle", "groen-zwart"]},
-        {"name": "OH Leuven", "aliases": ["leuven", "ohl"]},
-        {"name": "Westerlo", "aliases": ["westerlo"]},
-        {"name": "STVV", "aliases": ["sint truiden", "sint-truidense", "stvv"]},
-        {"name": "Charleroi", "aliases": ["sporting charleroi", "zebres"]}
-      ]
-    },
-    "Chinese Super League": {
-      "country": "China",
-      "clubs": [
-        {"name": "Shanghai Port FC", "aliases": ["shanghai port", "sipg"]},
-        {"name": "Shanghai Shenhua FC", "aliases": ["shanghai shenhua", "shenhua"]},
-        {"name": "Shandong Taishan FC", "aliases": ["shandong", "taishan", "luneng"]},
-        {"name": "Beijing Guoan FC", "aliases": ["beijing guoan", "guoan"]},
-        {"name": "Tianjin Jinmen Tiger FC", "aliases": ["tianjin", "jinmen tiger"]},
-        {"name": "Guangzhou FC", "aliases": ["guangzhou", "evergrande"]},
-        {"name": "Chengdu Rongcheng FC", "aliases": ["chengdu", "rongcheng"]},
-        {"name": "Wuhan Three Towns FC", "aliases": ["wuhan"]},
-        {"name": "Zhejiang FC", "aliases": ["zhejiang", "greentown"]}
-      ]
-    },
-    "Russian Premier Liga": {
-      "country": "Russia",
-      "clubs": [
-        {"name": "FC Zenit St. Petersburg", "aliases": ["zenit", "zenith", "saint petersburg"]},
-        {"name": "FC Spartak Moscow", "aliases": ["spartak", "spartak moscow", "narodnaya komanda"]},
-        {"name": "FC Lokomotiv Moscow", "aliases": ["lokomotiv", "loko"]},
-        {"name": "CSKA Moscow", "aliases": ["cska", "pfc cska", "koni"]},
-        {"name": "FC Dynamo Moscow", "aliases": ["dynamo moscow", "dynamo"]},
-        {"name": "FC Krasnodar", "aliases": ["krasnodar", "byki"]}
-      ]
-    },
-    "A-League": {
-      "country": "Australia",
-      "clubs": [
-        {"name": "Melbourne Victory", "aliases": ["victory", "melbourne victory"]},
-        {"name": "Melbourne City FC", "aliases": ["melbourne city", "city fc"]},
-        {"name": "Sydney FC", "aliases": ["sydney", "sky blues"]},
-        {"name": "Western Sydney Wanderers FC", "aliases": ["western sydney", "wanderers", "wsw"]},
-        {"name": "Brisbane Roar FC", "aliases": ["brisbane roar", "roar"]},
-        {"name": "Perth Glory FC", "aliases": ["perth glory", "glory"]},
-        {"name": "Adelaide United FC", "aliases": ["adelaide", "reds"]},
-        {"name": "Central Coast Mariners FC", "aliases": ["central coast", "mariners"]},
-        {"name": "Wellington Phoenix FC", "aliases": ["wellington", "phoenix", "nix"]},
-        {"name": "Macarthur FC", "aliases": ["macarthur", "bulls"]}
-      ]
-    },
-    "EFL Championship": {
-      "country": "England",
-      "clubs": [
-        {"name": "Leeds United FC", "aliases": ["leeds", "whites", "lufc"]},
-        {"name": "Burnley FC", "aliases": ["burnley", "clarets"]},
-        {"name": "Sheffield United FC", "aliases": ["sheffield united", "blades", "sufc"]},
-        {"name": "Sunderland AFC", "aliases": ["sunderland", "black cats", "safc"]},
-        {"name": "Blackburn Rovers FC", "aliases": ["blackburn", "rovers"]},
-        {"name": "Watford FC", "aliases": ["watford", "hornets"]},
-        {"name": "Middlesbrough FC", "aliases": ["middlesbrough", "boro", "mfc"]},
-        {"name": "West Bromwich Albion FC", "aliases": ["west brom", "baggies", "wba"]},
-        {"name": "Norwich City FC", "aliases": ["norwich", "canaries", "ncfc"]},
-        {"name": "Hull City FC", "aliases": ["hull", "tigers", "hcfc"]},
-        {"name": "Coventry City FC", "aliases": ["coventry", "sky blues"]},
-        {"name": "Bristol City FC", "aliases": ["bristol city", "robins", "bcfc"]},
-        {"name": "Millwall FC", "aliases": ["millwall", "lions"]},
-        {"name": "Stoke City FC", "aliases": ["stoke", "potters", "scfc"]},
-        {"name": "Swansea City AFC", "aliases": ["swansea", "swans", "jacks"]},
-        {"name": "Preston North End FC", "aliases": ["preston", "lilywhites", "pne"]},
-        {"name": "Queens Park Rangers FC", "aliases": ["qpr", "rangers", "hoops"]},
-        {"name": "Cardiff City FC", "aliases": ["cardiff", "bluebirds", "ccfc"]},
-        {"name": "Derby County FC", "aliases": ["derby", "rams", "dcfc"]},
-        {"name": "Sheffield Wednesday FC", "aliases": ["sheffield wednesday", "wednesday", "owls", "swfc"]},
-        {"name": "Plymouth Argyle FC", "aliases": ["plymouth", "pilgrims", "argyle"]},
-        {"name": "Oxford United FC", "aliases": ["oxford", "u's", "oufc"]},
-        {"name": "Luton Town FC", "aliases": ["luton", "hatters", "ltfc"]}
-      ]
+    "leagues": {
+        "Premier League": {
+            "country": "England",
+            "clubs": [
+                {
+                    "name": "Arsenal FC",
+                    "aliases": [
+                        "arsenal",
+                        "gunners",
+                        "afc"
+                    ]
+                },
+                {
+                    "name": "Aston Villa FC",
+                    "aliases": [
+                        "aston villa",
+                        "villa",
+                        "avfc"
+                    ]
+                },
+                {
+                    "name": "AFC Bournemouth",
+                    "aliases": [
+                        "bournemouth",
+                        "cherries"
+                    ]
+                },
+                {
+                    "name": "Brentford FC",
+                    "aliases": [
+                        "brentford",
+                        "bees"
+                    ]
+                },
+                {
+                    "name": "Brighton & Hove Albion FC",
+                    "aliases": [
+                        "brighton",
+                        "seagulls",
+                        "bhafc"
+                    ]
+                },
+                {
+                    "name": "Chelsea FC",
+                    "aliases": [
+                        "chelsea",
+                        "blues",
+                        "cfc"
+                    ]
+                },
+                {
+                    "name": "Crystal Palace FC",
+                    "aliases": [
+                        "crystal palace",
+                        "palace",
+                        "eagles",
+                        "cpfc"
+                    ]
+                },
+                {
+                    "name": "Everton FC",
+                    "aliases": [
+                        "everton",
+                        "toffees",
+                        "efc"
+                    ]
+                },
+                {
+                    "name": "Fulham FC",
+                    "aliases": [
+                        "fulham",
+                        "cottagers",
+                        "ffc"
+                    ]
+                },
+                {
+                    "name": "Ipswich Town FC",
+                    "aliases": [
+                        "ipswich",
+                        "tractor boys"
+                    ]
+                },
+                {
+                    "name": "Leicester City FC",
+                    "aliases": [
+                        "leicester",
+                        "foxes",
+                        "lcfc"
+                    ]
+                },
+                {
+                    "name": "Liverpool FC",
+                    "aliases": [
+                        "liverpool",
+                        "reds",
+                        "lfc"
+                    ]
+                },
+                {
+                    "name": "Manchester City FC",
+                    "aliases": [
+                        "manchester city",
+                        "man city",
+                        "city",
+                        "mcfc"
+                    ]
+                },
+                {
+                    "name": "Manchester United FC",
+                    "aliases": [
+                        "manchester united",
+                        "man united",
+                        "man u",
+                        "united",
+                        "mufc",
+                        "red devils"
+                    ]
+                },
+                {
+                    "name": "Newcastle United FC",
+                    "aliases": [
+                        "newcastle",
+                        "magpies",
+                        "nufc",
+                        "toon"
+                    ]
+                },
+                {
+                    "name": "Nottingham Forest FC",
+                    "aliases": [
+                        "nottingham forest",
+                        "forest",
+                        "nffc"
+                    ]
+                },
+                {
+                    "name": "Southampton FC",
+                    "aliases": [
+                        "southampton",
+                        "saints",
+                        "soton"
+                    ]
+                },
+                {
+                    "name": "Tottenham Hotspur FC",
+                    "aliases": [
+                        "tottenham",
+                        "spurs",
+                        "thfc"
+                    ]
+                },
+                {
+                    "name": "West Ham United FC",
+                    "aliases": [
+                        "west ham",
+                        "hammers",
+                        "whufc",
+                        "irons"
+                    ]
+                },
+                {
+                    "name": "Wolverhampton Wanderers FC",
+                    "aliases": [
+                        "wolves",
+                        "wolverhampton",
+                        "wwfc"
+                    ]
+                }
+            ]
+        },
+        "La Liga": {
+            "country": "Spain",
+            "clubs": [
+                {
+                    "name": "Athletic Club",
+                    "aliases": [
+                        "athletic bilbao",
+                        "bilbao",
+                        "athletic"
+                    ]
+                },
+                {
+                    "name": "Atletico Madrid",
+                    "aliases": [
+                        "atletico",
+                        "atleti",
+                        "colchoneros"
+                    ]
+                },
+                {
+                    "name": "CA Osasuna",
+                    "aliases": [
+                        "osasuna"
+                    ]
+                },
+                {
+                    "name": "Celta de Vigo",
+                    "aliases": [
+                        "celta",
+                        "celta vigo"
+                    ]
+                },
+                {
+                    "name": "Deportivo Alaves",
+                    "aliases": [
+                        "alaves"
+                    ]
+                },
+                {
+                    "name": "Espanyol",
+                    "aliases": [
+                        "rcd espanyol",
+                        "espanyol barcelona"
+                    ]
+                },
+                {
+                    "name": "FC Barcelona",
+                    "aliases": [
+                        "barcelona",
+                        "barca",
+                        "fcb",
+                        "blaugrana"
+                    ]
+                },
+                {
+                    "name": "Getafe CF",
+                    "aliases": [
+                        "getafe"
+                    ]
+                },
+                {
+                    "name": "Girona FC",
+                    "aliases": [
+                        "girona"
+                    ]
+                },
+                {
+                    "name": "CD Leganes",
+                    "aliases": [
+                        "leganes"
+                    ]
+                },
+                {
+                    "name": "RCD Mallorca",
+                    "aliases": [
+                        "mallorca"
+                    ]
+                },
+                {
+                    "name": "Rayo Vallecano",
+                    "aliases": [
+                        "rayo"
+                    ]
+                },
+                {
+                    "name": "Real Betis",
+                    "aliases": [
+                        "betis",
+                        "real betis balompie"
+                    ]
+                },
+                {
+                    "name": "Real Madrid CF",
+                    "aliases": [
+                        "real madrid",
+                        "madrid",
+                        "real",
+                        "los blancos",
+                        "merengues"
+                    ]
+                },
+                {
+                    "name": "Real Sociedad",
+                    "aliases": [
+                        "sociedad",
+                        "la real",
+                        "txuri-urdin"
+                    ]
+                },
+                {
+                    "name": "Real Valladolid",
+                    "aliases": [
+                        "valladolid"
+                    ]
+                },
+                {
+                    "name": "Sevilla FC",
+                    "aliases": [
+                        "sevilla",
+                        "sevillistas"
+                    ]
+                },
+                {
+                    "name": "UD Las Palmas",
+                    "aliases": [
+                        "las palmas"
+                    ]
+                },
+                {
+                    "name": "Valencia CF",
+                    "aliases": [
+                        "valencia",
+                        "los che"
+                    ]
+                },
+                {
+                    "name": "Villarreal CF",
+                    "aliases": [
+                        "villarreal",
+                        "yellow submarine",
+                        "submarino amarillo"
+                    ]
+                }
+            ]
+        },
+        "Serie A": {
+            "country": "Italy",
+            "clubs": [
+                {
+                    "name": "AC Milan",
+                    "aliases": [
+                        "milan",
+                        "rossoneri",
+                        "acm"
+                    ]
+                },
+                {
+                    "name": "AS Roma",
+                    "aliases": [
+                        "roma",
+                        "giallorossi",
+                        "lupi"
+                    ]
+                },
+                {
+                    "name": "Atalanta BC",
+                    "aliases": [
+                        "atalanta",
+                        "dea",
+                        "bergamo"
+                    ]
+                },
+                {
+                    "name": "Bologna FC 1909",
+                    "aliases": [
+                        "bologna",
+                        "rossoblù"
+                    ]
+                },
+                {
+                    "name": "Cagliari Calcio",
+                    "aliases": [
+                        "cagliari"
+                    ]
+                },
+                {
+                    "name": "Como 1907",
+                    "aliases": [
+                        "como"
+                    ]
+                },
+                {
+                    "name": "Empoli FC",
+                    "aliases": [
+                        "empoli"
+                    ]
+                },
+                {
+                    "name": "ACF Fiorentina",
+                    "aliases": [
+                        "fiorentina",
+                        "viola"
+                    ]
+                },
+                {
+                    "name": "Genoa CFC",
+                    "aliases": [
+                        "genoa",
+                        "grifone"
+                    ]
+                },
+                {
+                    "name": "Hellas Verona FC",
+                    "aliases": [
+                        "verona",
+                        "hellas"
+                    ]
+                },
+                {
+                    "name": "Inter Milan",
+                    "aliases": [
+                        "inter",
+                        "internazionale",
+                        "nerazzurri",
+                        "biscione"
+                    ]
+                },
+                {
+                    "name": "Juventus FC",
+                    "aliases": [
+                        "juventus",
+                        "juve",
+                        "vecchia signora",
+                        "bianconeri"
+                    ]
+                },
+                {
+                    "name": "SS Lazio",
+                    "aliases": [
+                        "lazio",
+                        "aquilotti",
+                        "biancocelesti"
+                    ]
+                },
+                {
+                    "name": "US Lecce",
+                    "aliases": [
+                        "lecce",
+                        "salentini"
+                    ]
+                },
+                {
+                    "name": "AC Monza",
+                    "aliases": [
+                        "monza"
+                    ]
+                },
+                {
+                    "name": "SSC Napoli",
+                    "aliases": [
+                        "napoli",
+                        "partenopei",
+                        "azzurri"
+                    ]
+                },
+                {
+                    "name": "Parma Calcio 1913",
+                    "aliases": [
+                        "parma",
+                        "crociati"
+                    ]
+                },
+                {
+                    "name": "Torino FC",
+                    "aliases": [
+                        "torino",
+                        "toro",
+                        "granata"
+                    ]
+                },
+                {
+                    "name": "Udinese Calcio",
+                    "aliases": [
+                        "udinese",
+                        "zebrette"
+                    ]
+                },
+                {
+                    "name": "Venezia FC",
+                    "aliases": [
+                        "venezia"
+                    ]
+                }
+            ]
+        },
+        "Bundesliga": {
+            "country": "Germany",
+            "clubs": [
+                {
+                    "name": "FC Augsburg",
+                    "aliases": [
+                        "augsburg",
+                        "fca"
+                    ]
+                },
+                {
+                    "name": "Bayer 04 Leverkusen",
+                    "aliases": [
+                        "leverkusen",
+                        "bayer",
+                        "werkself"
+                    ]
+                },
+                {
+                    "name": "Bayern Munich",
+                    "aliases": [
+                        "bayern",
+                        "bayern munchen",
+                        "fcb",
+                        "bavarians"
+                    ]
+                },
+                {
+                    "name": "VfL Bochum 1848",
+                    "aliases": [
+                        "bochum"
+                    ]
+                },
+                {
+                    "name": "Borussia Dortmund",
+                    "aliases": [
+                        "dortmund",
+                        "bvb",
+                        "die schwarzgelben"
+                    ]
+                },
+                {
+                    "name": "Borussia Monchengladbach",
+                    "aliases": [
+                        "gladbach",
+                        "monchengladbach",
+                        "bmg",
+                        "fohlen"
+                    ]
+                },
+                {
+                    "name": "Eintracht Frankfurt",
+                    "aliases": [
+                        "frankfurt",
+                        "sge",
+                        "eintracht"
+                    ]
+                },
+                {
+                    "name": "SC Freiburg",
+                    "aliases": [
+                        "freiburg",
+                        "breisgau-brasilianer"
+                    ]
+                },
+                {
+                    "name": "1. FC Heidenheim 1846",
+                    "aliases": [
+                        "heidenheim",
+                        "fch"
+                    ]
+                },
+                {
+                    "name": "TSG 1899 Hoffenheim",
+                    "aliases": [
+                        "hoffenheim",
+                        "tsg",
+                        "hoffe"
+                    ]
+                },
+                {
+                    "name": "Holstein Kiel",
+                    "aliases": [
+                        "kiel",
+                        "holstein"
+                    ]
+                },
+                {
+                    "name": "1. FSV Mainz 05",
+                    "aliases": [
+                        "mainz",
+                        "nullfunfer",
+                        "karnevalsverein"
+                    ]
+                },
+                {
+                    "name": "RB Leipzig",
+                    "aliases": [
+                        "leipzig",
+                        "rbl",
+                        "die roten bullen"
+                    ]
+                },
+                {
+                    "name": "FC St. Pauli",
+                    "aliases": [
+                        "st pauli",
+                        "kiezklub"
+                    ]
+                },
+                {
+                    "name": "VfB Stuttgart",
+                    "aliases": [
+                        "stuttgart",
+                        "vfb",
+                        "schwaben"
+                    ]
+                },
+                {
+                    "name": "1. FC Union Berlin",
+                    "aliases": [
+                        "union berlin",
+                        "union",
+                        "eisern union"
+                    ]
+                },
+                {
+                    "name": "VfL Wolfsburg",
+                    "aliases": [
+                        "wolfsburg",
+                        "wolves"
+                    ]
+                },
+                {
+                    "name": "SV Werder Bremen",
+                    "aliases": [
+                        "bremen",
+                        "werder"
+                    ]
+                }
+            ]
+        },
+        "Ligue 1": {
+            "country": "France",
+            "clubs": [
+                {
+                    "name": "AJ Auxerre",
+                    "aliases": [
+                        "auxerre",
+                        "aja"
+                    ]
+                },
+                {
+                    "name": "Angers SCO",
+                    "aliases": [
+                        "angers"
+                    ]
+                },
+                {
+                    "name": "Stade Brestois 29",
+                    "aliases": [
+                        "brest",
+                        "stade brestois"
+                    ]
+                },
+                {
+                    "name": "Le Havre AC",
+                    "aliases": [
+                        "le havre",
+                        "hac"
+                    ]
+                },
+                {
+                    "name": "RC Lens",
+                    "aliases": [
+                        "lens",
+                        "sang et or"
+                    ]
+                },
+                {
+                    "name": "LOSC Lille",
+                    "aliases": [
+                        "lille",
+                        "losc",
+                        "dogues"
+                    ]
+                },
+                {
+                    "name": "Olympique Lyonnais",
+                    "aliases": [
+                        "lyon",
+                        "ol",
+                        "gones"
+                    ]
+                },
+                {
+                    "name": "Olympique de Marseille",
+                    "aliases": [
+                        "marseille",
+                        "om",
+                        "phocéens"
+                    ]
+                },
+                {
+                    "name": "AS Monaco FC",
+                    "aliases": [
+                        "monaco",
+                        "asm"
+                    ]
+                },
+                {
+                    "name": "Montpellier HSC",
+                    "aliases": [
+                        "montpellier",
+                        "mhsc",
+                        "paillade"
+                    ]
+                },
+                {
+                    "name": "FC Nantes",
+                    "aliases": [
+                        "nantes",
+                        "canaris"
+                    ]
+                },
+                {
+                    "name": "OGC Nice",
+                    "aliases": [
+                        "nice",
+                        "aiglons"
+                    ]
+                },
+                {
+                    "name": "Paris Saint-Germain FC",
+                    "aliases": [
+                        "paris",
+                        "psg",
+                        "paris saint germain",
+                        "parisiens"
+                    ]
+                },
+                {
+                    "name": "Stade de Reims",
+                    "aliases": [
+                        "reims"
+                    ]
+                },
+                {
+                    "name": "Stade Rennais FC",
+                    "aliases": [
+                        "rennes",
+                        "stade rennais"
+                    ]
+                },
+                {
+                    "name": "AS Saint-Etienne",
+                    "aliases": [
+                        "saint etienne",
+                        "sainté",
+                        "asse",
+                        "verts"
+                    ]
+                },
+                {
+                    "name": "RC Strasbourg Alsace",
+                    "aliases": [
+                        "strasbourg",
+                        "racing"
+                    ]
+                },
+                {
+                    "name": "Toulouse FC",
+                    "aliases": [
+                        "toulouse",
+                        "téfécé",
+                        "tfc"
+                    ]
+                }
+            ]
+        },
+        "Brasileirao Serie A": {
+            "country": "Brazil",
+            "clubs": [
+                {
+                    "name": "Athletico Paranaense",
+                    "aliases": [
+                        "athletico",
+                        "athlético",
+                        "cap",
+                        "furacao"
+                    ]
+                },
+                {
+                    "name": "Atletico Mineiro",
+                    "aliases": [
+                        "atletico mg",
+                        "galo",
+                        "atletico-mg"
+                    ]
+                },
+                {
+                    "name": "Bahia EC",
+                    "aliases": [
+                        "bahia",
+                        "tricolor de aco"
+                    ]
+                },
+                {
+                    "name": "Botafogo FR",
+                    "aliases": [
+                        "botafogo",
+                        "fogo",
+                        "glorioso"
+                    ]
+                },
+                {
+                    "name": "Red Bull Bragantino",
+                    "aliases": [
+                        "bragantino",
+                        "rb bragantino",
+                        "massa bruta"
+                    ]
+                },
+                {
+                    "name": "Corinthians",
+                    "aliases": [
+                        "sport club corinthians paulista",
+                        "timao",
+                        "sccp"
+                    ]
+                },
+                {
+                    "name": "Criciuma EC",
+                    "aliases": [
+                        "criciuma",
+                        "tigre"
+                    ]
+                },
+                {
+                    "name": "Cruzeiro EC",
+                    "aliases": [
+                        "cruzeiro",
+                        "raposa",
+                        "cabuloso"
+                    ]
+                },
+                {
+                    "name": "Cuiaba EC",
+                    "aliases": [
+                        "cuiaba",
+                        "dourado"
+                    ]
+                },
+                {
+                    "name": "Flamengo",
+                    "aliases": [
+                        "clube de regatas do flamengo",
+                        "mengao",
+                        "fla",
+                        "rubro negro"
+                    ]
+                },
+                {
+                    "name": "Fluminense FC",
+                    "aliases": [
+                        "fluminense",
+                        "flu",
+                        "tricolor carioca"
+                    ]
+                },
+                {
+                    "name": "Fortaleza EC",
+                    "aliases": [
+                        "fortaleza",
+                        "leao do pici"
+                    ]
+                },
+                {
+                    "name": "Gremio FBPA",
+                    "aliases": [
+                        "gremio",
+                        "imortal tricolor",
+                        "gremio porto alegre"
+                    ]
+                },
+                {
+                    "name": "Internacional",
+                    "aliases": [
+                        "inter",
+                        "sc internacional",
+                        "colorado"
+                    ]
+                },
+                {
+                    "name": "Juventude",
+                    "aliases": [
+                        "ec juventude",
+                        "juve",
+                        "papo"
+                    ]
+                },
+                {
+                    "name": "Palmeiras",
+                    "aliases": [
+                        "se palmeiras",
+                        "verdao",
+                        "porco",
+                        "sep"
+                    ]
+                },
+                {
+                    "name": "Santos FC",
+                    "aliases": [
+                        "santos",
+                        "peixe",
+                        "alvinegro praiano"
+                    ]
+                },
+                {
+                    "name": "Sao Paulo FC",
+                    "aliases": [
+                        "sao paulo",
+                        "spfc",
+                        "tricolor paulista",
+                        "soberano"
+                    ]
+                },
+                {
+                    "name": "Vasco da Gama",
+                    "aliases": [
+                        "vasco",
+                        "gigante da colina",
+                        "vascao"
+                    ]
+                },
+                {
+                    "name": "Vitoria BA",
+                    "aliases": [
+                        "vitoria",
+                        "leao da barra"
+                    ]
+                }
+            ]
+        },
+        "Brasileirao Serie B": {
+            "country": "Brazil",
+            "clubs": [
+                {
+                    "name": "America Mineiro",
+                    "aliases": [
+                        "america mg",
+                        "coelho"
+                    ]
+                },
+                {
+                    "name": "Avai FC",
+                    "aliases": [
+                        "avai",
+                        "leao da ilha"
+                    ]
+                },
+                {
+                    "name": "Ceara SC",
+                    "aliases": [
+                        "ceara",
+                        "vozao"
+                    ]
+                },
+                {
+                    "name": "Chapecoense AF",
+                    "aliases": [
+                        "chapecoense",
+                        "chape",
+                        "verdao do oeste"
+                    ]
+                },
+                {
+                    "name": "Coritiba FC",
+                    "aliases": [
+                        "coritiba",
+                        "coxa"
+                    ]
+                },
+                {
+                    "name": "Goias EC",
+                    "aliases": [
+                        "goias",
+                        "verdao"
+                    ]
+                },
+                {
+                    "name": "Guarani FC",
+                    "aliases": [
+                        "guarani",
+                        "bugre"
+                    ]
+                },
+                {
+                    "name": "Ituano FC",
+                    "aliases": [
+                        "ituano",
+                        "galo de itu"
+                    ]
+                },
+                {
+                    "name": "Mirassol FC",
+                    "aliases": [
+                        "mirassol",
+                        "leao"
+                    ]
+                },
+                {
+                    "name": "Novorizontino",
+                    "aliases": [
+                        "novorizontino",
+                        "tigre"
+                    ]
+                },
+                {
+                    "name": "Operario PR",
+                    "aliases": [
+                        "operario",
+                        "fantasma"
+                    ]
+                },
+                {
+                    "name": "Paysandu SC",
+                    "aliases": [
+                        "paysandu",
+                        "papao"
+                    ]
+                },
+                {
+                    "name": "Ponte Preta",
+                    "aliases": [
+                        "ponte",
+                        "macaca"
+                    ]
+                },
+                {
+                    "name": "Sport Club do Recife",
+                    "aliases": [
+                        "sport",
+                        "leao",
+                        "sport recife"
+                    ]
+                },
+                {
+                    "name": "Vila Nova FC",
+                    "aliases": [
+                        "vila nova",
+                        "tigre"
+                    ]
+                }
+            ]
+        },
+        "MLS": {
+            "country": "USA",
+            "clubs": [
+                {
+                    "name": "Atlanta United FC",
+                    "aliases": [
+                        "atlanta united",
+                        "atlanta",
+                        "five stripes"
+                    ]
+                },
+                {
+                    "name": "Austin FC",
+                    "aliases": [
+                        "austin",
+                        "verde"
+                    ]
+                },
+                {
+                    "name": "Charlotte FC",
+                    "aliases": [
+                        "charlotte"
+                    ]
+                },
+                {
+                    "name": "Chicago Fire FC",
+                    "aliases": [
+                        "chicago fire",
+                        "fire"
+                    ]
+                },
+                {
+                    "name": "FC Cincinnati",
+                    "aliases": [
+                        "cincinnati",
+                        "fcc"
+                    ]
+                },
+                {
+                    "name": "Colorado Rapids",
+                    "aliases": [
+                        "colorado",
+                        "rapids"
+                    ]
+                },
+                {
+                    "name": "Columbus Crew",
+                    "aliases": [
+                        "columbus",
+                        "crew"
+                    ]
+                },
+                {
+                    "name": "D.C. United",
+                    "aliases": [
+                        "dc united",
+                        "dc"
+                    ]
+                },
+                {
+                    "name": "FC Dallas",
+                    "aliases": [
+                        "dallas",
+                        "fcd"
+                    ]
+                },
+                {
+                    "name": "Houston Dynamo FC",
+                    "aliases": [
+                        "houston",
+                        "dynamo"
+                    ]
+                },
+                {
+                    "name": "Sporting Kansas City",
+                    "aliases": [
+                        "kansas city",
+                        "sporting kc",
+                        "skc"
+                    ]
+                },
+                {
+                    "name": "LA Galaxy",
+                    "aliases": [
+                        "la galaxy",
+                        "galaxy",
+                        "lag"
+                    ]
+                },
+                {
+                    "name": "Los Angeles FC",
+                    "aliases": [
+                        "lafc",
+                        "los angeles fc"
+                    ]
+                },
+                {
+                    "name": "Inter Miami CF",
+                    "aliases": [
+                        "inter miami",
+                        "miami",
+                        "imcf"
+                    ]
+                },
+                {
+                    "name": "Minnesota United FC",
+                    "aliases": [
+                        "minnesota",
+                        "loons"
+                    ]
+                },
+                {
+                    "name": "CF Montreal",
+                    "aliases": [
+                        "montreal",
+                        "cfm"
+                    ]
+                },
+                {
+                    "name": "Nashville SC",
+                    "aliases": [
+                        "nashville",
+                        "nsc"
+                    ]
+                },
+                {
+                    "name": "New England Revolution",
+                    "aliases": [
+                        "new england",
+                        "revs",
+                        "revolution"
+                    ]
+                },
+                {
+                    "name": "New York City FC",
+                    "aliases": [
+                        "nycfc",
+                        "new york city"
+                    ]
+                },
+                {
+                    "name": "New York Red Bulls",
+                    "aliases": [
+                        "red bulls",
+                        "nyrb",
+                        "ny red bulls"
+                    ]
+                },
+                {
+                    "name": "Orlando City SC",
+                    "aliases": [
+                        "orlando",
+                        "lions"
+                    ]
+                },
+                {
+                    "name": "Philadelphia Union",
+                    "aliases": [
+                        "philadelphia",
+                        "union"
+                    ]
+                },
+                {
+                    "name": "Portland Timbers",
+                    "aliases": [
+                        "portland",
+                        "timbers"
+                    ]
+                },
+                {
+                    "name": "Real Salt Lake",
+                    "aliases": [
+                        "rsl",
+                        "salt lake"
+                    ]
+                },
+                {
+                    "name": "San Jose Earthquakes",
+                    "aliases": [
+                        "san jose",
+                        "quakes",
+                        "earthquakes"
+                    ]
+                },
+                {
+                    "name": "Seattle Sounders FC",
+                    "aliases": [
+                        "seattle",
+                        "sounders"
+                    ]
+                },
+                {
+                    "name": "St. Louis City SC",
+                    "aliases": [
+                        "st louis",
+                        "stl city"
+                    ]
+                },
+                {
+                    "name": "Toronto FC",
+                    "aliases": [
+                        "toronto",
+                        "tfc",
+                        "reds"
+                    ]
+                },
+                {
+                    "name": "Vancouver Whitecaps FC",
+                    "aliases": [
+                        "vancouver",
+                        "whitecaps"
+                    ]
+                }
+            ]
+        },
+        "Saudi Pro League": {
+            "country": "Saudi Arabia",
+            "clubs": [
+                {
+                    "name": "Al Ahli SFC",
+                    "aliases": [
+                        "al ahli",
+                        "ahli jeddah"
+                    ]
+                },
+                {
+                    "name": "Al Ettifaq FC",
+                    "aliases": [
+                        "al ettifaq",
+                        "ettifaq"
+                    ]
+                },
+                {
+                    "name": "Al Fateh SC",
+                    "aliases": [
+                        "al fateh",
+                        "fateh"
+                    ]
+                },
+                {
+                    "name": "Al Fayha FC",
+                    "aliases": [
+                        "al fayha",
+                        "fayha"
+                    ]
+                },
+                {
+                    "name": "Al Hilal SFC",
+                    "aliases": [
+                        "al hilal",
+                        "hilal",
+                        "zalzal"
+                    ]
+                },
+                {
+                    "name": "Al Ittihad FC",
+                    "aliases": [
+                        "al ittihad",
+                        "ittihad",
+                        "tigers"
+                    ]
+                },
+                {
+                    "name": "Al Khaleej FC",
+                    "aliases": [
+                        "al khaleej",
+                        "khaleej"
+                    ]
+                },
+                {
+                    "name": "Al Nassr FC",
+                    "aliases": [
+                        "al nassr",
+                        "nassr",
+                        "knights"
+                    ]
+                },
+                {
+                    "name": "Al Okhdood",
+                    "aliases": [
+                        "al okhdood",
+                        "okhdood"
+                    ]
+                },
+                {
+                    "name": "Al Orubah FC",
+                    "aliases": [
+                        "al orubah",
+                        "orubah"
+                    ]
+                },
+                {
+                    "name": "Al Qadsiah FC",
+                    "aliases": [
+                        "al qadsiah",
+                        "qadsiah"
+                    ]
+                },
+                {
+                    "name": "Al Raed FC",
+                    "aliases": [
+                        "al raed",
+                        "raed"
+                    ]
+                },
+                {
+                    "name": "Al Riyadh SC",
+                    "aliases": [
+                        "al riyadh",
+                        "riyadh"
+                    ]
+                },
+                {
+                    "name": "Al Shabab FC",
+                    "aliases": [
+                        "al shabab",
+                        "shabab"
+                    ]
+                },
+                {
+                    "name": "Al Taawoun FC",
+                    "aliases": [
+                        "al taawoun",
+                        "taawoun"
+                    ]
+                },
+                {
+                    "name": "Al Wehda FC",
+                    "aliases": [
+                        "al wehda",
+                        "wehda"
+                    ]
+                },
+                {
+                    "name": "Damac FC",
+                    "aliases": [
+                        "damac"
+                    ]
+                }
+            ]
+        },
+        "Eredivisie": {
+            "country": "Netherlands",
+            "clubs": [
+                {
+                    "name": "AFC Ajax",
+                    "aliases": [
+                        "ajax",
+                        "godenzonen"
+                    ]
+                },
+                {
+                    "name": "AZ Alkmaar",
+                    "aliases": [
+                        "az",
+                        "alkmaar"
+                    ]
+                },
+                {
+                    "name": "Feyenoord",
+                    "aliases": [
+                        "feyenoord rotterdam",
+                        "het legioen"
+                    ]
+                },
+                {
+                    "name": "PSV Eindhoven",
+                    "aliases": [
+                        "psv",
+                        "eindhoven",
+                        "boeren"
+                    ]
+                },
+                {
+                    "name": "FC Twente",
+                    "aliases": [
+                        "twente",
+                        "tukkers"
+                    ]
+                },
+                {
+                    "name": "FC Utrecht",
+                    "aliases": [
+                        "utrecht",
+                        "utreg"
+                    ]
+                },
+                {
+                    "name": "Fortuna Sittard",
+                    "aliases": [
+                        "fortuna"
+                    ]
+                },
+                {
+                    "name": "Go Ahead Eagles",
+                    "aliases": [
+                        "go ahead",
+                        "gae",
+                        "eagles"
+                    ]
+                },
+                {
+                    "name": "Heracles Almelo",
+                    "aliases": [
+                        "heracles",
+                        "heansen"
+                    ]
+                },
+                {
+                    "name": "NEC Nijmegen",
+                    "aliases": [
+                        "nec",
+                        "nijmegen"
+                    ]
+                },
+                {
+                    "name": "PEC Zwolle",
+                    "aliases": [
+                        "pec",
+                        "zwolle"
+                    ]
+                },
+                {
+                    "name": "RKC Waalwijk",
+                    "aliases": [
+                        "rkc",
+                        "waalwijk"
+                    ]
+                },
+                {
+                    "name": "SC Heerenveen",
+                    "aliases": [
+                        "heerenveen"
+                    ]
+                },
+                {
+                    "name": "Sparta Rotterdam",
+                    "aliases": [
+                        "sparta",
+                        "kasteelheren"
+                    ]
+                },
+                {
+                    "name": "Vitesse",
+                    "aliases": [
+                        "vitesse arnhem",
+                        "arnhem"
+                    ]
+                },
+                {
+                    "name": "Willem II",
+                    "aliases": [
+                        "willem",
+                        "tricolores"
+                    ]
+                }
+            ]
+        },
+        "Primeira Liga": {
+            "country": "Portugal",
+            "clubs": [
+                {
+                    "name": "SL Benfica",
+                    "aliases": [
+                        "benfica",
+                        "slb",
+                        "aguias",
+                        "encarnados"
+                    ]
+                },
+                {
+                    "name": "Sporting CP",
+                    "aliases": [
+                        "sporting",
+                        "sporting lisbon",
+                        "leoes"
+                    ]
+                },
+                {
+                    "name": "FC Porto",
+                    "aliases": [
+                        "porto",
+                        "fcp",
+                        "dragoes"
+                    ]
+                },
+                {
+                    "name": "SC Braga",
+                    "aliases": [
+                        "braga",
+                        "arsenalistas"
+                    ]
+                },
+                {
+                    "name": "Vitoria SC",
+                    "aliases": [
+                        "vitoria guimaraes",
+                        "guimaraes",
+                        "vimaranenses"
+                    ]
+                },
+                {
+                    "name": "Boavista FC",
+                    "aliases": [
+                        "boavista",
+                        "panteras"
+                    ]
+                },
+                {
+                    "name": "CD Santa Clara",
+                    "aliases": [
+                        "santa clara"
+                    ]
+                },
+                {
+                    "name": "Casa Pia AC",
+                    "aliases": [
+                        "casa pia"
+                    ]
+                },
+                {
+                    "name": "Estoril Praia",
+                    "aliases": [
+                        "estoril",
+                        "canarinhos"
+                    ]
+                },
+                {
+                    "name": "Rio Ave FC",
+                    "aliases": [
+                        "rio ave",
+                        "rioavistas"
+                    ]
+                },
+                {
+                    "name": "FC Arouca",
+                    "aliases": [
+                        "arouca"
+                    ]
+                },
+                {
+                    "name": "FC Famalicao",
+                    "aliases": [
+                        "famalicao"
+                    ]
+                },
+                {
+                    "name": "Gil Vicente FC",
+                    "aliases": [
+                        "gil vicente",
+                        "gilistas"
+                    ]
+                },
+                {
+                    "name": "GD Estrela Amadora",
+                    "aliases": [
+                        "estrela amadora",
+                        "tricolores"
+                    ]
+                },
+                {
+                    "name": "Moreirense FC",
+                    "aliases": [
+                        "moreirense",
+                        "cónegos"
+                    ]
+                },
+                {
+                    "name": "Nacional",
+                    "aliases": [
+                        "cd nacional",
+                        "alvinegros"
+                    ]
+                }
+            ]
+        },
+        "Liga MX": {
+            "country": "Mexico",
+            "clubs": [
+                {
+                    "name": "Club America",
+                    "aliases": [
+                        "america",
+                        "aguilas",
+                        "las aguilas"
+                    ]
+                },
+                {
+                    "name": "Guadalajara",
+                    "aliases": [
+                        "chivas",
+                        "chivas guadalajara",
+                        "rebano sagrado"
+                    ]
+                },
+                {
+                    "name": "Cruz Azul",
+                    "aliases": [
+                        "cruz azul",
+                        "la maquina",
+                        "cementeros"
+                    ]
+                },
+                {
+                    "name": "Pumas UNAM",
+                    "aliases": [
+                        "pumas",
+                        "unam",
+                        "universitarios"
+                    ]
+                },
+                {
+                    "name": "CF Monterrey",
+                    "aliases": [
+                        "monterrey",
+                        "rayados"
+                    ]
+                },
+                {
+                    "name": "UANL Tigres",
+                    "aliases": [
+                        "tigres",
+                        "tigres uanl",
+                        "felinos"
+                    ]
+                },
+                {
+                    "name": "Club Leon",
+                    "aliases": [
+                        "leon",
+                        "esmeraldas",
+                        "panzas verdes"
+                    ]
+                },
+                {
+                    "name": "Santos Laguna",
+                    "aliases": [
+                        "santos",
+                        "santos laguna",
+                        "guerreros"
+                    ]
+                },
+                {
+                    "name": "Atlas FC",
+                    "aliases": [
+                        "atlas",
+                        "rojinegros",
+                        "zorros"
+                    ]
+                },
+                {
+                    "name": "Toluca FC",
+                    "aliases": [
+                        "toluca",
+                        "diablos rojos"
+                    ]
+                },
+                {
+                    "name": "Club Pachuca",
+                    "aliases": [
+                        "pachuca",
+                        "tuzos"
+                    ]
+                },
+                {
+                    "name": "Necaxa",
+                    "aliases": [
+                        "necaxa",
+                        "rayos"
+                    ]
+                },
+                {
+                    "name": "Club Tijuana",
+                    "aliases": [
+                        "tijuana",
+                        "xolos",
+                        "xoloitzcuintles"
+                    ]
+                },
+                {
+                    "name": "Queretaro FC",
+                    "aliases": [
+                        "queretaro",
+                        "gallos blancos"
+                    ]
+                },
+                {
+                    "name": "Mazatlan FC",
+                    "aliases": [
+                        "mazatlan",
+                        "canoneros"
+                    ]
+                },
+                {
+                    "name": "FC Juarez",
+                    "aliases": [
+                        "juarez",
+                        "bravos"
+                    ]
+                },
+                {
+                    "name": "Puebla FC",
+                    "aliases": [
+                        "puebla",
+                        "camoteros",
+                        "franja"
+                    ]
+                }
+            ]
+        },
+        "Argentine Primera Division": {
+            "country": "Argentina",
+            "clubs": [
+                {
+                    "name": "CA Boca Juniors",
+                    "aliases": [
+                        "boca",
+                        "boca juniors",
+                        "xeneizes"
+                    ]
+                },
+                {
+                    "name": "CA River Plate",
+                    "aliases": [
+                        "river",
+                        "river plate",
+                        "millonarios"
+                    ]
+                },
+                {
+                    "name": "CA Independiente",
+                    "aliases": [
+                        "independiente",
+                        "rojo",
+                        "diablos rojos"
+                    ]
+                },
+                {
+                    "name": "Racing Club",
+                    "aliases": [
+                        "racing",
+                        "academia"
+                    ]
+                },
+                {
+                    "name": "CA San Lorenzo",
+                    "aliases": [
+                        "san lorenzo",
+                        "ciclon",
+                        "cuervo"
+                    ]
+                },
+                {
+                    "name": "CA Huracan",
+                    "aliases": [
+                        "huracan",
+                        "globo",
+                        "quemeros"
+                    ]
+                },
+                {
+                    "name": "CA Velez Sarsfield",
+                    "aliases": [
+                        "velez",
+                        "velez sarsfield",
+                        "fortin"
+                    ]
+                },
+                {
+                    "name": "Estudiantes de La Plata",
+                    "aliases": [
+                        "estudiantes",
+                        "pincharratas"
+                    ]
+                },
+                {
+                    "name": "CA Lanus",
+                    "aliases": [
+                        "lanus",
+                        "granate"
+                    ]
+                },
+                {
+                    "name": "CA Rosario Central",
+                    "aliases": [
+                        "rosario central",
+                        "central",
+                        "canallas"
+                    ]
+                },
+                {
+                    "name": "Newell's Old Boys",
+                    "aliases": [
+                        "newells",
+                        "leprosos",
+                        "rojinegros"
+                    ]
+                },
+                {
+                    "name": "CA Talleres",
+                    "aliases": [
+                        "talleres",
+                        "albiazul",
+                        "matadores"
+                    ]
+                },
+                {
+                    "name": "Godoy Cruz",
+                    "aliases": [
+                        "godoy cruz",
+                        "tomba",
+                        "bodegueros"
+                    ]
+                },
+                {
+                    "name": "Club Atletico Belgrano",
+                    "aliases": [
+                        "belgrano",
+                        "piratas",
+                        "celeste"
+                    ]
+                },
+                {
+                    "name": "Argentinos Juniors",
+                    "aliases": [
+                        "argentinos",
+                        "bicho"
+                    ]
+                },
+                {
+                    "name": "CA Defensa y Justicia",
+                    "aliases": [
+                        "defensa",
+                        "halcones"
+                    ]
+                },
+                {
+                    "name": "CA Tigre",
+                    "aliases": [
+                        "tigre",
+                        "matadores de victoria"
+                    ]
+                },
+                {
+                    "name": "CA Platense",
+                    "aliases": [
+                        "platense",
+                        "calamar"
+                    ]
+                }
+            ]
+        },
+        "J1 League": {
+            "country": "Japan",
+            "clubs": [
+                {
+                    "name": "Vissel Kobe",
+                    "aliases": [
+                        "vissel",
+                        "kobe"
+                    ]
+                },
+                {
+                    "name": "Yokohama F. Marinos",
+                    "aliases": [
+                        "yokohama",
+                        "marinos",
+                        "tricolore"
+                    ]
+                },
+                {
+                    "name": "Kawasaki Frontale",
+                    "aliases": [
+                        "kawasaki",
+                        "frontale"
+                    ]
+                },
+                {
+                    "name": "Kashima Antlers",
+                    "aliases": [
+                        "kashima",
+                        "antlers"
+                    ]
+                },
+                {
+                    "name": "Urawa Red Diamonds",
+                    "aliases": [
+                        "urawa",
+                        "reds",
+                        "urawa reds"
+                    ]
+                },
+                {
+                    "name": "FC Tokyo",
+                    "aliases": [
+                        "fc tokyo",
+                        "tokyo"
+                    ]
+                },
+                {
+                    "name": "Sanfrecce Hiroshima",
+                    "aliases": [
+                        "sanfrecce",
+                        "hiroshima"
+                    ]
+                },
+                {
+                    "name": "Gamba Osaka",
+                    "aliases": [
+                        "gamba",
+                        "osaka"
+                    ]
+                },
+                {
+                    "name": "Cerezo Osaka",
+                    "aliases": [
+                        "cerezo",
+                        "cerezo osaka"
+                    ]
+                },
+                {
+                    "name": "Nagoya Grampus",
+                    "aliases": [
+                        "nagoya",
+                        "grampus"
+                    ]
+                },
+                {
+                    "name": "Kashiwa Reysol",
+                    "aliases": [
+                        "kashiwa",
+                        "reysol"
+                    ]
+                },
+                {
+                    "name": "Sagan Tosu",
+                    "aliases": [
+                        "sagan",
+                        "tosu"
+                    ]
+                },
+                {
+                    "name": "Avispa Fukuoka",
+                    "aliases": [
+                        "avispa",
+                        "fukuoka"
+                    ]
+                },
+                {
+                    "name": "Albirex Niigata",
+                    "aliases": [
+                        "albirex",
+                        "niigata"
+                    ]
+                },
+                {
+                    "name": "Consadole Sapporo",
+                    "aliases": [
+                        "consadole",
+                        "sapporo"
+                    ]
+                },
+                {
+                    "name": "Machida Zelvia",
+                    "aliases": [
+                        "machida",
+                        "zelvia"
+                    ]
+                },
+                {
+                    "name": "Tokyo Verdy",
+                    "aliases": [
+                        "verdy",
+                        "tokyo verdy"
+                    ]
+                },
+                {
+                    "name": "Jubilo Iwata",
+                    "aliases": [
+                        "jubilo",
+                        "iwata"
+                    ]
+                }
+            ]
+        },
+        "K League 1": {
+            "country": "South Korea",
+            "clubs": [
+                {
+                    "name": "Jeonbuk Hyundai Motors FC",
+                    "aliases": [
+                        "jeonbuk",
+                        "hyundai",
+                        "green warriors"
+                    ]
+                },
+                {
+                    "name": "Ulsan Hyundai FC",
+                    "aliases": [
+                        "ulsan",
+                        "horangi"
+                    ]
+                },
+                {
+                    "name": "FC Seoul",
+                    "aliases": [
+                        "fc seoul",
+                        "seoul"
+                    ]
+                },
+                {
+                    "name": "Suwon Samsung Bluewings",
+                    "aliases": [
+                        "suwon",
+                        "bluewings",
+                        "samsung"
+                    ]
+                },
+                {
+                    "name": "Pohang Steelers",
+                    "aliases": [
+                        "pohang",
+                        "steelers"
+                    ]
+                },
+                {
+                    "name": "Daegu FC",
+                    "aliases": [
+                        "daegu"
+                    ]
+                },
+                {
+                    "name": "Incheon United FC",
+                    "aliases": [
+                        "incheon",
+                        "incheon united"
+                    ]
+                },
+                {
+                    "name": "Jeju United FC",
+                    "aliases": [
+                        "jeju",
+                        "jeju united"
+                    ]
+                },
+                {
+                    "name": "Gangwon FC",
+                    "aliases": [
+                        "gangwon"
+                    ]
+                },
+                {
+                    "name": "Gwangju FC",
+                    "aliases": [
+                        "gwangju"
+                    ]
+                },
+                {
+                    "name": "Daejeon Citizen FC",
+                    "aliases": [
+                        "daejeon",
+                        "citizen"
+                    ]
+                }
+            ]
+        },
+        "Super Lig": {
+            "country": "Turkey",
+            "clubs": [
+                {
+                    "name": "Galatasaray SK",
+                    "aliases": [
+                        "galatasaray",
+                        "cimbom",
+                        "gs",
+                        "aslanlar"
+                    ]
+                },
+                {
+                    "name": "Fenerbahce SK",
+                    "aliases": [
+                        "fenerbahce",
+                        "fener",
+                        "fb",
+                        "sari kanarya"
+                    ]
+                },
+                {
+                    "name": "Besiktas JK",
+                    "aliases": [
+                        "besiktas",
+                        "bjk",
+                        "kara kartallar"
+                    ]
+                },
+                {
+                    "name": "Trabzonspor",
+                    "aliases": [
+                        "trabzon",
+                        "firtina",
+                        "bordo mavililer"
+                    ]
+                },
+                {
+                    "name": "Istanbul Basaksehir FK",
+                    "aliases": [
+                        "basaksehir",
+                        "ibfk"
+                    ]
+                },
+                {
+                    "name": "Adana Demirspor",
+                    "aliases": [
+                        "adana",
+                        "demirspor",
+                        "mavi şimșek"
+                    ]
+                },
+                {
+                    "name": "Alanyaspor",
+                    "aliases": [
+                        "alanya",
+                        "turuncu-yesil"
+                    ]
+                },
+                {
+                    "name": "Sivasspor",
+                    "aliases": [
+                        "sivas",
+                        "yigidolar"
+                    ]
+                },
+                {
+                    "name": "Antalyaspor",
+                    "aliases": [
+                        "antalya",
+                        "akrepler"
+                    ]
+                },
+                {
+                    "name": "Kayserispor",
+                    "aliases": [
+                        "kayseri"
+                    ]
+                },
+                {
+                    "name": "Kasimpasa SK",
+                    "aliases": [
+                        "kasimpasa"
+                    ]
+                },
+                {
+                    "name": "Konyaspor",
+                    "aliases": [
+                        "konya"
+                    ]
+                },
+                {
+                    "name": "Gaziantep FK",
+                    "aliases": [
+                        "gaziantep"
+                    ]
+                },
+                {
+                    "name": "Hatayspor",
+                    "aliases": [
+                        "hatay"
+                    ]
+                },
+                {
+                    "name": "Samsunspor",
+                    "aliases": [
+                        "samsun"
+                    ]
+                }
+            ]
+        },
+        "Scottish Premiership": {
+            "country": "Scotland",
+            "clubs": [
+                {
+                    "name": "Celtic FC",
+                    "aliases": [
+                        "celtic",
+                        "bhoys",
+                        "hoops"
+                    ]
+                },
+                {
+                    "name": "Rangers FC",
+                    "aliases": [
+                        "rangers",
+                        "gers",
+                        "teddy bears"
+                    ]
+                },
+                {
+                    "name": "Aberdeen FC",
+                    "aliases": [
+                        "aberdeen",
+                        "dons"
+                    ]
+                },
+                {
+                    "name": "Heart of Midlothian FC",
+                    "aliases": [
+                        "hearts",
+                        "jambos"
+                    ]
+                },
+                {
+                    "name": "Hibernian FC",
+                    "aliases": [
+                        "hibernian",
+                        "hibs"
+                    ]
+                },
+                {
+                    "name": "Dundee United FC",
+                    "aliases": [
+                        "dundee united",
+                        "tangerines"
+                    ]
+                },
+                {
+                    "name": "Kilmarnock FC",
+                    "aliases": [
+                        "kilmarnock",
+                        "killie"
+                    ]
+                },
+                {
+                    "name": "Motherwell FC",
+                    "aliases": [
+                        "motherwell",
+                        "well",
+                        "steelmen"
+                    ]
+                },
+                {
+                    "name": "Ross County FC",
+                    "aliases": [
+                        "ross county",
+                        "county",
+                        "staggies"
+                    ]
+                },
+                {
+                    "name": "St Johnstone FC",
+                    "aliases": [
+                        "st johnstone",
+                        "saints"
+                    ]
+                },
+                {
+                    "name": "St Mirren FC",
+                    "aliases": [
+                        "st mirren",
+                        "buddies"
+                    ]
+                },
+                {
+                    "name": "Livingston FC",
+                    "aliases": [
+                        "livingston",
+                        "livi"
+                    ]
+                }
+            ]
+        },
+        "Belgian Pro League": {
+            "country": "Belgium",
+            "clubs": [
+                {
+                    "name": "Club Brugge KV",
+                    "aliases": [
+                        "club brugge",
+                        "brugge",
+                        "blauw-zwart"
+                    ]
+                },
+                {
+                    "name": "RSC Anderlecht",
+                    "aliases": [
+                        "anderlecht",
+                        "rsca",
+                        "sporting"
+                    ]
+                },
+                {
+                    "name": "KRC Genk",
+                    "aliases": [
+                        "genk",
+                        "racing genk"
+                    ]
+                },
+                {
+                    "name": "Royal Antwerp FC",
+                    "aliases": [
+                        "antwerp",
+                        "rafc",
+                        "great old"
+                    ]
+                },
+                {
+                    "name": "Union Saint-Gilloise",
+                    "aliases": [
+                        "union",
+                        "union sg",
+                        "unionistes"
+                    ]
+                },
+                {
+                    "name": "AA Gent",
+                    "aliases": [
+                        "gent",
+                        "buffalo's"
+                    ]
+                },
+                {
+                    "name": "Standard Liege",
+                    "aliases": [
+                        "standard",
+                        "liege",
+                        "rouches"
+                    ]
+                },
+                {
+                    "name": "KV Mechelen",
+                    "aliases": [
+                        "mechelen",
+                        "malinois"
+                    ]
+                },
+                {
+                    "name": "Cercle Brugge",
+                    "aliases": [
+                        "cercle",
+                        "groen-zwart"
+                    ]
+                },
+                {
+                    "name": "OH Leuven",
+                    "aliases": [
+                        "leuven",
+                        "ohl"
+                    ]
+                },
+                {
+                    "name": "Westerlo",
+                    "aliases": [
+                        "westerlo"
+                    ]
+                },
+                {
+                    "name": "STVV",
+                    "aliases": [
+                        "sint truiden",
+                        "sint-truidense",
+                        "stvv"
+                    ]
+                },
+                {
+                    "name": "Charleroi",
+                    "aliases": [
+                        "sporting charleroi",
+                        "zebres"
+                    ]
+                }
+            ]
+        },
+        "Chinese Super League": {
+            "country": "China",
+            "clubs": [
+                {
+                    "name": "Shanghai Port FC",
+                    "aliases": [
+                        "shanghai port",
+                        "sipg"
+                    ]
+                },
+                {
+                    "name": "Shanghai Shenhua FC",
+                    "aliases": [
+                        "shanghai shenhua",
+                        "shenhua"
+                    ]
+                },
+                {
+                    "name": "Shandong Taishan FC",
+                    "aliases": [
+                        "shandong",
+                        "taishan",
+                        "luneng"
+                    ]
+                },
+                {
+                    "name": "Beijing Guoan FC",
+                    "aliases": [
+                        "beijing guoan",
+                        "guoan"
+                    ]
+                },
+                {
+                    "name": "Tianjin Jinmen Tiger FC",
+                    "aliases": [
+                        "tianjin",
+                        "jinmen tiger"
+                    ]
+                },
+                {
+                    "name": "Guangzhou FC",
+                    "aliases": [
+                        "guangzhou",
+                        "evergrande"
+                    ]
+                },
+                {
+                    "name": "Chengdu Rongcheng FC",
+                    "aliases": [
+                        "chengdu",
+                        "rongcheng"
+                    ]
+                },
+                {
+                    "name": "Wuhan Three Towns FC",
+                    "aliases": [
+                        "wuhan"
+                    ]
+                },
+                {
+                    "name": "Zhejiang FC",
+                    "aliases": [
+                        "zhejiang",
+                        "greentown"
+                    ]
+                }
+            ]
+        },
+        "Russian Premier Liga": {
+            "country": "Russia",
+            "clubs": [
+                {
+                    "name": "FC Zenit St. Petersburg",
+                    "aliases": [
+                        "zenit",
+                        "zenith",
+                        "saint petersburg"
+                    ]
+                },
+                {
+                    "name": "FC Spartak Moscow",
+                    "aliases": [
+                        "spartak",
+                        "spartak moscow",
+                        "narodnaya komanda"
+                    ]
+                },
+                {
+                    "name": "FC Lokomotiv Moscow",
+                    "aliases": [
+                        "lokomotiv",
+                        "loko"
+                    ]
+                },
+                {
+                    "name": "CSKA Moscow",
+                    "aliases": [
+                        "cska",
+                        "pfc cska",
+                        "koni"
+                    ]
+                },
+                {
+                    "name": "FC Dynamo Moscow",
+                    "aliases": [
+                        "dynamo moscow",
+                        "dynamo"
+                    ]
+                },
+                {
+                    "name": "FC Krasnodar",
+                    "aliases": [
+                        "krasnodar",
+                        "byki"
+                    ]
+                }
+            ]
+        },
+        "A-League": {
+            "country": "Australia",
+            "clubs": [
+                {
+                    "name": "Melbourne Victory",
+                    "aliases": [
+                        "victory",
+                        "melbourne victory"
+                    ]
+                },
+                {
+                    "name": "Melbourne City FC",
+                    "aliases": [
+                        "melbourne city",
+                        "city fc"
+                    ]
+                },
+                {
+                    "name": "Sydney FC",
+                    "aliases": [
+                        "sydney",
+                        "sky blues"
+                    ]
+                },
+                {
+                    "name": "Western Sydney Wanderers FC",
+                    "aliases": [
+                        "western sydney",
+                        "wanderers",
+                        "wsw"
+                    ]
+                },
+                {
+                    "name": "Brisbane Roar FC",
+                    "aliases": [
+                        "brisbane roar",
+                        "roar"
+                    ]
+                },
+                {
+                    "name": "Perth Glory FC",
+                    "aliases": [
+                        "perth glory",
+                        "glory"
+                    ]
+                },
+                {
+                    "name": "Adelaide United FC",
+                    "aliases": [
+                        "adelaide",
+                        "reds"
+                    ]
+                },
+                {
+                    "name": "Central Coast Mariners FC",
+                    "aliases": [
+                        "central coast",
+                        "mariners"
+                    ]
+                },
+                {
+                    "name": "Wellington Phoenix FC",
+                    "aliases": [
+                        "wellington",
+                        "phoenix",
+                        "nix"
+                    ]
+                },
+                {
+                    "name": "Macarthur FC",
+                    "aliases": [
+                        "macarthur",
+                        "bulls"
+                    ]
+                }
+            ]
+        },
+        "EFL Championship": {
+            "country": "England",
+            "clubs": [
+                {
+                    "name": "Leeds United FC",
+                    "aliases": [
+                        "leeds",
+                        "whites",
+                        "lufc"
+                    ]
+                },
+                {
+                    "name": "Burnley FC",
+                    "aliases": [
+                        "burnley",
+                        "clarets"
+                    ]
+                },
+                {
+                    "name": "Sheffield United FC",
+                    "aliases": [
+                        "sheffield united",
+                        "blades",
+                        "sufc"
+                    ]
+                },
+                {
+                    "name": "Sunderland AFC",
+                    "aliases": [
+                        "sunderland",
+                        "black cats",
+                        "safc"
+                    ]
+                },
+                {
+                    "name": "Blackburn Rovers FC",
+                    "aliases": [
+                        "blackburn",
+                        "rovers"
+                    ]
+                },
+                {
+                    "name": "Watford FC",
+                    "aliases": [
+                        "watford",
+                        "hornets"
+                    ]
+                },
+                {
+                    "name": "Middlesbrough FC",
+                    "aliases": [
+                        "middlesbrough",
+                        "boro",
+                        "mfc"
+                    ]
+                },
+                {
+                    "name": "West Bromwich Albion FC",
+                    "aliases": [
+                        "west brom",
+                        "baggies",
+                        "wba"
+                    ]
+                },
+                {
+                    "name": "Norwich City FC",
+                    "aliases": [
+                        "norwich",
+                        "canaries",
+                        "ncfc"
+                    ]
+                },
+                {
+                    "name": "Hull City FC",
+                    "aliases": [
+                        "hull",
+                        "tigers",
+                        "hcfc"
+                    ]
+                },
+                {
+                    "name": "Coventry City FC",
+                    "aliases": [
+                        "coventry",
+                        "sky blues"
+                    ]
+                },
+                {
+                    "name": "Bristol City FC",
+                    "aliases": [
+                        "bristol city",
+                        "robins",
+                        "bcfc"
+                    ]
+                },
+                {
+                    "name": "Millwall FC",
+                    "aliases": [
+                        "millwall",
+                        "lions"
+                    ]
+                },
+                {
+                    "name": "Stoke City FC",
+                    "aliases": [
+                        "stoke",
+                        "potters",
+                        "scfc"
+                    ]
+                },
+                {
+                    "name": "Swansea City AFC",
+                    "aliases": [
+                        "swansea",
+                        "swans",
+                        "jacks"
+                    ]
+                },
+                {
+                    "name": "Preston North End FC",
+                    "aliases": [
+                        "preston",
+                        "lilywhites",
+                        "pne"
+                    ]
+                },
+                {
+                    "name": "Queens Park Rangers FC",
+                    "aliases": [
+                        "qpr",
+                        "rangers",
+                        "hoops"
+                    ]
+                },
+                {
+                    "name": "Cardiff City FC",
+                    "aliases": [
+                        "cardiff",
+                        "bluebirds",
+                        "ccfc"
+                    ]
+                },
+                {
+                    "name": "Derby County FC",
+                    "aliases": [
+                        "derby",
+                        "rams",
+                        "dcfc"
+                    ]
+                },
+                {
+                    "name": "Sheffield Wednesday FC",
+                    "aliases": [
+                        "sheffield wednesday",
+                        "wednesday",
+                        "owls",
+                        "swfc"
+                    ]
+                },
+                {
+                    "name": "Plymouth Argyle FC",
+                    "aliases": [
+                        "plymouth",
+                        "pilgrims",
+                        "argyle"
+                    ]
+                },
+                {
+                    "name": "Oxford United FC",
+                    "aliases": [
+                        "oxford",
+                        "u's",
+                        "oufc"
+                    ]
+                },
+                {
+                    "name": "Luton Town FC",
+                    "aliases": [
+                        "luton",
+                        "hatters",
+                        "ltfc"
+                    ]
+                }
+            ]
+        },
+        "Formula 1": {
+            "country": "International",
+            "clubs": [
+                {
+                    "name": "Red Bull Racing",
+                    "aliases": [
+                        "red bull",
+                        "oracle red bull racing",
+                        "rb",
+                        "rbr"
+                    ]
+                },
+                {
+                    "name": "Mercedes-AMG",
+                    "aliases": [
+                        "mercedes",
+                        "mercedes amg",
+                        "mercedes f1",
+                        "petronas"
+                    ]
+                },
+                {
+                    "name": "Scuderia Ferrari",
+                    "aliases": [
+                        "ferrari",
+                        "scuderia",
+                        "sf"
+                    ]
+                },
+                {
+                    "name": "McLaren",
+                    "aliases": [
+                        "mclaren",
+                        "mclaren f1"
+                    ]
+                },
+                {
+                    "name": "Aston Martin F1",
+                    "aliases": [
+                        "aston martin",
+                        "amr"
+                    ]
+                },
+                {
+                    "name": "Alpine F1",
+                    "aliases": [
+                        "alpine",
+                        "alpine f1 team"
+                    ]
+                },
+                {
+                    "name": "Williams Racing",
+                    "aliases": [
+                        "williams"
+                    ]
+                },
+                {
+                    "name": "Haas F1 Team",
+                    "aliases": [
+                        "haas",
+                        "haas f1"
+                    ]
+                },
+                {
+                    "name": "Kick Sauber",
+                    "aliases": [
+                        "sauber",
+                        "kick sauber",
+                        "stake f1"
+                    ]
+                },
+                {
+                    "name": "Racing Bulls",
+                    "aliases": [
+                        "rb",
+                        "visa cash app rb",
+                        "racing bulls",
+                        "alphatauri",
+                        "toro rosso",
+                        "alpha tauri"
+                    ]
+                }
+            ]
+        },
+        "NFL": {
+            "country": "USA",
+            "clubs": [
+                {
+                    "name": "Kansas City Chiefs",
+                    "aliases": [
+                        "chiefs",
+                        "kc chiefs",
+                        "kansas city"
+                    ]
+                },
+                {
+                    "name": "San Francisco 49ers",
+                    "aliases": [
+                        "49ers",
+                        "niners",
+                        "sf 49ers"
+                    ]
+                },
+                {
+                    "name": "Philadelphia Eagles",
+                    "aliases": [
+                        "eagles",
+                        "philly"
+                    ]
+                },
+                {
+                    "name": "Dallas Cowboys",
+                    "aliases": [
+                        "cowboys"
+                    ]
+                },
+                {
+                    "name": "Baltimore Ravens",
+                    "aliases": [
+                        "ravens"
+                    ]
+                },
+                {
+                    "name": "Detroit Lions",
+                    "aliases": [
+                        "lions"
+                    ]
+                },
+                {
+                    "name": "Buffalo Bills",
+                    "aliases": [
+                        "bills"
+                    ]
+                },
+                {
+                    "name": "Miami Dolphins",
+                    "aliases": [
+                        "dolphins"
+                    ]
+                },
+                {
+                    "name": "Cleveland Browns",
+                    "aliases": [
+                        "browns"
+                    ]
+                },
+                {
+                    "name": "Houston Texans",
+                    "aliases": [
+                        "texans"
+                    ]
+                },
+                {
+                    "name": "Green Bay Packers",
+                    "aliases": [
+                        "packers"
+                    ]
+                },
+                {
+                    "name": "Los Angeles Rams",
+                    "aliases": [
+                        "rams",
+                        "la rams"
+                    ]
+                },
+                {
+                    "name": "Pittsburgh Steelers",
+                    "aliases": [
+                        "steelers"
+                    ]
+                },
+                {
+                    "name": "Tampa Bay Buccaneers",
+                    "aliases": [
+                        "buccaneers",
+                        "bucs"
+                    ]
+                },
+                {
+                    "name": "Seattle Seahawks",
+                    "aliases": [
+                        "seahawks"
+                    ]
+                },
+                {
+                    "name": "New Orleans Saints",
+                    "aliases": [
+                        "saints"
+                    ]
+                },
+                {
+                    "name": "Cincinnati Bengals",
+                    "aliases": [
+                        "bengals"
+                    ]
+                },
+                {
+                    "name": "Jacksonville Jaguars",
+                    "aliases": [
+                        "jaguars",
+                        "jags"
+                    ]
+                },
+                {
+                    "name": "Indianapolis Colts",
+                    "aliases": [
+                        "colts"
+                    ]
+                },
+                {
+                    "name": "Las Vegas Raiders",
+                    "aliases": [
+                        "raiders",
+                        "lv raiders"
+                    ]
+                },
+                {
+                    "name": "Denver Broncos",
+                    "aliases": [
+                        "broncos"
+                    ]
+                },
+                {
+                    "name": "New York Jets",
+                    "aliases": [
+                        "jets",
+                        "ny jets"
+                    ]
+                },
+                {
+                    "name": "Atlanta Falcons",
+                    "aliases": [
+                        "falcons"
+                    ]
+                },
+                {
+                    "name": "Minnesota Vikings",
+                    "aliases": [
+                        "vikings"
+                    ]
+                },
+                {
+                    "name": "Chicago Bears",
+                    "aliases": [
+                        "bears"
+                    ]
+                },
+                {
+                    "name": "New York Giants",
+                    "aliases": [
+                        "giants",
+                        "ny giants"
+                    ]
+                },
+                {
+                    "name": "Tennessee Titans",
+                    "aliases": [
+                        "titans"
+                    ]
+                },
+                {
+                    "name": "Washington Commanders",
+                    "aliases": [
+                        "commanders",
+                        "washington"
+                    ]
+                },
+                {
+                    "name": "Arizona Cardinals",
+                    "aliases": [
+                        "cardinals"
+                    ]
+                },
+                {
+                    "name": "Los Angeles Chargers",
+                    "aliases": [
+                        "chargers",
+                        "la chargers"
+                    ]
+                },
+                {
+                    "name": "Carolina Panthers",
+                    "aliases": [
+                        "panthers"
+                    ]
+                },
+                {
+                    "name": "New England Patriots",
+                    "aliases": [
+                        "patriots",
+                        "pats"
+                    ]
+                }
+            ]
+        }
     }
-  }
 }

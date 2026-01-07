@@ -423,7 +423,7 @@ class YupooDownloaderGUI(ctk.CTk):
         """Abre o diálogo para organizar fotos de futebol"""
         dialog = ctk.CTkToplevel(self)
         dialog.title("Organizar Fotos de Futebol")
-        dialog.geometry("600x450")
+        dialog.geometry("600x650")
         dialog.transient(self)
         dialog.grab_set()
         
@@ -460,6 +460,12 @@ class YupooDownloaderGUI(ctk.CTk):
         ctk.CTkButton(dest_frame, text="Selecionar", width=80,
                       command=lambda: dest_var.set(filedialog.askdirectory(title="Selecione a pasta de destino"))).pack(side="left")
         
+        # OpenAI Key
+        ctk.CTkLabel(folders_frame, text="OpenAI API Key (Opcional, para melhorar acerto):").pack(anchor="w", padx=10, pady=(10, 0))
+        openai_key_var = tk.StringVar(value=self.api_key_entry.get()) # Tentar pegar da tela principal
+        key_entry = ctk.CTkEntry(folders_frame, textvariable=openai_key_var, width=400, show="*")
+        key_entry.pack(anchor="w", padx=10, pady=5)
+
         # Log de progresso
         log_frame = ctk.CTkFrame(dialog)
         log_frame.pack(fill="both", expand=True, padx=20, pady=10)
@@ -475,29 +481,38 @@ class YupooDownloaderGUI(ctk.CTk):
         def run_organizer():
             source = source_var.get()
             dest = dest_var.get()
+            api_key = openai_key_var.get().strip()
             
             if not source or not dest:
                 log_to_dialog("Por favor, selecione ambas as pastas!", "ERROR")
                 return
             
-            log_to_dialog(f"Iniciando organização...")
-            log_to_dialog(f"Origem: {source}")
-            log_to_dialog(f"Destino: {dest}")
+            organize_btn.configure(state="disabled", text="Organizando...")
             
-            try:
-                organizer = PhotoOrganizer(log_callback=log_to_dialog)
-                stats = organizer.organize_folder(source, dest)
-                log_to_dialog(f"\n=== CONCLUÍDO ===", "SUCCESS")
-                log_to_dialog(f"Arquivos processados: {stats['processed']}", "SUCCESS")
-                log_to_dialog(f"Arquivos movidos: {stats['moved']}", "SUCCESS")
-            except Exception as e:
-                log_to_dialog(f"Erro: {e}", "ERROR")
+            def _organize_thread():
+                log_to_dialog(f"Iniciando organização...")
+                log_to_dialog(f"Origem: {source}")
+                log_to_dialog(f"Destino: {dest}")
+                
+                try:
+                    organizer = PhotoOrganizer(log_callback=log_to_dialog, openai_api_key=api_key)
+                    stats = organizer.organize_folder(source, dest)
+                    log_to_dialog(f"\n=== CONCLUÍDO ===", "SUCCESS")
+                    log_to_dialog(f"Arquivos processados: {stats['processed']}", "SUCCESS")
+                    log_to_dialog(f"Arquivos movidos: {stats['moved']}", "SUCCESS")
+                except Exception as e:
+                    log_to_dialog(f"Erro: {e}", "ERROR")
+                finally:
+                    organize_btn.configure(state="normal", text="Organizar")
+
+            threading.Thread(target=_organize_thread, daemon=True).start()
         
         # Botões de ação
         action_frame = ctk.CTkFrame(dialog)
         action_frame.pack(fill="x", padx=20, pady=10)
         
-        ctk.CTkButton(action_frame, text="Organizar", command=run_organizer, fg_color="#2E7D32", hover_color="#1B5E20").pack(side="left", padx=10)
+        organize_btn = ctk.CTkButton(action_frame, text="Organizar", command=run_organizer, fg_color="#2E7D32", hover_color="#1B5E20")
+        organize_btn.pack(side="left", padx=10)
         ctk.CTkButton(action_frame, text="Fechar", command=dialog.destroy, fg_color="gray").pack(side="right", padx=10)
 
 if __name__ == "__main__":

@@ -1335,10 +1335,9 @@ class YupooAdvancedDownloader:
                             album_title = link.find_element(By.CSS_SELECTOR, ".album__title").text
                         except: pass
                     
-                    # Limpar nome para arquivo
-                    if album_title:
-                        album_title = re.sub(r'[<>:"/\\|?*]', '_', album_title).strip()
-                    else:
+                    # NÃO sanitizar aqui! Manter o título original para preservar temporada
+                    # A sanitização será feita apenas quando necessário para operações de arquivo
+                    if not album_title:
                         album_title = "Album_Sem_Nome"
                     
                     # Tentar encontrar miniatura de capa
@@ -1409,7 +1408,31 @@ class YupooAdvancedDownloader:
                 driver = self.create_driver()
                 driver.get(album_url)
                 
-                # No álbum individual, scroll rápido basta para achar a capa (geralmente no topo)
+                # NOVO: Tentar extrair temporada diretamente da página do álbum
+                # Mantemos duas versões: original (para extração de temporada) e sanitizada (para nome de arquivo)
+                actual_album_title = album_name_preset
+                try:
+                    # Buscar o título completo na página do álbum
+                    title_element = driver.find_element(By.CSS_SELECTOR, ".showalbumheader__gallerytitle span[data-name]")
+                    page_title = title_element.get_attribute("data-name")
+                    if page_title:
+                        actual_album_title = page_title
+                        self.log(f"[DEBUG] Título da página do álbum: '{page_title}'", "DEBUG")
+                except:
+                    pass
+                
+                # Se ainda não temos título, usar o preset ou gerar um
+                if not actual_album_title:
+                    actual_album_title = album_name_preset or f"Album_{album_index:03d}"
+                
+                # Limpar caracteres inválidos do título APENAS para operações de arquivo
+                album_name = re.sub(r'[<>:"/\\|?*]', '_', actual_album_title).strip()
+                
+                # IMPORTANTE: Usar o título ORIGINAL (não sanitizado) para classificação
+                # Isso garante que a temporada seja extraída corretamente
+                self.log(f"[DEBUG] Título original para classificação: '{actual_album_title}'", "DEBUG")
+                self.log(f"[DEBUG] Nome sanitizado para arquivo: '{album_name}'", "DEBUG")
+                
                 self.scroll_to_load_all(driver, duration=2)
                 
                 elements_with_data_id = driver.find_elements(By.XPATH, "//div[@data-id]")
@@ -1432,7 +1455,6 @@ class YupooAdvancedDownloader:
                         target_data_id = elements_with_data_id[0].get_attribute('data-id')
                     else: continue
 
-                # Navegar para a página da imagem
                 url_parsed = urlparse.urlparse(album_url)
                 subdomain = url_parsed.netloc.split('.')[0]
                 uid_match = re.search(r'uid=(\d+)', album_url)
@@ -1447,9 +1469,7 @@ class YupooAdvancedDownloader:
                 )
                 screenshot = img_element.screenshot_as_png
                 
-                # Usar nome pré-definido se disponível
-                album_name = album_name_preset or f"Album_{album_index:03d}"
-
+                # Salvar arquivo temporário com nome original
                 filename = f"{album_name}_CAPA_HQ.png"
                 filepath = os.path.join(output_folder, filename)
                 with open(filepath, 'wb') as f: f.write(screenshot)
@@ -1458,15 +1478,26 @@ class YupooAdvancedDownloader:
                 # --- ORGANIZAÇÃO AO VIVO ---
                 if self.organizer:
                     try:
-                        clean_name = re.sub(r'(_CAPA_HQ|hq|high quality)$', '', album_name, flags=re.IGNORECASE).strip()
-                        classification = self.organizer.classify_file(clean_name + ".png")
+                        # CRÍTICO: Usar o título ORIGINAL (não sanitizado) para classificação
+                        # Isso garante que a temporada seja extraída corretamente do texto original
+                        classification = self.organizer.classify_file(actual_album_title + ".png")
+                        
+                        # Debug: verificar se temporada foi extraída
+                        if classification['season']:
+                            self.log(f"[DEBUG] Temporada extraída: {classification['season']} de '{album_name}'", "DEBUG")
+                        else:
+                            self.log(f"[DEBUG] Nenhuma temporada encontrada em '{album_name}'", "DEBUG")
+                        
+                        # Local de destino absoluto
+                        abs_output_folder = os.path.abspath(output_folder)
                         
                         if classification['team_name']:
-                            # Local de destino absoluto
-                            abs_output_folder = os.path.abspath(output_folder)
-                            root_output = os.path.dirname(abs_output_folder)
-                            target_dir = os.path.join(root_output, classification['target_folder'])
+                            if classification['target_folder']:
+                                target_dir = os.path.join(abs_output_folder, classification['target_folder'])
+                            else:
+                                target_dir = abs_output_folder
                             
+                            # SEMPRE usar o target_filename da classificação
                             final_filename = os.path.splitext(classification['target_filename'])[0] + ".png"
                             target_path = os.path.join(target_dir, final_filename)
                             target_path = self.organizer._get_unique_path(target_path)
@@ -1478,14 +1509,34 @@ class YupooAdvancedDownloader:
                                 shutil.move(filepath, target_path)
                                 self.log(f"[ORGANIZADO] {classification['team_name']} -> {os.path.abspath(target_path)}", "SUCCESS")
                             else:
-                                self.log(f"Aviso: Arquivo fonte não encontrado para mover: {filepath}", "WARNING")
+                                self.log(f"Aviso: Arquivo fonte não encontrado: {filepath}", "WARNING")
                         else:
-                            self.log(f"[INFO] Time não identificado para: {clean_name}", "DEBUG")
+                            if classification['target_folder']:
+                                target_dir = os.path.join(abs_output_folder, classification['target_folder'])
+                            else:
+                                target_dir = abs_output_folder
+                            
+                            final_filename = os.path.splitext(classification['target_filename'])[0] + ".png"
+                            target_path = os.path.join(target_dir, final_filename)
+                            target_path = self.organizer._get_unique_path(target_path)
+                            
+                            os.makedirs(target_dir, exist_ok=True)
+                            
+                            import shutil
+                            if os.path.exists(filepath):
+                                shutil.move(filepath, target_path)
+                                self.log(f"[ORGANIZADO] (sem time) -> {os.path.abspath(target_path)}", "INFO")
+                            else:
+                                self.log(f"Aviso: Arquivo fonte não encontrado: {filepath}", "WARNING")
+                                
                     except Exception as org_err:
-                        self.log(f"Erro na organização ao vivo: {org_err}", "DEBUG")
+                        self.log(f"Erro na organização ao vivo: {org_err}", "ERROR")
+                        import traceback
+                        self.log(traceback.format_exc(), "ERROR")
                 # ---------------------------
                 
                 return True
+                
             except Exception as e:
                 self.log(f"Erro no download da capa (tentativa {attempt+1}): {e}", "WARNING")
             finally:
