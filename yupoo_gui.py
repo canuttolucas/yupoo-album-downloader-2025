@@ -10,6 +10,7 @@ from yupoo_gui_downloader import YupooGUIDownloader
 from yupoo_advanced_downloader import YupooAdvancedDownloader
 from yupoo_simple_cover_downloader import YupooSimpleCoverDownloader
 from photo_organizer import PhotoOrganizer
+from remover import PhotoCleaner
 from packaging import version
 
 # Set appearance mode and default color theme
@@ -68,6 +69,10 @@ class YupooDownloaderGUI(ctk.CTk):
         # Botão Organizar Fotos
         self.organize_button = ctk.CTkButton(self.sidebar_frame, text="Organizar Fotos", command=self.open_organize_dialog, fg_color="#2E7D32", hover_color="#1B5E20")
         self.organize_button.grid(row=1, column=0, padx=20, pady=(10, 5))
+        
+        # Botão Limpar Arquivos
+        self.cleanup_button = ctk.CTkButton(self.sidebar_frame, text="Limpar Arquivos Antigos", command=self.open_cleanup_dialog, fg_color="#C62828", hover_color="#B71C1C")
+        self.cleanup_button.grid(row=2, column=0, padx=20, pady=(5, 5))
         
         self.label_mode = ctk.CTkLabel(self.sidebar_frame, text="Tema:", anchor="w")
         self.label_mode.grid(row=5, column=0, padx=20, pady=(10, 0))
@@ -515,6 +520,95 @@ class YupooDownloaderGUI(ctk.CTk):
         organize_btn.pack(side="left", padx=10)
         ctk.CTkButton(action_frame, text="Fechar", command=dialog.destroy, fg_color="gray").pack(side="right", padx=10)
 
+    def open_cleanup_dialog(self):
+        """Abre o diálogo para limpar arquivos antigos baseados em palavras-chave"""
+        dialog = ctk.CTkToplevel(self)
+        dialog.title("Limpar Arquivos Antigos")
+        dialog.geometry("600x650")
+        dialog.transient(self)
+        dialog.grab_set()
+        
+        # Variáveis
+        root_path_var = tk.StringVar(value=self.output_dir_entry.get())
+        keywords_var = tk.StringVar(value="20-21; 21-22; 22-23")
+        exclude_var = tk.StringVar(value="RETRO; ANTIGAS (TALVEZ NÃO TENHA ESTOQUE)")
+        
+        # Título
+        title_label = ctk.CTkLabel(dialog, text="Limpeza de Arquivos Antigos", font=ctk.CTkFont(size=18, weight="bold"))
+        title_label.pack(pady=(20, 10))
+        
+        desc_label = ctk.CTkLabel(dialog, text="Move arquivos com termos específicos para uma pasta de 'ANTIGAS'", font=ctk.CTkFont(size=12))
+        desc_label.pack(pady=(0, 20))
+        
+        # Frame de seleção
+        input_frame = ctk.CTkFrame(dialog)
+        input_frame.pack(fill="x", padx=20, pady=10)
+        
+        # Pasta Raiz
+        ctk.CTkLabel(input_frame, text="Pasta Raiz para Varredura:").pack(anchor="w", padx=10, pady=(10, 0))
+        path_frame = ctk.CTkFrame(input_frame)
+        path_frame.pack(fill="x", padx=10, pady=5)
+        path_entry = ctk.CTkEntry(path_frame, textvariable=root_path_var, width=400)
+        path_entry.pack(side="left", padx=(0, 10))
+        ctk.CTkButton(path_frame, text="Selecionar", width=80, 
+                      command=lambda: root_path_var.set(filedialog.askdirectory(title="Selecione a pasta raiz"))).pack(side="left")
+        
+        # Palavras-chave
+        ctk.CTkLabel(input_frame, text="Palavras-chave (separadas por ;):").pack(anchor="w", padx=10, pady=(10, 0))
+        kw_entry = ctk.CTkEntry(input_frame, textvariable=keywords_var, width=490)
+        kw_entry.pack(anchor="w", padx=10, pady=5)
+        
+        # Pastas Excluídas
+        ctk.CTkLabel(input_frame, text="Nomes de pastas para NÃO entrar (separadas por ;):").pack(anchor="w", padx=10, pady=(10, 0))
+        excl_entry = ctk.CTkEntry(input_frame, textvariable=exclude_var, width=490)
+        excl_entry.pack(anchor="w", padx=10, pady=5)
+
+        # Log de progresso
+        log_frame = ctk.CTkFrame(dialog)
+        log_frame.pack(fill="both", expand=True, padx=20, pady=10)
+        ctk.CTkLabel(log_frame, text="Progresso:").pack(anchor="w", padx=10, pady=(10, 0))
+        log_text = ctk.CTkTextbox(log_frame, height=150)
+        log_text.pack(fill="both", expand=True, padx=10, pady=10)
+        
+        def log_to_dialog(message, level="INFO"):
+            log_text.insert("end", f"[{level}] {message}\n")
+            log_text.see("end")
+            dialog.update_idletasks()
+        
+        def run_cleanup():
+            root_path = root_path_var.get()
+            kws = keywords_var.get()
+            excl = exclude_var.get()
+            
+            if not root_path or not kws:
+                log_to_dialog("Por favor, informe a pasta e as palavras-chave!", "ERROR")
+                return
+            
+            cleanup_btn.configure(state="disabled", text="Limpando...")
+            
+            def _cleanup_thread():
+                try:
+                    cleaner = PhotoCleaner(log_callback=log_to_dialog)
+                    stats = cleaner.cleanup(root_path, kws, excl)
+                    log_to_dialog(f"\n=== CONCLUÍDO ===", "SUCCESS")
+                    log_to_dialog(f"Arquivos processados: {stats['processed']}", "SUCCESS")
+                    log_to_dialog(f"Arquivos movidos: {stats['moved']}", "SUCCESS")
+                except Exception as e:
+                    log_to_dialog(f"Erro: {e}", "ERROR")
+                finally:
+                    cleanup_btn.configure(state="normal", text="Limpar")
+
+            threading.Thread(target=_cleanup_thread, daemon=True).start()
+        
+        # Botões de ação
+        action_frame = ctk.CTkFrame(dialog)
+        action_frame.pack(fill="x", padx=20, pady=10)
+        
+        cleanup_btn = ctk.CTkButton(action_frame, text="Limpar", command=run_cleanup, fg_color="#C62828", hover_color="#B71C1C")
+        cleanup_btn.pack(side="left", padx=10)
+        ctk.CTkButton(action_frame, text="Fechar", command=dialog.destroy, fg_color="gray").pack(side="right", padx=10)
+
 if __name__ == "__main__":
     app = YupooDownloaderGUI()
     app.mainloop()
+
