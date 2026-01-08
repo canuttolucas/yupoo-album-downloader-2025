@@ -376,7 +376,7 @@ class YupooDownloaderGUI(ctk.CTk):
                     import gc
                     gc.collect()
 
-                if use_advanced or "collections" in url or "categories" in url:
+                if use_advanced or "collections" in url or "categories" in url or "/search/" in url:
                     self.downloader = YupooAdvancedDownloader(
                         headless=headless,
                         max_workers=max_workers,
@@ -384,7 +384,7 @@ class YupooDownloaderGUI(ctk.CTk):
                         openai_api_key=api_key
                     )
                     
-                    if "collections" in url or "categories" in url:
+                    if "collections" in url or "categories" in url or "/search/" in url:
                         if collection_mode == "covers":
                             self.downloader.download_covers_from_collection(url, page_conf, progress_callback=self.update_link_progress)
                         else:

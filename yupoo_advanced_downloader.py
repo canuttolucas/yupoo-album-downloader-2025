@@ -964,15 +964,15 @@ class YupooAdvancedDownloader:
     
     def get_total_pages(self, collection_url):
         """
-        Obtém o número total de páginas de uma coleção
+        Obtém o número total de páginas de uma coleção ou busca
         
         Args:
-            collection_url: URL da coleção Yupoo
+            collection_url: URL da coleção, categoria ou busca Yupoo
             
         Returns:
             Número total de páginas como inteiro
         """
-        self.log(f"Analisando paginação da coleção: {collection_url}")
+        self.log(f"Analisando paginação: {collection_url}")
         driver = self.create_driver()
         
         try:
@@ -982,11 +982,11 @@ class YupooAdvancedDownloader:
             # Scroll para carregar a paginação
             self.scroll_to_load_all(driver)
             
-            # Método robusto para detectar total de páginas na coleção
+            # Método robusto para detectar total de páginas
             try:
                 # 1. Tentar pelo input de paginação (MAIS CONFIÁVEL)
                 # Seletor: form.pagination__jumpwrap input[name='page']
-                page_input = driver.find_element(By.CSS_SELECTOR, "form.pagination__jumpwrap input")
+                page_input = driver.find_element(By.CSS_SELECTOR, ".pagination__jumpwrap input[name='page']")
                 max_page = page_input.get_attribute("max")
                 if max_page and max_page.isdigit():
                     total_pages = int(max_page)
@@ -997,37 +997,33 @@ class YupooAdvancedDownloader:
 
             try:
                 # 2. Tentar pelo texto "no total X páginas"
-                # Exemplo de seletor: html body.yupoo-with-head-foot div.container.categories__wrapper div.categories__box div.categories__box-right form.pagination__jumpwrap span
-                pagination_span = driver.find_element(By.XPATH, "//form[contains(@class, 'pagination__jumpwrap')]/span")
-                text = pagination_span.text # "no total 2 páginas" ou "in total 2 pages"
-                
-                # Extrair número
-                num_match = re.search(r'total (\d+)', text, re.IGNORECASE)
-                if num_match:
-                    total_pages = int(num_match.group(1))
-                    self.log(f"Total de páginas encontrado via texto: {total_pages}")
-                    return total_pages
+                # O elemento pode variar entre coleções e busca
+                pagination_spans = driver.find_elements(By.XPATH, "//form[contains(@class, 'pagination__jumpwrap')]//span | //div[contains(@class, 'pagination')]//span")
+                for span in pagination_spans:
+                    text = span.text
+                    num_match = re.search(r'(?:total|total\sde)\s+(\d+)', text, re.IGNORECASE)
+                    if num_match:
+                        total_pages = int(num_match.group(1))
+                        self.log(f"Total de páginas encontrado via texto: {total_pages}")
+                        return total_pages
             except:
                 pass
                 
-            # Fallbacks anteriores
+            # 3. Tentar encontrar o maior número nos links de paginação
             try:
-                # Procura pelo texto "in total X pages" ou "no total X páginas" genérico
-                pagination_text = driver.find_element(By.XPATH, "//*[(contains(text(), 'in total') or contains(text(), 'no total')) and contains(text(), 'pag')]")
-                text = pagination_text.text
-                num_match = re.search(r'(?:total|total\sde)\s+(\d+)', text, re.IGNORECASE)
-                if num_match:
-                    total_pages = int(num_match.group(1))
-                    self.log(f"Total de páginas encontrado (fallback): {total_pages}")
-                    return total_pages
-            except:
-                pass
-            
-            # Se não encontrar nada, tenta identificar se há botão "Next" ou paginação numérica
-            try:
-                pagination_nav = driver.find_element(By.CSS_SELECTOR, "nav.pagination__main")
-                self.log("Elemento de navegação encontrado, mas número exato não. Assumindo que há mais páginas.")
-                return 999 # Retorna um número alto para indicar que há muitas páginas, ou pode retornar 1
+                page_links = driver.find_elements(By.CSS_SELECTOR, "a.pagination__number")
+                if page_links:
+                    page_nums = []
+                    for link in page_links:
+                        try:
+                            num = int(link.text.strip())
+                            page_nums.append(num)
+                        except:
+                            continue
+                    if page_nums:
+                        total_pages = max(page_nums)
+                        self.log(f"Total de páginas encontrado via links: {total_pages}")
+                        return total_pages
             except:
                 pass
             
@@ -1052,7 +1048,7 @@ class YupooAdvancedDownloader:
         self.log(f"Iniciando download de CAPAS da coleção/categoria: {collection_url}")
         
         # 1. Criar pasta da coleção
-        self.create_collection_folder(collection_url)
+        collection_folder = self.create_collection_folder(collection_url)
         self.log("=" * 80)
         self.log("YUPOO COLLECTION COVER DOWNLOADER - Capas em Alta Qualidade")
         self.log(f"Opção de páginas: {page_option}")
@@ -1077,9 +1073,6 @@ class YupooAdvancedDownloader:
         
         self.log(f"Processando páginas: {pages_to_process}")
         
-        # Criar pasta para a coleção
-        collection_folder = self.create_collection_folder(collection_url)
-        
         all_albums = []
         
         # Processar cada página
@@ -1090,7 +1083,7 @@ class YupooAdvancedDownloader:
             if page_num == 1:
                 page_url = collection_url
             else:
-                page_url = f"{collection_url}?page={page_num}"
+                page_url = self._add_page_to_url(collection_url, page_num)
             
             self.log(f"Processando página {page_num}/{max(pages_to_process)}")
             page_albums = self.get_albums_from_collection_page(page_url)
@@ -1150,77 +1143,84 @@ class YupooAdvancedDownloader:
         """
         self.log(f"Iniciando download COMPLETO da coleção/categoria: {collection_url}")
         
-        # 1. Criar pasta da coleção
-        self.create_collection_folder(collection_url)
-        self.log("=" * 80)
-        self.log("YUPOO COLLECTION ALBUMS DOWNLOADER - Todos os Álbuns")
-        self.log(f"Opção de páginas: {page_option}")
-        self.log("=" * 80)
-        
-        # Determinar páginas para processar
-        if page_option == 'first':
-            pages_to_process = [1]
-        elif page_option == 'all':
-            total_pages = self.get_total_pages(collection_url)
-            pages_to_process = list(range(1, total_pages + 1))
-        elif isinstance(page_option, tuple):
-            start_page, end_page = page_option
-            total_pages = self.get_total_pages(collection_url)
-            if start_page < 1 or end_page > total_pages or start_page > end_page:
-                self.log(f"Intervalo de páginas inválido! Total disponível: {total_pages}", "ERROR")
-                return
-            pages_to_process = list(range(start_page, end_page + 1))
-        else:
-            self.log("Opção de páginas inválida!", "ERROR")
-            return
-        
-        self.log(f"Processando páginas: {pages_to_process}")
-        
-        all_albums = []
-        
-        # Processar cada página
-        for page_num in pages_to_process:
-            if self.is_cancelled:
-                break
-                
-            if page_num == 1:
-                page_url = collection_url
+        # 1. Criar pasta da coleção e entrar nela
+        collection_folder = self.create_collection_folder(collection_url)
+        original_dir = os.getcwd()
+        try:
+            os.chdir(collection_folder)
+            
+            self.log("=" * 80)
+            self.log("YUPOO COLLECTION ALBUMS DOWNLOADER - Todos os Álbuns")
+            self.log(f"Opção de páginas: {page_option}")
+            self.log("=" * 80)
+            
+            # Determinar páginas para processar
+            if page_option == 'first':
+                pages_to_process = [1]
+            elif page_option == 'all':
+                total_pages = self.get_total_pages(collection_url)
+                pages_to_process = list(range(1, total_pages + 1))
+            elif isinstance(page_option, tuple):
+                start_page, end_page = page_option
+                total_pages = self.get_total_pages(collection_url)
+                if start_page < 1 or end_page > total_pages or start_page > end_page:
+                    self.log(f"Intervalo de páginas inválido! Total disponível: {total_pages}", "ERROR")
+                    return
+                pages_to_process = list(range(start_page, end_page + 1))
             else:
-                page_url = self._add_page_to_url(collection_url, page_num)
+                self.log("Opção de páginas inválida!", "ERROR")
+                return
             
-            self.log(f"Processando página {page_num}/{max(pages_to_process)}")
-            page_albums = self.get_albums_from_collection_page(page_url)
-            all_albums.extend(page_albums)
-        
-        if not all_albums:
-            self.log("Nenhum álbum encontrado na coleção!", "ERROR")
-            return
-        
-        self.log(f"Total de {len(all_albums)} álbuns encontrados")
-        
-        # Baixar cada álbum completo
-        successful = 0
-        failed = 0
-        
-        for i, album_info in enumerate(all_albums):
-            if self.is_cancelled:
-                break
-                
-            album_url, _, _ = album_info
-            self.log(f"Baixando álbum {i+1}/{len(all_albums)}: {album_url}")
+            self.log(f"Processando páginas: {pages_to_process}")
             
-            try:
-                # Usar a função existente para baixar o álbum completo
-                self.download_album_advanced(album_url, "all", None)
-                successful += 1
+            all_albums = []
+            
+            # Processar cada página
+            for page_num in pages_to_process:
+                if self.is_cancelled:
+                    break
+                    
+                if page_num == 1:
+                    page_url = collection_url
+                else:
+                    page_url = self._add_page_to_url(collection_url, page_num)
                 
-            except Exception as e:
-                self.log(f"Erro ao baixar álbum {i+1}: {e}", "ERROR")
-                failed += 1
+                self.log(f"Processando página {page_num}/{max(pages_to_process)}")
+                page_albums = self.get_albums_from_collection_page(page_url)
+                all_albums.extend(page_albums)
+            
+            if not all_albums:
+                self.log("Nenhum álbum encontrado na coleção!", "ERROR")
+                return
+            
+            self.log(f"Total de {len(all_albums)} álbuns encontrados")
+            
+            # Baixar cada álbum completo
+            successful = 0
+            failed = 0
+            
+            for i, album_info in enumerate(all_albums):
+                if self.is_cancelled:
+                    break
+                    
+                album_url, _, _ = album_info
+                self.log(f"Baixando álbum {i+1}/{len(all_albums)}: {album_url}")
                 
-            if progress_callback:
-                progress_callback(i + 1, len(all_albums))
+                try:
+                    # Usar a função existente para baixar o álbum completo
+                    self.download_album_advanced(album_url, "all", None)
+                    successful += 1
+                    
+                except Exception as e:
+                    self.log(f"Erro ao baixar álbum {i+1}: {e}", "ERROR")
+                    failed += 1
+                    
+                if progress_callback:
+                    progress_callback(i + 1, len(all_albums))
         
+        finally:
+            os.chdir(original_dir)
+            
         self.log("=" * 80)
         self.log(f"Download de álbuns concluído!")
         self.log(f"Sucesso: {successful} álbuns", "SUCCESS")
@@ -1229,15 +1229,15 @@ class YupooAdvancedDownloader:
     
     def create_collection_folder(self, collection_url):
         """
-        Cria uma pasta específica para a coleção usando a categoria da trilha de navegação (crumbs)
+        Cria uma pasta específica para a coleção ou pesquisa
         
         Args:
-            collection_url: URL da coleção Yupoo
+            collection_url: URL da coleção, categoria ou pesquisa Yupoo
             
         Returns:
             Caminho da pasta criada
         """
-        self.log("Identificando nome da categoria para a pasta...")
+        self.log("Identificando nome para a pasta...")
         driver = self.create_driver()
         folder_name = None
         
@@ -1245,20 +1245,40 @@ class YupooAdvancedDownloader:
             driver.get(collection_url)
             time.sleep(2)
             
-            # Tenta encontrar a categoria no crumbs: a.yupoo-crumbs-span[title]
-            try:
-                # O último link no crumbs geralmente é a categoria/coleção atual
-                crumbs = driver.find_elements(By.CSS_SELECTOR, "a.yupoo-crumbs-span")
-                if crumbs:
-                    category_name = crumbs[-1].get_attribute("title") or crumbs[-1].text
-                    if category_name:
-                        folder_name = re.sub(r'[<>:"/\\|?*]', '_', category_name).strip()
-                        self.log(f"Categoria identificada: {folder_name}")
-            except:
-                pass
+            # 1. Tentar identificar se é uma pesquisa
+            if "/search/" in collection_url:
+                query_match = re.search(r'q=([^&]+)', collection_url)
+                if query_match:
+                    search_term = urlparse.unquote(query_match.group(1))
+                    safe_term = re.sub(r'[<>:\"/\\\\|?*]', '_', search_term)
+                    folder_name = f"yupoo_search_{safe_term}"
+                    self.log(f"Pesquisa identificada: {search_term}")
+            
+            # 2. Tentar encontrar no breadcrumbs (crumbs)
+            if not folder_name:
+                try:
+                    crumbs = driver.find_elements(By.CSS_SELECTOR, "a.yupoo-crumbs-span")
+                    if crumbs:
+                        category_name = crumbs[-1].get_attribute("title") or crumbs[-1].text
+                        if category_name:
+                            folder_name = re.sub(r'[<>:"/\\|?*]', '_', category_name).strip()
+                            self.log(f"Categoria identificada via crumbs: {folder_name}")
+                except:
+                    pass
+            
+            # 3. Tentar pelo título da página se for busca
+            if not folder_name and "/search/" in collection_url:
+                try:
+                    title_element = driver.find_element(By.CSS_SELECTOR, ".search-results__title, .categories__title")
+                    text = title_element.text
+                    if text:
+                        safe_text = re.sub(r'[<>:\"/\\\\|?*]', '_', text.strip())
+                        folder_name = f"yupoo_search_{safe_text}"
+                except:
+                    pass
                 
         except Exception as e:
-            self.log(f"Erro ao obter nome da coleção/categoria: {e}", "WARNING")
+            self.log(f"Erro ao obter nome: {e}", "WARNING")
         finally:
             self.close_driver(driver)
 
@@ -1274,7 +1294,7 @@ class YupooAdvancedDownloader:
                 if url_parts:
                     folder_name = f"yupoo_{url_parts.group(1)}_category_{url_parts.group(2)}"
                 else:
-                    folder_name = f"yupoo_collection_{int(time.time())}"
+                    folder_name = f"yupoo_batch_{int(time.time())}"
         
         self.output_dir = folder_name
         
@@ -1310,13 +1330,23 @@ class YupooAdvancedDownloader:
             # Scroll para cima devagar para garantir que o find_elements pegue tudo se necessário,
             # mas na verdade o find_elements deveria pegar mesmo fora da view.
             
-            selectors = ["a.album__main", "a[href*='/albums/']", ".album__title a"]
+            selectors = [
+                "a.album__main", 
+                "a.album__main--preview", 
+                "a[href*='/albums/']", 
+                ".album__title a",
+                "a.search-album"
+            ]
             album_links = []
             for sel in selectors:
                 links = driver.find_elements(By.CSS_SELECTOR, sel)
                 if len(links) > len(album_links):
                     album_links = links
             
+            # Fallback robusto via XPath se seletores CSS falharem
+            if not album_links:
+                album_links = driver.find_elements(By.XPATH, "//a[contains(@href, '/albums/')]")
+
             self.log(f"Iniciando extração de {len(album_links)} links detectados...")
             
             albums = []
